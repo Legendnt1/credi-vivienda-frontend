@@ -1,0 +1,9 @@
+{
+  "login": {
+    "title": "Iniciar sesión",
+    "username": "Nombre de usuario",
+    "password": "Contraseña",
+    "submit": "Enviar",
+    "forgotPassword": "¿Olvidaste tu contraseña?"
+  }
+}

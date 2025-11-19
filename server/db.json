@@ -1,0 +1,36 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "johndoe",
+      "password": "password123",
+      "enable": true,
+      "email": "johndoe@gmail.com",
+      "direccion": "123 Main St, Cityville",
+      "fecha_registro": "2023-01-15",
+      "nombre": "John",
+      "apellido": "Doe",
+      "dni": "12345678",
+      "ingreso": 5550,
+      "ahorro": 2323,
+      "vivienda": false,
+      "rol_id": 1
+    },
+    {
+      "id": 2,
+      "username": "janedoe",
+      "password": "securepass",
+      "enable": true,
+      "email": "janedoe@hotmail.com",
+      "direccion": "456 Elm St, Townsville",
+      "fecha_registro": "2023-02-20",
+      "nombre": "Jane",
+      "apellido": "Doe",
+      "dni": "87654321",
+      "ingreso": 6200,
+      "ahorro": 3100,
+      "vivienda": true,
+      "rol_id": 2
+    }
+  ]
+}
