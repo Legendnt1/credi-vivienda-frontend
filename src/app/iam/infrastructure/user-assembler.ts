@@ -3,63 +3,63 @@ import {User} from '@iam/domain/model/user.entity';
 import {UserResource, UserResponse} from '@iam/infrastructure/user-response';
 
 /**
- * Ensambla y desensambla objetos User entre diferentes representaciones.
+ * Assembler class for converting between User entities and User resources/responses.
  */
 export class UserAssembler implements BaseAssembler<User, UserResource, UserResponse> {
   /**
-   * Convierte una respuesta de usuario en una lista de entidades User.
-   *
-   * @param response la respuesta que contiene los recursos de usuario
+   * Converts a UserResponse to an array of User entities.
+   * @param response - The UserResponse to convert.
+   * @returns An array of User entities.
    */
   toEntitiesFromResponse(response: UserResponse): User[] {
     return response.users.map(resource => this.toEntityFromResource(resource as UserResource));
   }
 
   /**
-   * Convierte un UserResource en una entidad User.
-   *
-   * @param resource el recurso de usuario a convertir
+   * Converts a UserResource to a User entity.
+   * @param resource - The UserResource to convert.
+   * @returns A User entity.
    */
   toEntityFromResource(resource: UserResource): User {
     return new User({
       id: resource.id,
       username: resource.username,
       password: resource.password,
-      enable: resource.enable,
+      enabled: resource.enabled,
       email: resource.email,
-      direccion: resource.direccion,
-      fecha_registro: resource.fecha_registro,
-      nombre: resource.nombre,
-      apellido: resource.apellido,
+      address: resource.address,
+      registration_date: resource.registration_date,
+      name: resource.name,
+      last_name: resource.last_name,
       dni: resource.dni,
-      ingreso: resource.ingreso,
-      ahorro: resource.ahorro,
-      vivienda: resource.vivienda,
-      rol_id: resource.rol_id,
+      income: resource.income,
+      savings: resource.savings,
+      has_bond: resource.has_bond,
+      role_id: resource.role_id,
     });
   }
 
   /**
-   * Convierte una entidad User en un UserResource.
-   *
-   * @param entity la entidad de usuario a convertir
+   * Converts a User entity to a UserResource.
+   * @param entity - The User entity to convert.
+   * @returns A UserResource.
    */
   toResourceFromEntity(entity: User): UserResource {
     return {
-      id: entity._id,
-      username: entity._username,
-      password: entity._password,
-      enable:  entity._enable,
-      email: entity._email,
-      direccion: entity._direccion,
-      fecha_registro: entity._fecha_registro,
-      nombre: entity._nombre,
-      apellido: entity._apellido,
-      dni: entity._dni,
-      ingreso: entity._ingreso,
-      ahorro: entity._ahorro,
-      vivienda: entity._vivienda,
-      rol_id: entity._rol_id,
+      id: entity.id,
+      username: entity.username,
+      password: entity.password,
+      enabled: entity.enabled,
+      email: entity.email,
+      address: entity.address,
+      registration_date: entity.registration_date,
+      name: entity.name,
+      last_name: entity.last_name,
+      dni: entity.dni,
+      income: entity.income,
+      savings: entity.savings,
+      has_bond: entity.has_bond,
+      role_id: entity.role_id,
     } as UserResource;
   }
 }

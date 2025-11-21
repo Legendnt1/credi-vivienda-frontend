@@ -1,9 +1,9 @@
 {
   "login": {
     "title": "Login",
-    "username": "Username",
+    "username": "Email",
     "password": "Password",
-    "submit": "Submit",
+    "submit": "Login",
     "forgotPassword": "Forgot your password?"
   }
 }

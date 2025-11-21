@@ -19,12 +19,12 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideTranslateService({
       loader: provideTranslateHttpLoader({prefix: '/assets/i18n/', suffix: '.json'}),
-      lang: 'en',
-      fallbackLang: 'en'
+      lang: 'es',
+      fallbackLang: 'es'
     }),
     provideAppInitializer(() => {
       const translate = inject(TranslateService);
-      translate.use(translate.getBrowserLang() || "en");
+      translate.use(translate.getBrowserLang() || "es");
     })
   ]
 };

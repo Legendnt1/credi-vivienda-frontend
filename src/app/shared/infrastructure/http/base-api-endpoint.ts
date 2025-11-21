@@ -88,7 +88,7 @@ export abstract class BaseApiEndpoint<
   create(entity: TEntity): Observable<TEntity> {
     const resource = this.assembler.toResourceFromEntity(entity);
 
-    if (!this.config.usePathParams) {
+    if (this.config.usePathParams) {
       return this.http.post<TResource>(this.endpointUrl, resource).pipe(
         map(created => this.assembler.toEntityFromResource(created)),
         catchError(this.handleError('Failed to create entity'))
@@ -116,7 +116,7 @@ export abstract class BaseApiEndpoint<
     const resource = this.assembler.toResourceFromEntity(entity);
     const idString = id.toString();
 
-    if (!this.config.usePathParams) {
+    if (this.config.usePathParams) {
       return this.http.put<TResource>(`${this.endpointUrl}/${idString}`, resource).pipe(
         map(updated => this.assembler.toEntityFromResource(updated)),
         catchError(this.handleError('Failed to update entity'))
@@ -147,7 +147,7 @@ export abstract class BaseApiEndpoint<
   delete(id: number | string): Observable<void> {
     const idString = id.toString();
 
-    if (!this.config.usePathParams) {
+    if (this.config.usePathParams) {
       return this.http.delete<void>(`${this.endpointUrl}/${idString}`).pipe(
         catchError(this.handleError('Failed to delete entity'))
       );

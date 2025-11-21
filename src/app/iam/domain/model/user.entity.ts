@@ -1,118 +1,130 @@
 import {BaseEntity} from '@shared/infrastructure/http/base-entity';
 
 /**
- * Representa a un usuario en el sistema.
+ * Represents a user in the system.
  */
 export class User implements BaseEntity {
   /**
-   * Identificador único del usuario.
+   * Unique identifier of the user.
    */
   _id: number;
   /**
-   * Nombre de usuario.
+   * Username of the user.
    */
   _username: string;
+
   /**
-   * Contraseña del usuario.
+   * Password of the user.
    */
   _password: string;
+
   /**
-   * Indica si el usuario está habilitado.
+   * Indicates if the user is enabled.
    */
-  _enable: boolean;
+  _enabled: boolean;
+
   /**
-   * Correo electrónico del usuario.
+   * Email of the user.
    */
   _email: string;
+
   /**
-   * Dirección del usuario.
+   * Address of the user.
    */
-  _direccion: string;
+  _address: string;
+
   /**
-   * Fecha de registro del usuario.
+   * Registration date of the user.
    */
-  _fecha_registro: string;
+  _registration_date: string;
+
   /**
-   * Nombre real de usuario.
+   * Name of the user.
    */
-  _nombre: string;
+  _name: string;
+
   /**
-   * Apellido del usuario.
+   * Last name of the user.
    */
-  _apellido: string;
+  _last_name: string;
+
   /**
-   * Dni del usuario.
+   * DNI of the user.
    */
   _dni: string;
+
   /**
-   * Ingresos del usuario.
+   * Income of the user.
    */
-  _ingreso: number;
+  _income: number;
+
   /**
-   * Ahorros del usuario.
+   * Savings of the user.
    */
-  _ahorro: number;
+  _savings: number;
+
   /**
-   * Indica si el usuario tiene el bono vivienda.
+   * Indicates if the user has a bond.
    */
-  _vivienda: boolean;
+  _has_bond: boolean;
+
   /**
-   * Indica el rol del usuario.
+   * Role ID of the user.
    */
-  _rol_id: number;
+  _role_id: number;
 
 
   /**
-   * Constructor de la clase User.
-   *
-   * @param user Objeto con los datos del usuario.
+   * Constructor of the User class.
+   * @param user - Object containing the properties of the user.
    */
-  constructor(user: { id: number, username: string, password: string, enable: boolean,
-    email: string, direccion: string, fecha_registro: string, nombre: string, apellido: string,
-    dni: string, ingreso: number, ahorro: number, vivienda: boolean, rol_id: number }) {
+  constructor(user: { id: number, username: string, password: string, enabled: boolean,
+    email: string, address: string, registration_date: string, name: string, last_name: string,
+    dni: string, income: number, savings: number, has_bond: boolean, role_id: number }) {
     this._id = user.id;
     this._username = user.username;
     this._password = user.password;
-    this._enable = user.enable;
+    this._enabled = user.enabled;
     this._email = user.email;
-    this._direccion = user.direccion;
-    this._fecha_registro = user.fecha_registro;
-    this._nombre = user.nombre;
-    this._apellido = user.apellido;
+    this._address = user.address;
+    this._registration_date = user.registration_date;
+    this._name = user.name;
+    this._last_name = user.last_name;
     this._dni = user.dni;
-    this._ingreso = user.ingreso;
-    this._ahorro = user.ahorro;
-    this._vivienda = user.vivienda;
-    this._rol_id = user.rol_id;
+    this._income = user.income;
+    this._savings = user.savings;
+    this._has_bond = user.has_bond;
+    this._role_id = user.role_id;
   }
 
-  /** Getters y Setters */
+  /** Getters and Setters */
   get id(): number { return this._id };
   set id(value: number) { this._id = value };
   get username(): string { return this._username };
   set username(value: string) { this._username = value };
   get password(): string { return this._password };
   set password(value: string) { this._password = value };
-  get enable(): boolean { return this._enable };
-  set enable(value: boolean) { this._enable = value };
+  get enabled(): boolean { return this._enabled };
+  set enabled(value: boolean) { this._enabled = value };
   get email(): string { return this._email };
   set email(value: string) { this._email = value };
-  get direccion(): string { return this._direccion };
-  set direccion(value: string) { this._direccion = value }
-  get fecha_registro(): string { return this._fecha_registro };
-  set fecha_registro(value: string) { this._fecha_registro = value }
-  get nombre(): string { return this._nombre };
-  set nombre(value: string) { this._nombre = value }
-  get apellido(): string { return this._apellido };
-  set apellido(value: string) { this._apellido = value }
+  get address(): string { return this._address };
+  set address(value: string) { this._address = value };
+  get registration_date(): string { return this._registration_date };
+  set registration_date(value: string) { this._registration_date = value };
+  get name(): string { return this._name };
+  set name(value: string) { this._name = value };
+  get last_name(): string { return this._last_name };
+  set last_name(value: string) { this._last_name = value };
   get dni(): string { return this._dni };
-  set dni(value: string) { this._dni = value }
-  get ingreso(): number { return this._ingreso };
-  set ingreso(value: number) { this._ingreso = value }
-  get ahorro(): number { return this._ahorro };
-  set ahorro(value: number) { this._ahorro = value }
-  get vivienda(): boolean { return this._vivienda };
-  set vivienda(value: boolean) { this._vivienda = value }
-  get rol_id(): number { return this._rol_id };
-  set rol_id(value: number) { this._rol_id = value };
+  set dni(value: string) { this._dni = value };
+  get income(): number { return this._income };
+  set income(value: number) { this._income = value };
+  get savings(): number { return this._savings };
+  set savings(value: number) { this._savings = value };
+  get has_bond(): boolean { return this._has_bond };
+  set has_bond(value: boolean) { this._has_bond = value };
+  get role_id(): number { return this._role_id };
+  set role_id(value: number) { this._role_id = value };
+
 }

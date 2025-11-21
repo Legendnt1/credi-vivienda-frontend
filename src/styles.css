@@ -1,6 +1,22 @@
 /* Estilos globales */
 :root {
+  /* Paleta de colores */
+  --color-primario: #00005C;
+  --color-secundario: #F2AA1F;
+  --color-terciario: #88F4FF;
+  --color-exito: #2E7D32;
+  --color-error: #C62828;
+  --color-neutral-oscuro: #1E1E1E;
+  --color-neutral-claro: #F7F7F7;
 
+  /* Familias tipográficas */
+  --font-sans: "Poppins", sans-serif;
+  --font-regular: "Poppins", sans-serif;
+  --font-medium: "PoppinsMedium", sans-serif;
+  --font-semibold: "PoppinsSemiBold", sans-serif;
+  --font-bold: "PoppinsBold", sans-serif;
+  --font-extrabold: "PoppinsExtraBold", sans-serif;
+  --font-italic: "PoppinsItalic", sans-serif;
 }
 
 body {

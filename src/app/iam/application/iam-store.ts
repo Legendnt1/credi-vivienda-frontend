@@ -3,103 +3,130 @@ import {User} from '@iam/domain/model/user.entity';
 import {IamApi} from '@iam/infrastructure/iam-api';
 import {retry} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {Role} from '@iam/domain/model/role.entity';
 
 /**
- * Store para manejar el estado de IAM (Identity and Access Management).
+ * IAM Store to manage users and roles state.
  */
 @Injectable({
   providedIn: 'root'
 })
 export class IamStore {
   /**
-   * Lista de usuarios.
+   * Users signal.
    * @private
    */
   private readonly usersSignal = signal<User[]>([]);
   /**
-   * Usuarios registrados.
+   * Users readonly signal.
    */
   readonly users = this.usersSignal.asReadonly();
+
   /**
-   * Indica si se está cargando información.
+   * Roles signal.
+   * @private
+   */
+  private readonly rolesSignal = signal<Role[]>([]);
+
+  /**
+   * Roles readonly signal.
+   */
+  readonly roles = this.rolesSignal.asReadonly();
+
+  /**
+   * Loading signal.
    * @private
    */
   private readonly loadingSignal = signal<boolean>(false);
 
   /**
-   * Estado de carga.
+   * Loading readonly signal.
    */
   readonly loading = this.loadingSignal.asReadonly();
   /**
-   * Mensaje de error.
+   * Error signal.
    * @private
    */
   private readonly errorSignal = signal<string | null>(null);
   /**
-   * Mensaje de error.
+   * Error readonly signal.
    */
   readonly error = this.errorSignal.asReadonly();
 
   /**
-   * Cantidad de usuarios registrados.
+   * User count computed signal.
    */
   readonly userCount = computed(() => this.users().length);
 
   /**
-   * Usuario de la sesión actual.
+   * Role count computed signal.
+   */
+  readonly roleCount = computed(() => this.roles().length);
+
+  /**
+   * Session user signal.
    * @private
    */
   private readonly sessionUserSignal = signal<User | null>(null);
 
   /**
-   * Usuario de la sesión actual.
+   * Session user readonly signal.
    */
   readonly sessionUser = this.sessionUserSignal.asReadonly();
 
   /**
-   * Indica si el usuario está autenticado.
+   * Is authenticated computed signal.
    */
   readonly isAuthenticated = computed(() => !!this.sessionUser());
 
   /**
-   * Identificador del rol del usuario en sesión.
+   * Role ID computed signal.
    */
-  readonly rolId = computed(() => this.sessionUser()?.rol_id ?? '');
+  readonly roleId = computed(() => this.sessionUser()?.role_id ?? '');
 
   /**
-   * Identificador del usuario en sesión.
+   * Session user ID computed signal.
    */
   readonly sessionUserId = computed(() => this.sessionUser()?.id ?? 0);
 
-  // Flujo de registro y autenticación
+  // Registration Flow
 
   /**
-   * Usuario registrado.
+   * Register user signal.
    * @private
    */
   private readonly registerUserSignal = signal<User | null>(null);
 
   /**
-   * Rol del usuario registrado.
+   * Register role signal.
    * @private
    */
   private readonly registerRoleSignal = signal<string | null>(null);
 
   /**
-   * Usuario registrado.
+   * Register user readonly signal.
    */
   readonly registerUser = this.registerUserSignal.asReadonly();
 
   /**
-   * Rol del usuario registrado.
+   * Register role readonly signal.
    */
   readonly registerRole = this.registerRoleSignal.asReadonly();
 
+  /**
+   * Constructor of the IAM Store.
+   * @param iamApi - The IAM API service.
+   */
   constructor(private iamApi: IamApi) {
     this.loadUsers();
+    this.loadRoles();
   }
 
-
+  /**
+   * Logs in a user with the given email and password.
+   * @param email - The email of the user.
+   * @param password - The password of the user.
+   */
   login(email: string, password: string): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -149,8 +176,19 @@ export class IamStore {
   }
 
   /**
-   * Define el usuario de la sesión actual.
-   * @param userId - ID del usuario.
+   * Logs out the current user.
+   */
+  logout(): void {
+    const username = this.sessionUser()?.username ?? 'unknown';
+    this.sessionUserSignal.set(null);
+    this.clearSessionStorage();
+    console.log(`User ${username} has logged out.`);
+  }
+
+  /**
+   * Checks if the given user ID matches the current session user ID.
+   * @param userId - The ID of the user to check.
+   * @returns True if the IDs match, false otherwise.
    */
   isCurrentUser(userId: number | null | undefined): boolean {
     const currentUserId = this.sessionUserId();
@@ -161,7 +199,7 @@ export class IamStore {
   }
 
   /**
-   * Restaura la sesión del usuario desde el almacenamiento local.
+   * Restores the user session from local storage.
    * @private
    */
   private restoreSessionFromStorage(): void {
@@ -181,17 +219,17 @@ export class IamStore {
             id: rawUser._id,
             username: rawUser._username,
             password: rawUser._password,
-            enable: rawUser._enable,
+            enabled: rawUser._enabled,
             email: rawUser._email,
-            direccion: rawUser._direccion,
-            fecha_registro: rawUser._fecha_registro,
-            nombre: rawUser._nombre,
-            apellido: rawUser._apellido,
+            address: rawUser._address,
+            registration_date: rawUser._registration_date,
+            name: rawUser._name,
+            last_name: rawUser._last_name,
             dni: rawUser._dni,
-            ingreso: rawUser._ingreso,
-            ahorro: rawUser._ahorro,
-            vivienda: rawUser._vivienda,
-            rol_id: rawUser._rol_id
+            income: rawUser._income,
+            savings: rawUser._savings,
+            has_bond: rawUser._has_bond,
+            role_id: rawUser._role_id
           });
           this.sessionUserSignal.set(user);
           console.log("Sesión de usuario: ", user.username);
@@ -210,7 +248,7 @@ export class IamStore {
   }
 
   /**
-   * Guarda la sesión del usuario en el almacenamiento local.
+   * Saves the current user session to local storage.
    * @private
    */
   private saveSessionToStorage(): void {
@@ -227,6 +265,10 @@ export class IamStore {
     }
   }
 
+  /**
+   * Clears the user session from local storage.
+   * @private
+   */
   private clearSessionStorage(): void {
     if (typeof localStorage === 'undefined') {
       console.warn('LocalStorage is not available.');
@@ -242,16 +284,17 @@ export class IamStore {
   }
 
   /**
-   * Obtiene un usuario por su ID.
-   * @param id - ID del usuario.
+   * Gets a user by ID.
+   * @param id - The ID of the user to retrieve.
+   * @returns A signal of the user or undefined if not found.
    */
   getUserById(id: number | null | undefined): Signal<User | undefined> {
     return computed(() => id ? this.users().find(u => u.id === id) : undefined);
   }
 
   /**
-   * Agrega un nuevo usuario.
-   * @param user - Usuario a agregar.
+   * Adds a new user.
+   * @param user - The user to add.
    */
   addUser(user: User): void {
     this.loadingSignal.set(true);
@@ -269,8 +312,8 @@ export class IamStore {
   }
 
   /**
-   * Actualiza un usuario existente.
-   * @param updatedUser - Usuario con los datos actualizados.
+   * Updates an existing user.
+   * @param updatedUser - The user with updated information.
    */
   updateUser(updatedUser: User): void {
     this.loadingSignal.set(true);
@@ -293,8 +336,8 @@ export class IamStore {
   }
 
   /**
-   * Elimina un usuario por su ID.
-   * @param id - ID del usuario a eliminar.
+   * Deletes a user by ID.
+   * @param id - The ID of the user to delete.
    */
   deleteUser(id: number): void {
     this.loadingSignal.set(true);
@@ -312,7 +355,74 @@ export class IamStore {
   }
 
   /**
-   * Carga la lista de usuarios desde la API.
+   * Gets a role by ID.
+   * @param id - The ID of the role to retrieve.
+   * @returns A signal of the role or undefined if not found.
+   */
+  getRoleById(id: number | null | undefined): Signal<Role | undefined> {
+    return computed(() => id ? this.roles().find(r => r.id === id) : undefined);
+  }
+
+  /**
+   * Adds a new role.
+   * @param role - The role to add.
+   */
+  addRole(role: Role): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.createRole(role).pipe(retry(2)).subscribe({
+      next: (createdRole) => {
+        this.rolesSignal.set([...this.roles(), createdRole]);
+        this.loadingSignal.set(false);
+      },
+      error: (error) => {
+        this.errorSignal.set(this.formatError(error, 'Error at create new role'));
+        this.loadingSignal.set(false);
+      }
+    })
+  }
+
+  /**
+   * Updates an existing role.
+   * @param updatedRole - The role with updated information.
+   */
+  updateRol(updatedRole: Role): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.updateRole(updatedRole).pipe(retry(2)).subscribe({
+      next: role => {
+        this.rolesSignal.update(roles =>
+          roles.map(r => r.id === role.id ? role : r))
+        this.loadingSignal.set(false);
+      },
+      error: err => {
+        this.errorSignal.set(this.formatError(err, 'Error at update role'));
+        this.loadingSignal.set(false);
+      }
+    });
+  }
+
+  /**
+   * Deletes a role by ID.
+   * @param id - The ID of the role to delete.
+   */
+  deleteRol(id: number): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.deleteRol(id).pipe(retry(2)).subscribe({
+      next: () => {
+        this.rolesSignal.update(roles => roles.filter(r => r.id !== id))
+        this.loadingSignal.set(false);
+      },
+      error: err => {
+        this.errorSignal.set(this.formatError(err, 'Error at delete role'));
+        this.loadingSignal.set(false);
+      }
+    });
+  }
+
+  /**
+   * Loads users from the API.
    * @private
    */
   private loadUsers(): void {
@@ -332,10 +442,30 @@ export class IamStore {
   }
 
   /**
-   * Formatea el mensaje de error.
-   * @param error - Error recibido.
-   * @param fallback - Mensaje de respaldo.
-   * @returns Mensaje de error formateado.
+   * Loads roles from the API.
+   * @private
+   */
+  private loadRoles(): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.getRoles().pipe(takeUntilDestroyed()).subscribe({
+      next: roles => {
+        console.log(roles);
+        this.rolesSignal.set(roles);
+        this.loadingSignal.set(false);
+      },
+      error: err => {
+        this.errorSignal.set(this.formatError(err, 'Error al cargar los roles'));
+        this.loadingSignal.set(false);
+      }
+    })
+  }
+
+  /**
+   * Format error messages.
+   * @param error - The error object.
+   * @param fallback - The fallback message.
+   * @returns The formatted error message.
    * @private
    */
   private formatError(error: any, fallback: string): string {
