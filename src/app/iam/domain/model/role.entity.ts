@@ -25,6 +25,6 @@ export class Role implements BaseEntity {
   /** Getters and Setters */
   get id(): number { return this._id; }
   set id(value: number) { this._id = value; }
-  get rol(): string { return this._role; }
-  set rol(value: string) { this._role = value; }
+  get role(): string { return this._role; }
+  set role(value: string) { this._role = value; }
 }

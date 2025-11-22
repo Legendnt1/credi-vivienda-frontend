@@ -1,9 +1,10 @@
-import {computed, Injectable, Signal, signal} from '@angular/core';
+import {computed, inject, Injectable, Signal, signal} from '@angular/core';
 import {User} from '@iam/domain/model/user.entity';
 import {IamApi} from '@iam/infrastructure/iam-api';
 import {retry} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {Role} from '@iam/domain/model/role.entity';
+import {Router} from '@angular/router';
 
 /**
  * IAM Store to manage users and roles state.
@@ -12,6 +13,11 @@ import {Role} from '@iam/domain/model/role.entity';
   providedIn: 'root'
 })
 export class IamStore {
+  /**
+   * Router instance.
+   * @private
+   */
+  private readonly router = inject(Router);
   /**
    * Users signal.
    * @private
@@ -120,6 +126,7 @@ export class IamStore {
   constructor(private iamApi: IamApi) {
     this.loadUsers();
     this.loadRoles();
+    this.restoreSessionFromStorage();
   }
 
   /**
@@ -135,28 +142,31 @@ export class IamStore {
       const user = this.users().find(u =>
         u.email === email && u.password === password);
       if (!user) {
-        this.errorSignal.set('Correo o contraseña incorrectos');
+        this.errorSignal.set('Correo electrónico o contraseña incorrectos');
         this.loadingSignal.set(false);
         return;
       }
 
-      if (!password || password.length <1) {
-        this.errorSignal.set('Contraseña inválida');
+      if (!password || password.length < 1) {
+        this.errorSignal.set('La contraseña no puede estar vacía');
         this.loadingSignal.set(false);
         return;
       }
 
       const storedPassword = user.password ?? '';
       if (storedPassword !== password) {
-        this.errorSignal.set('Correo o contraseña incorrectos');
+        this.errorSignal.set('Correo electrónico o contraseña incorrectos');
         this.loadingSignal.set(false);
         return;
       }
 
       this.sessionUserSignal.set(user);
       this.saveSessionToStorage();
-      console.log(`Usuario ${user.username} ha iniciado sesión.`);
+      console.log(`Usuario ${user.username} ha iniciado sesión correctamente.`);
       this.loadingSignal.set(false);
+
+      // Redirect to home after successful login
+      this.router.navigate(['/home']).then();
     };
 
     if (!this.userCount()) {
@@ -166,7 +176,7 @@ export class IamStore {
           tryFromMemory();
         },
         error: err => {
-          this.errorSignal.set(this.formatError(err, 'Error al cargar los usuarios'));
+          this.errorSignal.set(this.formatError(err, 'Error al cargar los usuarios. Por favor, intenta nuevamente.'));
           this.loadingSignal.set(false);
         }
       });
@@ -183,6 +193,9 @@ export class IamStore {
     this.sessionUserSignal.set(null);
     this.clearSessionStorage();
     console.log(`User ${username} has logged out.`);
+
+    // Redirect to login after logout
+    this.router.navigate(['/login']).then();
   }
 
   /**
@@ -212,56 +225,79 @@ export class IamStore {
       const sessionData = localStorage.getItem('credi-vivienda-session');
       if (sessionData) {
         const parsed = JSON.parse(sessionData);
-        const { user: rawUser } = parsed;
-        const hasUserData = rawUser && typeof rawUser._id === 'number';
-        if (hasUserData) {
+        const { user: userData } = parsed;
+
+        // Validate user data
+        if (userData && typeof userData.id === 'number') {
           const user = new User({
-            id: rawUser._id,
-            username: rawUser._username,
-            password: rawUser._password,
-            enabled: rawUser._enabled,
-            email: rawUser._email,
-            address: rawUser._address,
-            registration_date: rawUser._registration_date,
-            name: rawUser._name,
-            last_name: rawUser._last_name,
-            dni: rawUser._dni,
-            income: rawUser._income,
-            savings: rawUser._savings,
-            has_bond: rawUser._has_bond,
-            role_id: rawUser._role_id
+            id: userData.id,
+            username: userData.username,
+            password: userData.password,
+            enabled: userData.enabled,
+            email: userData.email,
+            address: userData.address,
+            registration_date: userData.registration_date,
+            name: userData.name,
+            last_name: userData.last_name,
+            dni: userData.dni,
+            income: userData.income,
+            savings: userData.savings,
+            has_bond: userData.has_bond,
+            role_id: userData.role_id
           });
+
           this.sessionUserSignal.set(user);
-          console.log("Sesión de usuario: ", user.username);
+          console.log('Session restored from localStorage:', user.username);
         } else {
-          console.error('Invalid user data in session storage.');
+          console.warn('Invalid user data in session storage:', userData);
           this.clearSessionStorage();
-          console.log('Sesión de usuario eliminada debido a datos inválidos.');
         }
       } else {
-        console.log('No hay sesión de usuario en el almacenamiento local.');
+        console.log('No session data found in localStorage.');
       }
     } catch (error) {
-      console.error('Error al restaurar la sesión desde el Localstorage', error);
+      console.error('Error restoring session from localStorage:', error);
       this.clearSessionStorage();
     }
   }
 
   /**
    * Saves the current user session to local storage.
-   * @private
    */
-  private saveSessionToStorage(): void {
+  saveSessionToStorage(): void {
+    if (typeof localStorage === 'undefined') {
+      console.warn('LocalStorage is not available.');
+      return;
+    }
+
     try {
       const user = this.sessionUser();
 
       if (user) {
-        const sessionData = { user, timestamp: Date.now() };
+        // Serialize user with public properties (getters)
+        const userPlainObject = {
+          id: user.id,
+          username: user.username,
+          password: user.password,
+          enabled: user.enabled,
+          email: user.email,
+          address: user.address,
+          registration_date: user.registration_date,
+          name: user.name,
+          last_name: user.last_name,
+          dni: user.dni,
+          income: user.income,
+          savings: user.savings,
+          has_bond: user.has_bond,
+          role_id: user.role_id
+        };
+
+        const sessionData = { user: userPlainObject, timestamp: Date.now() };
         localStorage.setItem('credi-vivienda-session', JSON.stringify(sessionData));
-        console.log('Sesión de usuario guardada en el almacenamiento local.');
+        console.log('Session saved to localStorage:', userPlainObject);
       }
     } catch (error) {
-      console.warn("Error al guardar la sesión en el Localstorage", error);
+      console.error("Error saving session to localStorage:", error);
     }
   }
 
@@ -277,9 +313,9 @@ export class IamStore {
 
     try {
       localStorage.removeItem('credi-vivienda-session');
-      console.log('Sesión de usuario eliminada del almacenamiento local.');
+      console.log('Session of user removed from local storage.');
     } catch (error) {
-      console.error('Error al eliminar la sessión desde el Localstorage', error);
+      console.error('Error at delete session from Localstorage', error);
     }
   }
 
@@ -305,7 +341,7 @@ export class IamStore {
         this.loadingSignal.set(false);
       },
       error: (error) => {
-        this.errorSignal.set(this.formatError(error, 'Error al crear el usuario'));
+        this.errorSignal.set(this.formatError(error, 'Error at create new user'));
         this.loadingSignal.set(false);
       }
     })
@@ -329,7 +365,7 @@ export class IamStore {
         this.loadingSignal.set(false);
       },
       error: err => {
-        this.errorSignal.set(this.formatError(err, 'Error al actualizar el usuario'));
+        this.errorSignal.set(this.formatError(err, 'Error at update user'));
         this.loadingSignal.set(false);
       }
     });
@@ -348,7 +384,7 @@ export class IamStore {
         this.loadingSignal.set(false);
       },
       error: err => {
-        this.errorSignal.set(this.formatError(err, 'Error al eliminar el usuario'));
+        this.errorSignal.set(this.formatError(err, 'Error at delete user'));
         this.loadingSignal.set(false);
       }
     });
@@ -428,14 +464,14 @@ export class IamStore {
   private loadUsers(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
-    this.iamApi.getUsers().pipe(takeUntilDestroyed()).subscribe({
+    this.iamApi.getUsers().pipe(retry(2)).subscribe({
       next: users => {
-        console.log(users);
+        console.log('Users loaded:', users);
         this.usersSignal.set(users);
         this.loadingSignal.set(false);
       },
       error: err => {
-        this.errorSignal.set(this.formatError(err, 'Error al cargar los usuarios'));
+        this.errorSignal.set(this.formatError(err, 'Error at load users'));
         this.loadingSignal.set(false);
       }
     })
@@ -448,14 +484,14 @@ export class IamStore {
   private loadRoles(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
-    this.iamApi.getRoles().pipe(takeUntilDestroyed()).subscribe({
+    this.iamApi.getRoles().pipe(retry(2)).subscribe({
       next: roles => {
-        console.log(roles);
+        console.log('Roles loaded:', roles);
         this.rolesSignal.set(roles);
         this.loadingSignal.set(false);
       },
       error: err => {
-        this.errorSignal.set(this.formatError(err, 'Error al cargar los roles'));
+        this.errorSignal.set(this.formatError(err, 'Error at load roles'));
         this.loadingSignal.set(false);
       }
     })

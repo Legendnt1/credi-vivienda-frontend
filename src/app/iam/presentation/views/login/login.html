@@ -15,7 +15,8 @@
             id="email"
             formControlName="email"
             class="form-input"
-            [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+            [class.input-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+            placeholder="ejemplo@correo.com"
           />
         </div>
 
@@ -27,13 +28,14 @@
               id="password"
               formControlName="password"
               class="form-input"
-              [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+              [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+              placeholder="••••••"
             />
             <button
               type="button"
               class="password-toggle"
               (click)="togglePasswordVisibility()"
-              aria-label="Toggle password visibility"
+              [attr.aria-label]="isPasswordVisible() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
             >
               <svg class="icon" width="24" height="24">
                 @if (isPasswordVisible()) {
@@ -46,15 +48,56 @@
           </div>
         </div>
 
+        <!-- Error Messages Section -->
+        @if (store.error()) {
+          <div class="error-message">
+            <svg class="error-icon" width="20" height="20">
+              <use href="/assets/icons/sprite.symbol.svg#alert-circle"></use>
+            </svg>
+            <span>{{ store.error() }}</span>
+          </div>
+        }
+
+        @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+          <div class="field-error">
+            @if (loginForm.get('email')?.errors?.['required']) {
+              {{ 'login.errors.emailRequired' | translate }}
+            }
+            @if (loginForm.get('email')?.errors?.['email']) {
+              {{ 'login.errors.emailInvalid' | translate }}
+            }
+          </div>
+        }
+
+        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+          <div class="field-error">
+            @if (loginForm.get('password')?.errors?.['required']) {
+              {{ 'login.errors.passwordRequired' | translate }}
+            }
+            @if (loginForm.get('password')?.errors?.['minlength']) {
+              {{ 'login.errors.passwordMinLength' | translate }}
+            }
+          </div>
+        }
+
         <button
           type="submit"
           class="submit-button"
           [disabled]="store.loading()"
+          [class.loading]="store.loading()"
         >
-          {{ 'login.submit' | translate }}
+          @if (store.loading()) {
+            <span class="spinner"></span>
+            {{ 'login.submitting' | translate }}
+          } @else {
+            {{ 'login.submit' | translate }}
+          }
         </button>
 
-        <a href="#" class="forgot-password-link">{{ 'login.forgotPassword' | translate }}</a>
+        <div class="register-link-container">
+          <span class="register-text">{{ 'login.noAccount' | translate }}</span>
+          <a routerLink="/register" class="register-link">{{ 'login.registerLink' | translate }}</a>
+        </div>
       </form>
     </div>
   </div>

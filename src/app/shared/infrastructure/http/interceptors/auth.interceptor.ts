@@ -4,40 +4,39 @@ import {environment} from '@env/environment';
 import {Observable} from 'rxjs';
 
 /**
- * Forma del objeto de sesión almacenado en local storage.
+ * Interceptor that adds authentication headers to outgoing HTTP requests.
  */
 interface SessionShape {
   token?: { accessToken?: string };
 }
 
 /**
- * Un interceptor HTTP que agrega encabezados de autenticación a las solicitudes salientes.
- * Adjunta una clave API y, si está disponible, un token Bearer desde el almacenamiento local.
- * Las solicitudes a URL de activos están excluidas de esta intercepción.
+ * Interceptor that appends authentication headers to HTTP requests
+ * targeting the CrediVivienda Provider API.
  */
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   /**
-   * La clave API utilizada para la autenticación.
+   * API key for authenticating with the CrediVivienda Provider API.
    * @private
    */
   private readonly API_KEY = environment.crediViviendaProviderApiKey;
   /**
-   * La URL base de la API a la que se aplica el interceptor.
+   * Base URL of the CrediVivienda Provider API.
    * @private
    */
   private readonly API_BASE = environment.crediViviendaProviderApiBaseUrl;
   /**
-   * La clave utilizada para almacenar datos de autenticación en el almacenamiento local.
+   * Local storage key for retrieving authentication session data.
    * @private
    */
   private readonly AUTH_STORAGE_KEY = 'cv_iam_auth';
 
   /**
-   * Intercepta las solicitudes HTTP para agregar encabezados de autenticación.
-   * @param request - La solicitud HTTP saliente.
-   * @param next - El siguiente manejador en la cadena de solicitudes HTTP.
-   * @return Un observable del evento HTTP.
+   * Intercepts HTTP requests to add authentication headers when necessary.
+   * @param request - The outgoing HTTP request.
+   * @param next - The next handler in the HTTP request chain.
+   * @returns An observable of the HTTP event stream.
    */
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (this.isAssetsRequest(request.url) || !this.matchesApiBase(request.url)) {
@@ -61,8 +60,8 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   /**
-   * Lee el token de acceso del almacenamiento local.
-   * @return El token de acceso o null si no está disponible.
+   * Reads the access token from local storage.
+   * @returns The access token if available, otherwise null.
    * @private
    */
   private readAccessToken(): string | null {
@@ -77,9 +76,9 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   /**
-   * Determina si la URL de la solicitud es para activos.
-   * @param url - La URL de la solicitud.
-   * @return True si la URL es para activos, de lo contrario false.
+   * Determines if the request is for assets.
+   * @param url - The request URL.
+   * @returns True if the request is for assets, otherwise false.
    * @private
    */
   private isAssetsRequest(url: string): boolean {
@@ -87,9 +86,9 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   /**
-   * Verifica si la URL de la solicitud coincide con la URL base de la API.
-   * @param url - La URL de la solicitud.
-   * @return True si la URL coincide con la base de la API, de lo contrario false.
+   * Checks if the URL matches the API base URL.
+   * @param url - The request URL.
+   * @returns True if the URL matches the API base, otherwise false.
    * @private
    */
   private matchesApiBase(url: string): boolean {

@@ -7,9 +7,10 @@ import {
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import {provideHttpClient} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, provideHttpClient} from '@angular/common/http';
 import {provideTranslateService, TranslateService} from '@ngx-translate/core';
 import {provideTranslateHttpLoader} from '@ngx-translate/http-loader';
+import {AuthInterceptor} from '@shared/infrastructure/http/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,6 +26,7 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       const translate = inject(TranslateService);
       translate.use(translate.getBrowserLang() || "es");
-    })
+    }),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ]
 };

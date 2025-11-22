@@ -1,1 +1,75 @@
-<p>home works!</p>
+<div class="home-container">
+  @if (needsProfile()) {
+    <!-- Profile Completion Form -->
+    <div class="home-content">
+      <div class="form-card">
+        <h1 class="form-title">{{ 'home.welcome' | translate }} {{ userName() }}!</h1>
+        <p class="form-subtitle">{{ 'home.completeProfile' | translate }}</p>
+
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+          <!-- Income Field -->
+          <div class="form-group">
+            <label for="income" class="form-label">
+              {{ 'home.form.income' | translate }}:
+            </label>
+            <input
+              type="number"
+              id="income"
+              formControlName="income"
+              class="form-input"
+              [placeholder]="'home.form.incomePlaceholder' | translate"
+            />
+          </div>
+
+          <!-- Savings Field -->
+          <div class="form-group">
+            <label for="savings" class="form-label">
+              {{ 'home.form.savings' | translate }}:
+            </label>
+            <input
+              type="number"
+              id="savings"
+              formControlName="savings"
+              class="form-input"
+              [placeholder]="'home.form.savingsPlaceholder' | translate"
+            />
+          </div>
+
+          <!-- Has Property Checkbox -->
+          <div class="form-group-checkbox">
+            <label class="checkbox-label">
+              {{ 'home.form.hasProperty' | translate }}
+            </label>
+            <div class="checkbox-container">
+              <input
+                type="checkbox"
+                id="hasProperty"
+                formControlName="hasProperty"
+                class="form-checkbox"
+              />
+              <label for="hasProperty" class="checkbox-box"></label>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="submit-button" [disabled]="!profileForm.valid">
+            {{ 'home.form.submit' | translate }}
+          </button>
+        </form>
+      </div>
+    </div>
+  } @else {
+    <!-- Dashboard View (cuando enabled=true) -->
+    <div class="dashboard-content">
+      <h1 class="dashboard-title">{{ 'home.dashboard.title' | translate }}</h1>
+      <p class="dashboard-subtitle">{{ 'home.dashboard.subtitle' | translate }}</p>
+
+      <!-- Aquí puedes agregar el dashboard real más adelante -->
+      <div class="dashboard-card">
+        <p>{{ 'home.dashboard.comingSoon' | translate }}</p>
+      </div>
+    </div>
+  }
+</div>
+
+

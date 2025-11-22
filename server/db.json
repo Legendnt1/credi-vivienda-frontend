@@ -4,7 +4,7 @@
       "id": 1,
       "username": "john_doe",
       "password": "123456",
-      "enabled": true,
+      "enabled": false,
       "email": "john@hotmail.com",
       "address": "123 Main St, Anytown, USA",
       "registration_date": "2022-01-15T10:00:00Z",

@@ -1,1 +1,187 @@
-<p>register works!</p>
+<div class="register-container">
+  <div class="register-form-section">
+    <div class="register-form-wrapper">
+      <div class="logo-container">
+        <img src="/assets/images/big-logo.webp" alt="Credi Vivienda" class="logo" />
+      </div>
+
+      <h1 class="register-title">{{ 'register.title' | translate }}</h1>
+      <p class="register-subtitle">{{ 'register.subtitle' | translate }}</p>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+        <!-- Name and Last Name Row -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name" class="form-label">{{ 'register.name' | translate }}</label>
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              class="form-input"
+              [class.input-error]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
+              placeholder="Juan"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="last_name" class="form-label">{{ 'register.lastName' | translate }}</label>
+            <input
+              type="text"
+              id="last_name"
+              formControlName="last_name"
+              class="form-input"
+              [class.input-error]="registerForm.get('last_name')?.invalid && registerForm.get('last_name')?.touched"
+              placeholder="Pérez"
+            />
+          </div>
+        </div>
+
+        <!-- DNI -->
+        <div class="form-group">
+          <label for="dni" class="form-label">{{ 'register.dni' | translate }}</label>
+          <input
+            type="text"
+            id="dni"
+            formControlName="dni"
+            class="form-input"
+            [class.input-error]="registerForm.get('dni')?.invalid && registerForm.get('dni')?.touched"
+            placeholder="12345678"
+          />
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email" class="form-label">{{ 'register.email' | translate }}</label>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            class="form-input"
+            [class.input-error]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+            placeholder="ejemplo@correo.com"
+          />
+        </div>
+
+        <!-- Username -->
+        <div class="form-group">
+          <label for="username" class="form-label">{{ 'register.username' | translate }}</label>
+          <input
+            type="text"
+            id="username"
+            formControlName="username"
+            class="form-input"
+            [class.input-error]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
+            placeholder="juanperez"
+          />
+        </div>
+
+        <!-- Address -->
+        <div class="form-group">
+          <label for="address" class="form-label">{{ 'register.address' | translate }}</label>
+          <input
+            type="text"
+            id="address"
+            formControlName="address"
+            class="form-input"
+            [class.input-error]="registerForm.get('address')?.invalid && registerForm.get('address')?.touched"
+            placeholder="Av. Principal 123"
+          />
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password" class="form-label">{{ 'register.password' | translate }}</label>
+          <div class="password-input-wrapper">
+            <input
+              [type]="isPasswordVisible() ? 'text' : 'password'"
+              id="password"
+              formControlName="password"
+              class="form-input"
+              [class.input-error]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+              placeholder="••••••"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="isPasswordVisible() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            >
+              <svg class="icon" width="24" height="24">
+                @if (isPasswordVisible()) {
+                  <use href="/assets/icons/sprite.symbol.svg#eye"></use>
+                } @else {
+                  <use href="/assets/icons/sprite.symbol.svg#eye-off"></use>
+                }
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label for="confirmPassword" class="form-label">{{ 'register.confirmPassword' | translate }}</label>
+          <div class="password-input-wrapper">
+            <input
+              [type]="isConfirmPasswordVisible() ? 'text' : 'password'"
+              id="confirmPassword"
+              formControlName="confirmPassword"
+              class="form-input"
+              [class.input-error]="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched"
+              placeholder="••••••"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="toggleConfirmPasswordVisibility()"
+              [attr.aria-label]="isConfirmPasswordVisible() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            >
+              <svg class="icon" width="24" height="24">
+                @if (isConfirmPasswordVisible()) {
+                  <use href="/assets/icons/sprite.symbol.svg#eye"></use>
+                } @else {
+                  <use href="/assets/icons/sprite.symbol.svg#eye-off"></use>
+                }
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Error Messages Section -->
+        @if (errorMessage()) {
+          <div class="error-message">
+            <svg class="error-icon" width="20" height="20">
+              <use href="/assets/icons/sprite.symbol.svg#alert-circle"></use>
+            </svg>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+
+        @if (registerForm.get('confirmPassword')?.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched) {
+          <div class="field-error">
+            {{ 'register.errors.passwordMismatch' | translate }}
+          </div>
+        }
+
+        <button
+          type="submit"
+          class="submit-button"
+          [disabled]="isLoading()"
+          [class.loading]="isLoading()"
+        >
+          @if (isLoading()) {
+            <span class="spinner"></span>
+            {{ 'register.submitting' | translate }}
+          } @else {
+            {{ 'register.submit' | translate }}
+          }
+        </button>
+
+        <div class="login-link-container">
+          <span class="login-text">{{ 'register.alreadyHaveAccount' | translate }}</span>
+          <a (click)="goToLogin()" class="login-link">{{ 'register.loginLink' | translate }}</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+

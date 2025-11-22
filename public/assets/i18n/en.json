@@ -4,6 +4,62 @@
     "username": "Email",
     "password": "Password",
     "submit": "Login",
-    "forgotPassword": "Forgot your password?"
+    "submitting": "Logging in...",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Sign Up",
+    "errors": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters"
+    }
+  },
+  "register": {
+    "title": "Create Account",
+    "subtitle": "Fill in your details to register",
+    "name": "Name",
+    "lastName": "Last Name",
+    "dni": "ID Number",
+    "email": "Email",
+    "username": "Username",
+    "address": "Address",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "submit": "Register",
+    "submitting": "Registering...",
+    "alreadyHaveAccount": "Already have an account?",
+    "loginLink": "Login",
+    "errors": {
+      "passwordMismatch": "Passwords do not match"
+    }
+  },
+  "logout": {
+    "button": "Logout"
+  },
+  "sidebar": {
+    "settings": "Settings",
+    "projects": "Properties",
+    "calculations": "Calculations",
+    "reports": "Reports",
+    "support": "Support",
+    "bonus": "Roof Bonus",
+    "user": "User"
+  },
+  "home": {
+    "welcome": "Welcome",
+    "completeProfile": "Complete your profile to continue",
+    "form": {
+      "income": "Monthly Income",
+      "incomePlaceholder": "Enter your monthly income",
+      "savings": "Saved Amount",
+      "savingsPlaceholder": "Enter the saved amount",
+      "hasProperty": "Do you have a property?",
+      "submit": "Complete Profile"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Welcome to your control panel",
+      "comingSoon": "Coming Soon - Dashboard under development"
+    }
   }
 }

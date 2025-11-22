@@ -1,18 +1,17 @@
 import {Component, inject, signal} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
 import {IamStore} from '@iam/application/iam-store';
 import {TranslateModule} from '@ngx-translate/core';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [TranslateModule, ReactiveFormsModule],
+  imports: [TranslateModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login {
   private fb = inject(FormBuilder);
-  private router = inject(Router);
   readonly store = inject(IamStore);
 
   isPasswordVisible = signal(false);
