@@ -1,7 +1,7 @@
 <aside class="sidebar">
   <!-- Logo Section -->
   <div class="sidebar-header">
-    <div class="logo-container">
+    <a class="logo-container" routerLink="/dashboard" [attr.aria-label]="'Ir al Dashboard'">
       <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32">
         <use [attr.href]="spriteUrl + '#home'"></use>
       </svg>
@@ -9,7 +9,7 @@
         <span class="brand-credi">Credi</span>
         <span class="brand-vivienda">Vivienda</span>
       </div>
-    </div>
+    </a>
   </div>
 
   <!-- Navigation Menu -->
@@ -35,14 +35,14 @@
   <!-- Bonus Action Button -->
   <div class="bonus-section">
     <a
-      [routerLink]="bonuAction().route"
+      [routerLink]="bonusAction().route"
       routerLinkActive="active"
       class="bonus-link"
-      [attr.aria-label]="bonuAction().label">
+      [attr.aria-label]="bonusAction().label">
       <svg class="bonus-icon" width="24" height="24">
-        <use [attr.href]="spriteUrl + '#' + bonuAction().iconId"></use>
+        <use [attr.href]="spriteUrl + '#' + bonusAction().iconId"></use>
       </svg>
-      <span class="bonus-label">{{ bonuAction().translationKey | translate }}</span>
+      <span class="bonus-label">{{ bonusAction().translationKey | translate }}</span>
     </a>
   </div>
 

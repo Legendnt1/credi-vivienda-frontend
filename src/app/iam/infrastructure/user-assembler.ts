@@ -35,6 +35,7 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UserResp
       income: resource.income,
       savings: resource.savings,
       has_bond: resource.has_bond,
+      has_home: resource.has_home,
       role_id: resource.role_id,
     });
   }
@@ -59,6 +60,7 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UserResp
       income: entity.income,
       savings: entity.savings,
       has_bond: entity.has_bond,
+      has_home: entity.has_home,
       role_id: entity.role_id,
     } as UserResource;
   }

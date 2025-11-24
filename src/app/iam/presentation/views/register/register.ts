@@ -75,19 +75,20 @@ export class Register {
 
     // Create new user with enabled=false (needs to complete profile)
     const newUser = new User({
-      id: Date.now(), // Temporal ID, será reemplazado por la API
+      id: Date.now(), // Temporary ID generation
       username: formValue.username,
       password: formValue.password,
-      enabled: false, // Usuario necesita completar perfil
+      enabled: false, // Needs to complete profile
       email: formValue.email,
       address: formValue.address,
       registration_date: new Date().toISOString(),
       name: formValue.name,
       last_name: formValue.last_name,
       dni: formValue.dni,
-      income: 0, // Se completará en el home
-      savings: 0, // Se completará en el home
+      income: 0, // It will be completed in the home
+      savings: 0, // It will be completed in the home
       has_bond: false, // Default false
+      has_home: false, // Default false
       role_id: 1 // USER role
     });
 
@@ -96,7 +97,7 @@ export class Register {
       console.log('Usuario registrado:', newUser);
       this.isLoading.set(false);
 
-      // Redirigir al login
+      // Redirect to log in after successful registration
       this.router.navigate(['/login']).then();
     }, 1000);
   }

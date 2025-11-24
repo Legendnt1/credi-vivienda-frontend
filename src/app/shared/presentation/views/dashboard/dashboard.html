@@ -1,1 +1,205 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-title">
+      <h1>{{ 'dashboard.title' | translate }}</h1>
+    </div>
+    <div class="header-filters">
+      <div class="filter-group">
+        <button
+          class="filter-btn"
+          [class.active]="selectedDateRange() === 'today'"
+          (click)="setDateRange('today')">
+          {{ 'dashboard.filters.today' | translate }}
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="selectedDateRange() === 'thisWeek'"
+          (click)="setDateRange('thisWeek')">
+          {{ 'dashboard.filters.thisWeek' | translate }}
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="selectedDateRange() === 'thisMonth'"
+          (click)="setDateRange('thisMonth')">
+          {{ 'dashboard.filters.thisMonth' | translate }}
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="selectedDateRange() === 'custom'"
+          (click)="setDateRange('custom')">
+          {{ 'dashboard.filters.custom' | translate }}
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- KPIs Section -->
+  <section class="kpis-section">
+    @for (kpi of kpis(); track kpi.label) {
+      <div class="kpi-card">
+        <div class="kpi-icon">
+          <svg class="icon">
+            <use [attr.href]="'assets/icons/sprite.symbol.svg#' + kpi.icon"></use>
+          </svg>
+        </div>
+        <div class="kpi-content">
+          <div class="kpi-value">{{ kpi.value }}</div>
+          <div class="kpi-label">{{ kpi.label | translate }}</div>
+          <div class="kpi-change" [class.positive]="kpi.changePositive" [class.negative]="!kpi.changePositive">
+            <span class="arrow">{{ kpi.changePositive ? '↑' : '↓' }}</span>
+            {{ kpi.changePositive ? '+' : '' }}{{ kpi.change }}% {{ 'dashboard.kpis.vsPreviousMonth' | translate }}
+          </div>
+        </div>
+      </div>
+    }
+  </section>
+
+  <!-- Main Content Grid -->
+  <div class="main-content-grid">
+    <!-- Left: Recent Clients Table -->
+    <section class="clients-section">
+      <h2>{{ 'dashboard.recentClients.title' | translate }}</h2>
+      <div class="table-container">
+        <table class="clients-table">
+          <thead>
+            <tr>
+              <th>{{ 'dashboard.recentClients.columns.name' | translate }}</th>
+              <th>{{ 'dashboard.recentClients.columns.date' | translate }}</th>
+              <th>{{ 'dashboard.recentClients.columns.project' | translate }}</th>
+              <th>{{ 'dashboard.recentClients.columns.program' | translate }}</th>
+              <th>{{ 'dashboard.recentClients.columns.amount' | translate }}</th>
+              <th>{{ 'dashboard.recentClients.columns.status' | translate }}</th>
+              <th>{{ 'dashboard.recentClients.columns.actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (client of clientsData(); track client.user.id) {
+              <tr>
+                <td>{{ client.user.name }} {{ client.user.last_name }}</td>
+                <td>{{ client.date }}</td>
+                <td>{{ client.property?.project || 'N/A' }}</td>
+                <td>
+                  <span class="program-badge" [ngClass]="getProgramBadgeClass(client.credit.program)">
+                    {{ client.credit.program }}
+                  </span>
+                </td>
+                <td>{{ formatCurrency(client.credit.down_payment) }}</td>
+                <td>
+                  <span class="status-chip" [ngClass]="getStatusClass(client.status)">
+                    {{ 'dashboard.recentClients.status.' + client.status | translate }}
+                  </span>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="icon-btn" (click)="viewClientDetail(client.user.id)" title="{{ 'dashboard.recentClients.actions.viewDetail' | translate }}">
+                      <svg class="icon-small">
+                        <use href="assets/icons/sprite.symbol.svg#eye"></use>
+                      </svg>
+                    </button>
+                    <button class="icon-btn" (click)="simulateAgain(client.user.id)" title="{{ 'dashboard.recentClients.actions.simulateAgain' | translate }}">
+                      <svg class="icon-small">
+                        <use href="assets/icons/sprite.symbol.svg#calculator"></use>
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Right: Performance Chart -->
+    <section class="chart-section">
+      <h3>{{ 'dashboard.performanceChart.title' | translate }}</h3>
+      <div class="chart-container">
+        @for (item of chartData(); track item.label) {
+          <div class="chart-bar-wrapper">
+            <div class="chart-bar" [style.height.%]="(item.value / maxChartValue()) * 100" [style.background-color]="item.color">
+              <span class="bar-value">{{ item.value }}</span>
+            </div>
+            <div class="chart-label">{{ item.label }}</div>
+          </div>
+        }
+      </div>
+      <div class="chart-summary">
+        <p><strong>{{ 'dashboard.performanceChart.summary.simulationsThisWeek' | translate }}:</strong> {{ chartSummary().total }}</p>
+        <p><strong>{{ 'dashboard.performanceChart.summary.approved' | translate }}:</strong> {{ chartSummary().approved }} ({{ chartSummary().percentage }}%)</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- Properties Section -->
+  <section class="properties-section">
+    <h2>{{ 'dashboard.properties.title' | translate }}</h2>
+    <div class="properties-grid">
+      <!-- Featured Property -->
+      @if (featuredProperty(); as featured) {
+        <div class="featured-property">
+          <div class="property-image-placeholder">
+            <svg class="icon-large">
+              <use href="assets/icons/sprite.symbol.svg#home"></use>
+            </svg>
+          </div>
+          <div class="property-content">
+            <span class="featured-badge">{{ 'dashboard.properties.featured' | translate }}</span>
+            <h3>{{ featured.project }}</h3>
+            <p class="property-type">{{ featured.type }}</p>
+            <p class="property-price">{{ formatCurrency(featured.price) }}</p>
+            <p class="property-units">{{ featured.availability }} {{ 'dashboard.properties.available' | translate }}</p>
+            <button class="btn-primary" (click)="viewPropertyDetail(featured.id)">
+              {{ 'dashboard.properties.viewDetails' | translate }}
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- Property Cards -->
+      <div class="properties-cards">
+        @for (property of properties(); track property.id) {
+          <div class="property-card">
+            <div class="card-image">
+              <svg class="icon-medium">
+                <use href="assets/icons/sprite.symbol.svg#home"></use>
+              </svg>
+            </div>
+            <div class="card-content">
+              <h4>{{ property.project }}</h4>
+              <p class="property-type">{{ property.type }}</p>
+              <p class="property-area">Área: {{ property.area }} m²</p>
+              <p class="property-price">{{ formatCurrency(property.price) }}</p>
+              <div class="property-badges">
+                <span class="badge-units">{{ property.availability }} {{ 'dashboard.properties.available' | translate }}</span>
+              </div>
+              <button class="btn-secondary" (click)="simulateCredit(property.id)">
+                {{ 'dashboard.properties.simulateCredit' | translate }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Education Content -->
+      <div class="education-card">
+        <h3>{{ educationContent().title | translate }}</h3>
+        <div class="education-cover">
+          <svg class="icon-large">
+            <use href="assets/icons/sprite.symbol.svg#file-type-pdf"></use>
+          </svg>
+        </div>
+        <p class="education-description">{{ educationContent().description | translate }}</p>
+        <button class="btn-download" (click)="downloadGuide()">
+          <svg class="icon-small">
+            <use href="assets/icons/sprite.symbol.svg#download"></use>
+          </svg>
+          {{ 'dashboard.education.download' | translate }}
+        </button>
+        <p class="education-date">{{ 'dashboard.education.updated' | translate }}: {{ educationContent().updateDate }}</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+

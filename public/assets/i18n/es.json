@@ -61,5 +61,68 @@
       "subtitle": "Bienvenido a tu panel de control",
       "comingSoon": "Próximamente - Dashboard en desarrollo"
     }
+  },
+  "dashboard": {
+    "title": "Dashboard – CrediVivienda",
+    "filters": {
+      "today": "Hoy",
+      "thisWeek": "Esta semana",
+      "thisMonth": "Este mes",
+      "custom": "Personalizado",
+      "allPrograms": "Todos",
+      "miVivienda": "MiVivienda",
+      "techoPropio": "Techo Propio",
+      "others": "Otros"
+    },
+    "kpis": {
+      "creditsSimulated": "Créditos simulados",
+      "totalAmount": "Monto simulado",
+      "availableProperties": "Inmuebles disponibles",
+      "approvedCredits": "Créditos aprobados",
+      "vsPreviousMonth": "vs mes anterior"
+    },
+    "recentClients": {
+      "title": "Clientes recientes",
+      "columns": {
+        "name": "Nombre",
+        "date": "Fecha",
+        "project": "Proyecto",
+        "program": "Programa",
+        "amount": "Monto",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "status": {
+        "pending": "Pendiente",
+        "inEvaluation": "En evaluación",
+        "approved": "Aprobado",
+        "rejected": "Rechazado"
+      },
+      "actions": {
+        "viewDetail": "Ver detalle",
+        "simulateAgain": "Simular de nuevo"
+      }
+    },
+    "performanceChart": {
+      "title": "Créditos por estado",
+      "summary": {
+        "simulationsThisWeek": "Simulaciones esta semana",
+        "approved": "Aprobados"
+      }
+    },
+    "properties": {
+      "title": "Inmuebles destacados",
+      "featured": "Campaña del mes",
+      "viewDetails": "Ver más detalles",
+      "simulateCredit": "Simular crédito",
+      "available": "disponibles",
+      "location": "Ubicación"
+    },
+    "education": {
+      "title": "Guía de la semana para el inversionista",
+      "description": "Tips para elegir tu primera vivienda con crédito MiVivienda",
+      "download": "Descargar PDF",
+      "updated": "Actualizado"
+    }
   }
 }

@@ -69,6 +69,11 @@ export class User implements BaseEntity {
   _has_bond: boolean;
 
   /**
+   * Indicates if the user has a home.
+   */
+  _has_home: boolean;
+
+  /**
    * Role ID of the user.
    */
   _role_id: number;
@@ -80,7 +85,7 @@ export class User implements BaseEntity {
    */
   constructor(user: { id: number, username: string, password: string, enabled: boolean,
     email: string, address: string, registration_date: string, name: string, last_name: string,
-    dni: string, income: number, savings: number, has_bond: boolean, role_id: number }) {
+    dni: string, income: number, savings: number, has_bond: boolean, has_home: boolean, role_id: number }) {
     this._id = user.id;
     this._username = user.username;
     this._password = user.password;
@@ -94,6 +99,7 @@ export class User implements BaseEntity {
     this._income = user.income;
     this._savings = user.savings;
     this._has_bond = user.has_bond;
+    this._has_home = user.has_home;
     this._role_id = user.role_id;
   }
 
@@ -124,6 +130,8 @@ export class User implements BaseEntity {
   set savings(value: number) { this._savings = value };
   get has_bond(): boolean { return this._has_bond };
   set has_bond(value: boolean) { this._has_bond = value };
+  get has_home(): boolean { return this._has_home };
+  set has_home(value: boolean) { this._has_home = value }
   get role_id(): number { return this._role_id };
   set role_id(value: number) { this._role_id = value };
 

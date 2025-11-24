@@ -67,6 +67,10 @@ export interface UserResource extends BaseResource {
    */
   has_bond: boolean;
   /**
+   * Indicates if the user has a home.
+   */
+  has_home: boolean;
+  /**
    * Role ID associated with the user.
    */
   role_id: number;

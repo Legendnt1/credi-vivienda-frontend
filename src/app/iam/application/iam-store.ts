@@ -166,7 +166,7 @@ export class IamStore {
       this.loadingSignal.set(false);
 
       // Redirect to home after successful login
-      this.router.navigate(['/home']).then();
+      this.router.navigate(['/dashboard']).then();
     };
 
     if (!this.userCount()) {
@@ -243,6 +243,7 @@ export class IamStore {
             income: userData.income,
             savings: userData.savings,
             has_bond: userData.has_bond,
+            has_home: userData.has_home,
             role_id: userData.role_id
           });
 

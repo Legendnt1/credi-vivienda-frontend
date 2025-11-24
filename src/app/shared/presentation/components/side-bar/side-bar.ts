@@ -53,7 +53,7 @@ export class SideBar {
     }
   ]);
 
-  bonuAction = signal({
+  bonusAction = signal({
     label: 'Bono Techo Propio',
     iconId: 'gift',
     route: '/bonus',
