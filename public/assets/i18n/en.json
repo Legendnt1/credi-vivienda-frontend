@@ -61,5 +61,169 @@
       "subtitle": "Welcome to your control panel",
       "comingSoon": "Coming Soon - Dashboard under development"
     }
+  },
+  "dashboard": {
+    "title": "Dashboard – CrediVivienda",
+    "filters": {
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "custom": "Custom",
+      "allPrograms": "All",
+      "miVivienda": "MiVivienda",
+      "techoPropio": "Techo Propio",
+      "others": "Others"
+    },
+    "kpis": {
+      "creditsSimulated": "Credits Simulated",
+      "totalAmount": "Total Amount Simulated",
+      "availableProperties": "Available Properties",
+      "approvedCredits": "Approved Credits",
+      "vsPreviousMonth": "vs Previous Month"
+    },
+    "recentClients": {
+      "title": "Recent Clients",
+      "columns": {
+        "name": "Name",
+        "date": "Date",
+        "project": "Project",
+        "program": "Program",
+        "amount": "Amount",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "pending": "Pending",
+        "inEvaluation": "In Evaluation",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "actions": {
+        "viewDetail": "View Detail",
+        "simulateAgain": "Simulate Again"
+      }
+    },
+    "performanceChart": {
+      "title": "Performance Over Time",
+      "summary": {
+        "simulationsThisWeek": "Simulations This Week",
+        "approved": "Approved"
+      }
+    },
+    "properties": {
+      "title": "Featured Properties",
+      "featured": "Campaign of the Month",
+      "viewDetails": "View More Details",
+      "simulateCredit": "Simulate Credit",
+      "available": "available",
+      "location": "Location"
+    },
+    "education": {
+      "title": "Guide of the week for the investor",
+      "description": "Tips and advice to make the best investment decisions",
+      "download": "Download PDF",
+      "updated": "Updated"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "form": {
+      "currency": {
+        "label": "Default Currency",
+        "placeholder": "Select a currency"
+      },
+      "interestType": {
+        "label": "Interest Type",
+        "options": {
+          "effective": "Effective",
+          "nominal": "Nominal"
+        }
+      },
+      "gracePeriod": {
+        "label": "Grace Period",
+        "options": {
+          "total": "Total",
+          "partial": "Partial"
+        }
+      },
+      "buttons": {
+        "save": "Save Changes",
+        "saving": "Saving..."
+      }
+    }
+  },
+  "projects": {
+    "title": "Properties",
+    "filter": {
+      "label": "Filter:",
+      "placeholder": "Search by code, project, type or status...",
+      "apply": "Apply"
+    },
+    "buttons": {
+      "add": "Add Property",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "table": {
+      "code": "Code",
+      "project": "Project",
+      "type": "Type",
+      "area": "Area (m²)",
+      "price": "Price",
+      "status": "Status",
+      "availability": "Availability",
+      "actions": "Actions"
+    },
+    "loading": "Loading properties...",
+    "noResults": "No properties found",
+    "summary": {
+      "total": "Total",
+      "filtered": "of"
+    },
+    "form": {
+      "titleCreate": "Add Property",
+      "titleEdit": "Edit Property",
+      "sections": {
+        "general": "General Information",
+        "physical": "Physical Characteristics",
+        "economic": "Economic Data",
+        "location": "Location"
+      },
+      "fields": {
+        "code": "Property Code",
+        "project": "Project",
+        "type": "Type",
+        "status": "Status",
+        "area": "Area (m²)",
+        "price": "Price",
+        "address": "Address",
+        "district": "District"
+      },
+      "placeholders": {
+        "code": "E.g: 001",
+        "project": "E.g: Residence A",
+        "type": "E.g: Apartment, House",
+        "status": "E.g: Available, Reserved",
+        "area": "E.g: 80",
+        "price": "E.g: 250000",
+        "address": "Enter address",
+        "district": "Enter district"
+      },
+      "currency": {
+        "soles": "Soles (S/)"
+      },
+      "bondsApplicable": "Applicable Bond",
+      "bonds": {
+        "techoPropio": "Own Roof"
+      },
+      "buttons": {
+        "save": "Add",
+        "saving": "Saving...",
+        "cancel": "Cancel"
+      },
+      "errors": {
+        "required": "This field is required"
+      }
+    }
   }
 }

@@ -124,5 +124,106 @@
       "download": "Descargar PDF",
       "updated": "Actualizado"
     }
+  },
+  "settings": {
+    "title": "Configuración",
+    "form": {
+      "currency": {
+        "label": "Moneda por defecto",
+        "placeholder": "Selecciona una moneda"
+      },
+      "interestType": {
+        "label": "Tipo de tasa",
+        "options": {
+          "effective": "Efectiva",
+          "nominal": "Nominal"
+        }
+      },
+      "gracePeriod": {
+        "label": "Periodo de gracia",
+        "options": {
+          "total": "Total",
+          "partial": "Parcial"
+        }
+      },
+      "buttons": {
+        "save": "Guardar cambios",
+        "saving": "Guardando..."
+      }
+    }
+  },
+  "projects": {
+    "title": "Inmuebles",
+    "filter": {
+      "label": "Filtrar:",
+      "placeholder": "Buscar por código, proyecto, tipo o estado...",
+      "apply": "Aplicar"
+    },
+    "buttons": {
+      "add": "Agregar Inmueble",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "table": {
+      "code": "Código",
+      "project": "Proyecto",
+      "type": "Tipo",
+      "area": "Área (m²)",
+      "price": "Precio",
+      "status": "Estado",
+      "availability": "Disponibilidad",
+      "actions": "Acciones"
+    },
+    "loading": "Cargando inmuebles...",
+    "noResults": "No se encontraron inmuebles",
+    "summary": {
+      "total": "Total",
+      "filtered": "de"
+    },
+    "form": {
+      "titleCreate": "Agregar Inmueble",
+      "titleEdit": "Editar Inmueble",
+      "sections": {
+        "general": "Datos generales",
+        "physical": "Características Físicas",
+        "economic": "Datos Económicos",
+        "location": "Ubicación"
+      },
+      "fields": {
+        "code": "Código del inmueble",
+        "project": "Proyecto",
+        "type": "Tipo",
+        "status": "Estado",
+        "area": "Área (m²)",
+        "price": "Precio",
+        "address": "Dirección",
+        "district": "Distrito"
+      },
+      "placeholders": {
+        "code": "Ej: 001",
+        "project": "Ej: Residencia A",
+        "type": "Ej: Departamento, Casa",
+        "status": "Ej: Disponible, Reservado",
+        "area": "Ej: 80",
+        "price": "Ej: 250000",
+        "address": "Ingrese la dirección",
+        "district": "Ingrese el distrito"
+      },
+      "currency": {
+        "soles": "Soles (S/)"
+      },
+      "bondsApplicable": "Bono aplicable",
+      "bonds": {
+        "techoPropio": "Techo propio"
+      },
+      "buttons": {
+        "save": "Agregar",
+        "saving": "Guardando...",
+        "cancel": "Cancelar"
+      },
+      "errors": {
+        "required": "Este campo es obligatorio"
+      }
+    }
   }
 }

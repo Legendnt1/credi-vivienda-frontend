@@ -6,6 +6,8 @@ import {Observable} from 'rxjs';
 import {User} from '@iam/domain/model/user.entity';
 import {RolesApiEndpoint} from '@iam/infrastructure/roles-api-endpoint';
 import {Role} from '@iam/domain/model/role.entity';
+import {SettingsApiEndpoint} from '@iam/infrastructure/settings-api-endpoint';
+import {Setting} from '@iam/domain/model/setting.entity';
 
 /**
  * IAM API service to interact with user and role endpoints.
@@ -28,6 +30,12 @@ export class IamApi extends BaseApi {
   private readonly rolesEndpoint: RolesApiEndpoint;
 
   /**
+   * Settings API endpoint.
+   * @private
+   */
+  private readonly settingsEndpoint: SettingsApiEndpoint;
+
+  /**
    * Constructor to initialize the IAM API service with HTTP client.
    * @param http - The HTTP client to make API requests.
    */
@@ -35,6 +43,7 @@ export class IamApi extends BaseApi {
     super();
     this.usersEndpoint = new UsersApiEndpoint(http);
     this.rolesEndpoint = new RolesApiEndpoint(http);
+    this.settingsEndpoint = new SettingsApiEndpoint(http);
   }
 
   /**
@@ -123,5 +132,49 @@ export class IamApi extends BaseApi {
    */
   deleteRol(id: number): Observable<void> {
     return this.rolesEndpoint.delete(id);
+  }
+
+  /**
+   * Get all settings.
+   * @returns An observable of an array of settings.
+   */
+  getSettings(): Observable<Setting[]> {
+    return this.settingsEndpoint.getAll();
+  }
+
+  /**
+   * Get a setting by ID.
+   * @param id - The ID of the setting to retrieve.
+   * @returns An observable of the setting.
+   */
+  getSetting(id: number): Observable<Setting> {
+    return this.settingsEndpoint.getById(id);
+  }
+
+  /**
+   * Create a new setting.
+   * @param setting - The setting data to create.
+   * @returns An observable of the created setting.
+   */
+  createSetting(setting: Setting): Observable<Setting> {
+    return this.settingsEndpoint.create(setting);
+  }
+
+  /**
+   * Update an existing setting.
+   * @param setting - The setting data to update.
+   * @returns An observable of the updated setting.
+   */
+  updateSetting(setting: Setting): Observable<Setting> {
+    return this.settingsEndpoint.update(setting, setting.id);
+  }
+
+  /**
+   * Delete a setting by ID.
+   * @param id - The ID of the setting to delete.
+   * @returns An observable of void.
+   */
+  deleteSetting(id: number): Observable<void> {
+    return this.settingsEndpoint.delete(id);
   }
 }

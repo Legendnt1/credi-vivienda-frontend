@@ -77,41 +77,43 @@
   "property_projects": [
     {
       "id": 1,
+      "property_code": "001",
       "project": "Condominio Las Flores",
       "type": "Departamento",
       "area": 72,
       "price": 220000.0,
-      "availability": 5
+      "availability": 5,
+      "status": "Disponible"
     },
     {
       "id": 2,
+      "property_code": "002",
       "project": "Residencial El Sol",
       "type": "Casa",
       "area": 120,
       "price": 320000.0,
-      "availability": 2
+      "availability": 2,
+      "status": "Reservado"
     },
     {
       "id": 3,
+      "property_code": "003",
       "project": "Residencial Miramar",
       "type": "Departamento",
       "area": 85,
       "price": 280000.0,
-      "availability": 3
+      "availability": 3,
+      "status": "Vendido"
     }
   ],
   "currency_catalogs": [
     {
       "id": 1,
-      "currency": "PEN",
-      "type_interest_rate": "EFFECTIVE",
-      "capitalization": "MONTHLY"
+      "currency": "PEN"
     },
     {
       "id": 2,
-      "currency": "USD",
-      "type_interest_rate": "NOMINAL",
-      "capitalization": "MONTHLY"
+      "currency": "USD"
     }
   ],
   "credits": [
@@ -159,7 +161,7 @@
       "program": "OTRO",
       "tcea": 7.4,
       "currency_catalogs_id": 2,
-      "bond_id": null,
+      "bond_id": 0,
       "user_id": 3,
       "property_project_id": 3
     }
@@ -212,6 +214,14 @@
       "grace_type": "SIN_PLAZO",
       "remaining_balance": 168100.0,
       "credit_id": 3
+    }
+  ],
+  "settings": [
+    {
+      "id": 1,
+      "default_currency_catalog_id": 1,
+      "default_interest_type": "EFFECTIVE",
+      "default_grace_period": "TOTAL"
     }
   ]
 }

@@ -24,8 +24,6 @@ export class CurrencyCatalogAssembler implements BaseAssembler<CurrencyCatalog, 
     return new CurrencyCatalog({
       id: resource.id,
       currency: resource.currency,
-      type_interest_rate: resource.type_interest_rate,
-      capitalization: resource.capitalization
     });
   }
 
@@ -38,8 +36,6 @@ export class CurrencyCatalogAssembler implements BaseAssembler<CurrencyCatalog, 
     return {
       id: entity.id,
       currency: entity.currency,
-      type_interest_rate: entity.type_interest_rate,
-      capitalization: entity.capitalization
     };
   }
 }

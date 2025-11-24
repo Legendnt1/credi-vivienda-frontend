@@ -12,24 +12,14 @@ export class CurrencyCatalog implements BaseEntity {
    * The currency type.
    */
   _currency: string;
-  /**
-   * The type of interest rate.
-   */
-  _type_interest_rate: string;
-  /**
-   * The capitalization method.
-   */
-  _capitalization: string;
 
   /**
    * Creates a new CurrencyCatalog instance.
    * @param currencyCatalog - An object containing currency catalog properties.
    */
-  constructor(currencyCatalog: {id: number; currency: string; type_interest_rate: string; capitalization: string}) {
+  constructor(currencyCatalog: {id: number; currency: string;}) {
     this._id = currencyCatalog.id;
     this._currency = currencyCatalog.currency;
-    this._type_interest_rate = currencyCatalog.type_interest_rate;
-    this._capitalization = currencyCatalog.capitalization;
   }
 
   /** Getters and Setters */
@@ -37,8 +27,4 @@ export class CurrencyCatalog implements BaseEntity {
   set id(value: number) { this._id = value; }
   get currency(): string { return this._currency; }
   set currency(value: string) { this._currency = value; }
-  get type_interest_rate(): string { return this._type_interest_rate; }
-  set type_interest_rate(value: string) { this._type_interest_rate = value; }
-  get capitalization(): string { return this._capitalization; }
-  set capitalization(value: string) { this._capitalization = value; }
 }

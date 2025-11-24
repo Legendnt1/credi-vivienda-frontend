@@ -55,68 +55,13 @@
     }
   </section>
 
-  <!-- Main Content Grid -->
-  <div class="main-content-grid">
-    <!-- Left: Recent Clients Table -->
-    <section class="clients-section">
-      <h2>{{ 'dashboard.recentClients.title' | translate }}</h2>
-      <div class="table-container">
-        <table class="clients-table">
-          <thead>
-            <tr>
-              <th>{{ 'dashboard.recentClients.columns.name' | translate }}</th>
-              <th>{{ 'dashboard.recentClients.columns.date' | translate }}</th>
-              <th>{{ 'dashboard.recentClients.columns.project' | translate }}</th>
-              <th>{{ 'dashboard.recentClients.columns.program' | translate }}</th>
-              <th>{{ 'dashboard.recentClients.columns.amount' | translate }}</th>
-              <th>{{ 'dashboard.recentClients.columns.status' | translate }}</th>
-              <th>{{ 'dashboard.recentClients.columns.actions' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (client of clientsData(); track client.user.id) {
-              <tr>
-                <td>{{ client.user.name }} {{ client.user.last_name }}</td>
-                <td>{{ client.date }}</td>
-                <td>{{ client.property?.project || 'N/A' }}</td>
-                <td>
-                  <span class="program-badge" [ngClass]="getProgramBadgeClass(client.credit.program)">
-                    {{ client.credit.program }}
-                  </span>
-                </td>
-                <td>{{ formatCurrency(client.credit.down_payment) }}</td>
-                <td>
-                  <span class="status-chip" [ngClass]="getStatusClass(client.status)">
-                    {{ 'dashboard.recentClients.status.' + client.status | translate }}
-                  </span>
-                </td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="icon-btn" (click)="viewClientDetail(client.user.id)" title="{{ 'dashboard.recentClients.actions.viewDetail' | translate }}">
-                      <svg class="icon-small">
-                        <use href="assets/icons/sprite.symbol.svg#eye"></use>
-                      </svg>
-                    </button>
-                    <button class="icon-btn" (click)="simulateAgain(client.user.id)" title="{{ 'dashboard.recentClients.actions.simulateAgain' | translate }}">
-                      <svg class="icon-small">
-                        <use href="assets/icons/sprite.symbol.svg#calculator"></use>
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Right: Performance Chart -->
-    <section class="chart-section">
-      <h3>{{ 'dashboard.performanceChart.title' | translate }}</h3>
+  <!-- Performance Chart Section -->
+  <section class="chart-section">
+    <h2>{{ 'dashboard.performanceChart.title' | translate }}</h2>
+    <div class="chart-wrapper">
       <div class="chart-container">
         @for (item of chartData(); track item.label) {
-          <div class="chart-bar-wrapper">
+          <div class="chart-column">
             <div class="chart-bar" [style.height.%]="(item.value / maxChartValue()) * 100" [style.background-color]="item.color">
               <span class="bar-value">{{ item.value }}</span>
             </div>
@@ -125,11 +70,17 @@
         }
       </div>
       <div class="chart-summary">
-        <p><strong>{{ 'dashboard.performanceChart.summary.simulationsThisWeek' | translate }}:</strong> {{ chartSummary().total }}</p>
-        <p><strong>{{ 'dashboard.performanceChart.summary.approved' | translate }}:</strong> {{ chartSummary().approved }} ({{ chartSummary().percentage }}%)</p>
+        <div class="summary-item">
+          <span class="summary-label">{{ 'dashboard.performanceChart.summary.simulationsThisWeek' | translate }}:</span>
+          <span class="summary-value">{{ chartSummary().total }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">{{ 'dashboard.performanceChart.summary.approved' | translate }}:</span>
+          <span class="summary-value">{{ chartSummary().approved }} ({{ chartSummary().percentage }}%)</span>
+        </div>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
 
   <!-- Properties Section -->
   <section class="properties-section">
@@ -156,30 +107,6 @@
         </div>
       }
 
-      <!-- Property Cards -->
-      <div class="properties-cards">
-        @for (property of properties(); track property.id) {
-          <div class="property-card">
-            <div class="card-image">
-              <svg class="icon-medium">
-                <use href="assets/icons/sprite.symbol.svg#home"></use>
-              </svg>
-            </div>
-            <div class="card-content">
-              <h4>{{ property.project }}</h4>
-              <p class="property-type">{{ property.type }}</p>
-              <p class="property-area">Área: {{ property.area }} m²</p>
-              <p class="property-price">{{ formatCurrency(property.price) }}</p>
-              <div class="property-badges">
-                <span class="badge-units">{{ property.availability }} {{ 'dashboard.properties.available' | translate }}</span>
-              </div>
-              <button class="btn-secondary" (click)="simulateCredit(property.id)">
-                {{ 'dashboard.properties.simulateCredit' | translate }}
-              </button>
-            </div>
-          </div>
-        }
-      </div>
 
       <!-- Education Content -->
       <div class="education-card">

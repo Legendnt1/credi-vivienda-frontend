@@ -6,6 +6,7 @@ export const environment = {
 
   crediViviendaProviderUsersEndpointPath: '/users',
   crediViviendaProviderRolesEndpointPath: '/roles',
+  crediViviendaProviderSettingsEndpointPath: '/settings',
   crediViviendaProviderCreditsEndpointPath: '/credits',
   crediViviendaProviderBondsEndpointPath: '/bonds',
   crediViviendaProviderPropertiesProjectsEndpointPath: '/property_projects',

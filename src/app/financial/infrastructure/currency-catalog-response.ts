@@ -22,12 +22,4 @@ export interface CurrencyCatalogResource extends BaseResource {
    * The currency type.
    */
   currency: string;
-  /**
-   * The type of interest rate.
-   */
-  type_interest_rate: string;
-  /**
-   * The capitalization method.
-   */
-  capitalization: string;
 }

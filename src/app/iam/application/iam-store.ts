@@ -5,6 +5,7 @@ import {retry} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {Role} from '@iam/domain/model/role.entity';
 import {Router} from '@angular/router';
+import {Setting} from '@iam/domain/model/setting.entity';
 
 /**
  * IAM Store to manage users and roles state.
@@ -38,6 +39,17 @@ export class IamStore {
    * Roles readonly signal.
    */
   readonly roles = this.rolesSignal.asReadonly();
+
+  /**
+   * Settings signal.
+   * @private
+   */
+  private readonly settingsSignal = signal<Setting[]>([]);
+
+  /**
+   * Settings readonly signal.
+   */
+  readonly settings = this.settingsSignal.asReadonly();
 
   /**
    * Loading signal.
@@ -126,6 +138,7 @@ export class IamStore {
   constructor(private iamApi: IamApi) {
     this.loadUsers();
     this.loadRoles();
+    this.loadSettings();
     this.restoreSessionFromStorage();
   }
 
@@ -459,6 +472,73 @@ export class IamStore {
   }
 
   /**
+   * Gets a setting by ID.
+   * @param id - The ID of the setting to retrieve.
+   * @returns A signal of the setting or undefined if not found.
+   */
+  getSettingById(id: number | null | undefined): Signal<Setting | undefined> {
+    return computed(() => id ? this.settings().find(s => s.id === id) : undefined);
+  }
+
+  /**
+   * Adds a new setting.
+   * @param setting - The setting to add.
+   */
+  addSetting(setting: Setting): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.createSetting(setting).pipe(retry(2)).subscribe({
+      next: (createdSetting) => {
+        this.settingsSignal.set([...this.settings(), createdSetting]);
+        this.loadingSignal.set(false);
+      },
+      error: (error) => {
+        this.errorSignal.set(this.formatError(error, 'Error at create new setting'));
+        this.loadingSignal.set(false);
+      }
+    })
+  }
+
+  /**
+   * Updates an existing setting.
+   * @param updatedSetting - The setting with updated information.
+   */
+  updateSetting(updatedSetting: Setting): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.updateSetting(updatedSetting).pipe(retry(2)).subscribe({
+      next: setting => {
+        this.settingsSignal.update(settings =>
+          settings.map(s => s.id === setting.id ? setting : s))
+        this.loadingSignal.set(false);
+      },
+      error: err => {
+        this.errorSignal.set(this.formatError(err, 'Error at update setting'));
+        this.loadingSignal.set(false);
+      }
+    });
+  }
+
+  /**
+   * Deletes a setting by ID.
+   * @param id - The ID of the setting to delete.
+   */
+  deleteSetting(id: number): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.deleteSetting(id).pipe(retry(2)).subscribe({
+      next: () => {
+        this.settingsSignal.update(settings => settings.filter(s => s.id !== id))
+        this.loadingSignal.set(false);
+      },
+      error: err => {
+        this.errorSignal.set(this.formatError(err, 'Error at delete setting'));
+        this.loadingSignal.set(false);
+      }
+    });
+  }
+
+  /**
    * Loads users from the API.
    * @private
    */
@@ -493,6 +573,26 @@ export class IamStore {
       },
       error: err => {
         this.errorSignal.set(this.formatError(err, 'Error at load roles'));
+        this.loadingSignal.set(false);
+      }
+    })
+  }
+
+  /**
+   * Loads settings from the API.
+   * @private
+   */
+  private loadSettings(): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.getSettings().pipe(retry(2)).subscribe({
+      next: settings => {
+        console.log('Settings loaded:', settings);
+        this.settingsSignal.set(settings);
+        this.loadingSignal.set(false);
+      },
+      error: err => {
+        this.errorSignal.set(this.formatError(err, 'Error at load settings'));
         this.loadingSignal.set(false);
       }
     })

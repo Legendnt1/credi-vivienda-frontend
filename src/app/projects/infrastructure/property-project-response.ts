@@ -19,6 +19,10 @@ export interface PropertyProjectResource extends BaseResource {
    */
   id: number;
   /**
+   * The code of the property.
+   */
+  property_code: string;
+  /**
    * The name of the project.
    */
   project: string;
@@ -38,4 +42,8 @@ export interface PropertyProjectResource extends BaseResource {
    * The availability status of the property.
    */
   availability: number;
+  /**
+   * The status of the property project.
+   */
+  status: string;
 }

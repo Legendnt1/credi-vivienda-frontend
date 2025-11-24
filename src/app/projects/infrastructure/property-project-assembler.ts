@@ -23,11 +23,13 @@ export class PropertyProjectAssembler implements BaseAssembler<PropertyProject, 
   toEntityFromResource(resource: PropertyProjectResource): PropertyProject {
     return new PropertyProject({
       id: resource.id,
+      property_code: resource.property_code,
       project: resource.project,
       type: resource.type,
       area: resource.area,
       price: resource.price,
-      availability: resource.availability
+      availability: resource.availability,
+      status: resource.status,
     });
   }
 
@@ -39,11 +41,13 @@ export class PropertyProjectAssembler implements BaseAssembler<PropertyProject, 
   toResourceFromEntity(entity: PropertyProject): PropertyProjectResource {
     return {
       id: entity.id,
+      property_code: entity.property_code,
       project: entity.project,
       type: entity.type,
       area: entity.area,
       price: entity.price,
-      availability: entity.availability
+      availability: entity.availability,
+      status: entity.status,
     } as PropertyProjectResource;
   }
 

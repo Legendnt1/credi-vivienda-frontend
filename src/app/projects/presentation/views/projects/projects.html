@@ -1,1 +1,352 @@
-<p>projects works!</p>
+<div class="projects-container">
+  <!-- Header Section -->
+  <div class="projects-header">
+    <h1 class="projects-title">{{ 'projects.title' | translate }}</h1>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+      <label for="search" class="filter-label">{{ 'projects.filter.label' | translate }}</label>
+      <div class="filter-controls">
+        <input
+          type="text"
+          id="search"
+          [(ngModel)]="searchTerm"
+          class="filter-input"
+          [placeholder]="'projects.filter.placeholder' | translate">
+        <button
+          type="button"
+          class="btn-filter"
+          (click)="onApplyFilter()">
+          {{ 'projects.filter.apply' | translate }}
+        </button>
+        @if (searchTerm()) {
+          <button
+            type="button"
+            class="btn-clear"
+            (click)="onClearFilter()">
+            <svg class="icon-small">
+              <use href="assets/icons/sprite.symbol.svg#x"></use>
+            </svg>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Add New Button -->
+    <button
+      type="button"
+      class="btn-add"
+      (click)="onCreateProperty()">
+      <svg class="icon-small">
+        <use href="assets/icons/sprite.symbol.svg#plus"></use>
+      </svg>
+      {{ 'projects.buttons.add' | translate }}
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>{{ 'projects.loading' | translate }}</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error()) {
+    <div class="alert alert-error">
+      <svg class="alert-icon">
+        <use href="assets/icons/sprite.symbol.svg#alert-circle"></use>
+      </svg>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <!-- Properties Table -->
+  @if (!loading() && !error()) {
+    <div class="table-container">
+      <table class="properties-table">
+        <thead>
+          <tr>
+            <th>{{ 'projects.table.code' | translate }}</th>
+            <th>{{ 'projects.table.project' | translate }}</th>
+            <th>{{ 'projects.table.type' | translate }}</th>
+            <th>{{ 'projects.table.area' | translate }}</th>
+            <th>{{ 'projects.table.price' | translate }}</th>
+            <th>{{ 'projects.table.status' | translate }}</th>
+            <th>{{ 'projects.table.availability' | translate }}</th>
+            <th>{{ 'projects.table.actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filteredProperties().length === 0) {
+            <tr>
+              <td colspan="8" class="empty-message">
+                {{ 'projects.noResults' | translate }}
+              </td>
+            </tr>
+          } @else {
+            @for (property of filteredProperties(); track property.id) {
+              <tr>
+                <td class="code-cell">{{ property.property_code }}</td>
+                <td class="project-cell">{{ property.project }}</td>
+                <td>{{ property.type }}</td>
+                <td>{{ property.area }}</td>
+                <td class="price-cell">{{ formatCurrency(property.price) }}</td>
+                <td>
+                  <span class="status-badge" [ngClass]="getStatusClass(property.status)">
+                    {{ property.status }}
+                  </span>
+                </td>
+                <td class="availability-cell">{{ property.availability }}</td>
+                <td>
+                  <div class="action-buttons">
+                    <button
+                      type="button"
+                      class="btn-icon"
+                      (click)="onEditProperty(property)"
+                      [title]="'projects.buttons.edit' | translate">
+                      <svg class="icon-small">
+                        <use href="assets/icons/sprite.symbol.svg#edit"></use>
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn-icon btn-danger"
+                      (click)="onDeleteProperty(property.id)"
+                      [title]="'projects.buttons.delete' | translate">
+                      <svg class="icon-small">
+                        <use href="assets/icons/sprite.symbol.svg#x"></use>
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Summary -->
+    <div class="table-summary">
+      <p>
+        {{ 'projects.summary.total' | translate }}:
+        <strong>{{ filteredProperties().length }}</strong>
+        @if (searchTerm()) {
+          ({{ 'projects.summary.filtered' | translate }}: {{ properties().length }})
+        }
+      </p>
+    </div>
+  }
+
+  <!-- Form Modal -->
+  @if (showForm()) {
+    <div class="modal-overlay" (click)="onCloseForm()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>
+            @if (editingProject()) {
+              {{ 'projects.form.titleEdit' | translate }}
+            } @else {
+              {{ 'projects.form.titleCreate' | translate }}
+            }
+          </h2>
+          <button type="button" class="btn-close" (click)="onCloseForm()">
+            <svg class="icon-small">
+              <use href="assets/icons/sprite.symbol.svg#x"></use>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="propertyForm" (ngSubmit)="onSubmitForm()" class="property-form">
+            <!-- Datos Generales Section -->
+            <div class="form-section">
+              <h3 class="section-title">{{ 'projects.form.sections.general' | translate }}</h3>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="property_code" class="form-label">
+                    {{ 'projects.form.fields.code' | translate }}
+                  </label>
+                  <input
+                    type="text"
+                    id="property_code"
+                    formControlName="property_code"
+                    class="form-input"
+                    [class.invalid]="propertyForm.get('property_code')?.invalid && propertyForm.get('property_code')?.touched"
+                    [placeholder]="'projects.form.placeholders.code' | translate">
+                  @if (propertyForm.get('property_code')?.invalid && propertyForm.get('property_code')?.touched) {
+                    <span class="error-message">{{ 'projects.form.errors.required' | translate }}</span>
+                  }
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="project" class="form-label">
+                    {{ 'projects.form.fields.project' | translate }}
+                  </label>
+                  <input
+                    type="text"
+                    id="project"
+                    formControlName="project"
+                    class="form-input"
+                    [class.invalid]="propertyForm.get('project')?.invalid && propertyForm.get('project')?.touched"
+                    [placeholder]="'projects.form.placeholders.project' | translate">
+                  @if (propertyForm.get('project')?.invalid && propertyForm.get('project')?.touched) {
+                    <span class="error-message">{{ 'projects.form.errors.required' | translate }}</span>
+                  }
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="type" class="form-label">
+                    {{ 'projects.form.fields.type' | translate }}
+                  </label>
+                  <input
+                    type="text"
+                    id="type"
+                    formControlName="type"
+                    class="form-input"
+                    [class.invalid]="propertyForm.get('type')?.invalid && propertyForm.get('type')?.touched"
+                    [placeholder]="'projects.form.placeholders.type' | translate">
+                  @if (propertyForm.get('type')?.invalid && propertyForm.get('type')?.touched) {
+                    <span class="error-message">{{ 'projects.form.errors.required' | translate }}</span>
+                  }
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="status" class="form-label">
+                    {{ 'projects.form.fields.status' | translate }}
+                  </label>
+                  <input
+                    type="text"
+                    id="status"
+                    formControlName="status"
+                    class="form-input"
+                    [class.invalid]="propertyForm.get('status')?.invalid && propertyForm.get('status')?.touched"
+                    [placeholder]="'projects.form.placeholders.status' | translate">
+                  @if (propertyForm.get('status')?.invalid && propertyForm.get('status')?.touched) {
+                    <span class="error-message">{{ 'projects.form.errors.required' | translate }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <!-- Características Físicas Section -->
+            <div class="form-section">
+              <h3 class="section-title">{{ 'projects.form.sections.physical' | translate }}</h3>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="area" class="form-label">
+                    {{ 'projects.form.fields.area' | translate }}
+                  </label>
+                  <input
+                    type="number"
+                    id="area"
+                    formControlName="area"
+                    class="form-input"
+                    [class.invalid]="propertyForm.get('area')?.invalid && propertyForm.get('area')?.touched"
+                    [placeholder]="'projects.form.placeholders.area' | translate">
+                  @if (propertyForm.get('area')?.invalid && propertyForm.get('area')?.touched) {
+                    <span class="error-message">{{ 'projects.form.errors.required' | translate }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <!-- Datos Económicos Section -->
+            <div class="form-section">
+              <h3 class="section-title">{{ 'projects.form.sections.economic' | translate }}</h3>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="price" class="form-label">
+                    {{ 'projects.form.fields.price' | translate }}
+                  </label>
+                  <input
+                    type="number"
+                    id="price"
+                    formControlName="price"
+                    class="form-input"
+                    [class.invalid]="propertyForm.get('price')?.invalid && propertyForm.get('price')?.touched"
+                    [placeholder]="'projects.form.placeholders.price' | translate">
+                  @if (propertyForm.get('price')?.invalid && propertyForm.get('price')?.touched) {
+                    <span class="error-message">{{ 'projects.form.errors.required' | translate }}</span>
+                  }
+                </div>
+              </div>
+
+              <div class="form-row form-row-buttons">
+                <button type="button" class="btn-currency active">
+                  {{ 'projects.form.currency.soles' | translate }}
+                </button>
+                <span class="bonds-label">{{ 'projects.form.bondsApplicable' | translate }}</span>
+                <button type="button" class="btn-bond">
+                  {{ 'projects.form.bonds.techoPropio' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Ubicación Section -->
+            <div class="form-section">
+              <h3 class="section-title">{{ 'projects.form.sections.location' | translate }}</h3>
+
+              <div class="form-row form-row-two">
+                <div class="form-group">
+                  <label for="address" class="form-label">
+                    {{ 'projects.form.fields.address' | translate }}
+                  </label>
+                  <input
+                    type="text"
+                    id="address"
+                    formControlName="address"
+                    class="form-input"
+                    [placeholder]="'projects.form.placeholders.address' | translate">
+                </div>
+
+                <div class="form-group">
+                  <label for="district" class="form-label">
+                    {{ 'projects.form.fields.district' | translate }}
+                  </label>
+                  <input
+                    type="text"
+                    id="district"
+                    formControlName="district"
+                    class="form-input"
+                    [placeholder]="'projects.form.placeholders.district' | translate">
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+              <button
+                type="submit"
+                class="btn-submit"
+                [disabled]="formSubmitting()">
+                @if (formSubmitting()) {
+                  {{ 'projects.form.buttons.saving' | translate }}
+                } @else {
+                  {{ 'projects.form.buttons.save' | translate }}
+                }
+              </button>
+              <button
+                type="button"
+                class="btn-cancel"
+                (click)="onCloseForm()">
+                {{ 'projects.form.buttons.cancel' | translate }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
