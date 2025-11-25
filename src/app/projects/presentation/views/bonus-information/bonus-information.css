@@ -1,0 +1,119 @@
+.bonus-container {
+  padding: 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Info Cards */
+.info-card {
+  background-color: white;
+  border: 2px solid #D1D1D1;
+  border-radius: 0.5rem;
+  padding: 2.5rem;
+}
+
+.section-title {
+  font-family: var(--font-semibold);
+  font-size: 1.5rem;
+  color: var(--color-primary);
+  margin-bottom: 1.5rem;
+}
+
+.section-content {
+  font-family: var(--font-regular);
+  font-size: 1rem;
+  color: var(--color-neutral-dark);
+  line-height: 1.8;
+}
+
+.paragraph {
+  margin-bottom: 1rem;
+  text-align: justify;
+}
+
+.paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.highlight {
+  font-family: var(--font-semibold);
+  color: var(--color-primary);
+}
+
+/* Requirements List */
+.requirements-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.requirements-list li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.requirements-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--color-primary);
+  font-size: 1.5rem;
+  line-height: 1.4;
+}
+
+.requirements-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* Button Container */
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.btn-more-info {
+  background-color: var(--color-secondary);
+  color: white;
+  font-family: var(--font-semibold);
+  font-size: 1rem;
+  padding: 0.875rem 2.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-more-info:hover {
+  opacity: 0.9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .bonus-container {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .info-card {
+    padding: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  .section-content {
+    font-size: 0.95rem;
+  }
+
+  .btn-more-info {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+

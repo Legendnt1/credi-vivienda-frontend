@@ -1,1 +1,40 @@
-<p>bonus-information works!</p>
+<div class="bonus-container">
+  <!-- Section 1: What is Bono Techo Propio -->
+  <section class="info-card">
+    <h2 class="section-title">{{ 'bonus.section1.title' | translate }}</h2>
+
+    <div class="section-content">
+      <p class="paragraph">
+        {{ 'bonus.section1.paragraph1' | translate }}
+      </p>
+
+      <p class="paragraph">
+        {{ 'bonus.section1.paragraph2' | translate }}
+        <strong class="highlight">{{ 'bonus.section1.miViviendaCredit' | translate }}</strong>{{ 'bonus.section1.paragraph3' | translate }}
+      </p>
+    </div>
+  </section>
+
+  <!-- Section 2: Requirements -->
+  <section class="info-card">
+    <h2 class="section-title">{{ 'bonus.section2.title' | translate }}</h2>
+
+    <div class="section-content">
+      <ul class="requirements-list">
+        <li>{{ 'bonus.section2.requirement1' | translate }}</li>
+        <li>{{ 'bonus.section2.requirement2' | translate }}</li>
+        <li>{{ 'bonus.section2.requirement3' | translate }}</li>
+        <li>{{ 'bonus.section2.requirement4' | translate }}</li>
+        <li>{{ 'bonus.section2.requirement5' | translate }}</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- More Info Button -->
+  <div class="button-container">
+    <button class="btn-more-info" (click)="onMoreInfo()">
+      {{ 'bonus.button.moreInfo' | translate }}
+    </button>
+  </div>
+</div>
+
