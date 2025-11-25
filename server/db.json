@@ -66,12 +66,12 @@
     {
       "id": 1,
       "name": "Techo Propio",
-      "total_bond": 46545.0
+      "total_bond": 46545
     },
     {
       "id": 2,
       "name": "Bono del Buen Pagador",
-      "total_bond": 25000.0
+      "total_bond": 25000
     }
   ],
   "property_projects": [
@@ -81,7 +81,7 @@
       "project": "Condominio Las Flores",
       "type": "Departamento",
       "area": 72,
-      "price": 220000.0,
+      "price": 220000,
       "availability": 5,
       "status": "Disponible"
     },
@@ -91,7 +91,7 @@
       "project": "Residencial El Sol",
       "type": "Casa",
       "area": 120,
-      "price": 320000.0,
+      "price": 320000,
       "availability": 2,
       "status": "Reservado"
     },
@@ -101,7 +101,7 @@
       "project": "Residencial Miramar",
       "type": "Departamento",
       "area": 85,
-      "price": 280000.0,
+      "price": 280000,
       "availability": 3,
       "status": "Vendido"
     }
@@ -119,7 +119,7 @@
   "credits": [
     {
       "id": 1,
-      "down_payment": 44000.0,
+      "down_payment": 44000,
       "credit_term_months": 240,
       "grace_period_total": 3,
       "grace_period_partial": 0,
@@ -135,7 +135,7 @@
     },
     {
       "id": 2,
-      "down_payment": 35000.0,
+      "down_payment": 35000,
       "credit_term_months": 180,
       "grace_period_total": 0,
       "grace_period_partial": 2,
@@ -151,7 +151,7 @@
     },
     {
       "id": 3,
-      "down_payment": 56000.0,
+      "down_payment": 56000,
       "credit_term_months": 120,
       "grace_period_total": 0,
       "grace_period_partial": 0,
@@ -207,12 +207,12 @@
       "id": 4,
       "period": 1,
       "payment_date": "2025-04-30",
-      "payment_amount": 2800.0,
-      "capital_amortization": 1900.0,
-      "interest_paid": 900.0,
+      "payment_amount": 2800,
+      "capital_amortization": 1900,
+      "interest_paid": 900,
       "effective_rate_period": 0.0056,
       "grace_type": "SIN_PLAZO",
-      "remaining_balance": 168100.0,
+      "remaining_balance": 168100,
       "credit_id": 3
     }
   ],
@@ -220,6 +220,12 @@
     {
       "id": 1,
       "default_currency_catalog_id": 1,
+      "default_interest_type": "EFFECTIVE",
+      "default_grace_period": "TOTAL"
+    },
+    {
+      "id": 2,
+      "default_currency_catalog_id": 2,
       "default_interest_type": "EFFECTIVE",
       "default_grace_period": "TOTAL"
     }

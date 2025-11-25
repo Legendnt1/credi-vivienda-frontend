@@ -1,8 +1,8 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, effect, inject, signal} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {IamStore} from '@iam/application/iam-store';
 import {TranslateModule} from '@ngx-translate/core';
-import {RouterLink} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +13,8 @@ import {RouterLink} from '@angular/router';
 export class Login {
   private fb = inject(FormBuilder);
   readonly store = inject(IamStore);
+  private route = inject(ActivatedRoute);
+    private router = inject(Router);
 
   isPasswordVisible = signal(false);
 
@@ -22,8 +24,18 @@ export class Login {
   });
 
   togglePasswordVisibility() {
-    this.isPasswordVisible.update(visible => !visible);
+    this.isPasswordVisible.set(!this.isPasswordVisible());
   }
+
+  private _autoRedirect = effect(() => {
+    if (!this.store.isAuthenticated()) return;
+    const redirect = this.route.snapshot.queryParamMap.get('redirect');
+    const navigateTo = '/dashboard';
+    const target = redirect || navigateTo;
+    if (this.router.url !== target) {
+      void this.router.navigateByUrl(target);
+    }
+  })
 
   onSubmit() {
     if (this.loginForm.invalid || this.store.loading()) {

@@ -12,7 +12,6 @@ import {IamStore} from '@iam/application/iam-store';
 export const authGuard: CanActivateFn = (_r, state) => {
   const router = inject(Router);
   const iamStore = inject(IamStore);
-
   // Check if user is authenticated
   if (!iamStore.isAuthenticated()) {
     console.log('User not authenticated, redirecting to login');
