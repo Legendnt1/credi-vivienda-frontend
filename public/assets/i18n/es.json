@@ -228,5 +228,90 @@
         "required": "Este campo es obligatorio"
       }
     }
+  },
+  "calculations": {
+    "title": "Calculadora de Préstamo Hipotecario",
+    "form": {
+      "loanAmount": "Monto del préstamo:",
+      "term": "Plazo (meses):",
+      "interestRate": "Tasa de interés:",
+      "rateType": "Tipo de tasa:",
+      "calculate": "Calcular"
+    },
+    "paymentPlan": {
+      "title": "Plan de Pagos (Método Francés)",
+      "table": {
+        "month": "Mes",
+        "installment": "Cuota",
+        "interest": "Interés",
+        "amortization": "Amortización",
+        "balanceWithBond": "Saldo con bono"
+      }
+    },
+    "summary": {
+      "van": "VAN",
+      "tir": "TIR",
+      "cet": "CET"
+    }
+  },
+  "reports": {
+    "title": "Generación de reportes",
+    "form": {
+      "period": "Periodo:",
+      "project": "Proyecto:",
+      "reportType": "Tipo de reporte:",
+      "download": "Descargar"
+    },
+    "chart": {
+      "title": "Créditos simulados por mes",
+      "months": {
+        "january": "Enero",
+        "february": "Febrero",
+        "march": "Marzo",
+        "april": "Abril",
+        "may": "Mayo",
+        "june": "Junio",
+        "july": "Julio",
+        "august": "Agosto",
+        "september": "Septiembre",
+        "october": "Octubre",
+        "november": "Noviembre",
+        "december": "Diciembre"
+      }
+    }
+  },
+  "support": {
+    "title": "Centro de soporte",
+    "form": {
+      "subject": "Asunto:",
+      "category": "Categoría:",
+      "description": "Descripción:",
+      "send": "Enviar"
+    },
+    "modal": {
+      "title": "¡Se mandó el mensaje a soporte!",
+      "description": "Nuestro equipo te responderá en menos de 24 horas",
+      "continue": "Continuar"
+    }
+  },
+  "bonus": {
+    "section1": {
+      "title": "¿Qué es el Bono Techo Propio?",
+      "paragraph1": "El bono Techo Propio es un subsidio del Gobierno Peruano dirigido a personas de escasos recursos para ayudar en la adquisición de vivienda nueva. Su objetivo es reducir el monto del crédito que el comprador debe asumir, restando el valor del bono al monto financiable.",
+      "paragraph2": "Este bono puede aplicarse cuando se utiliza el",
+      "miViviendaCredit": "Nuevo Crédito del Fondo MiVivienda",
+      "paragraph3": ", sujeto a ciertos requisitos y límites de precio de la vivienda."
+    },
+    "section2": {
+      "title": "Requisitos para acceder al bono",
+      "requirement1": "No ser propietario de otra vivienda.",
+      "requirement2": "No superar un determinado nivel de ingresos (según normativa vigente).",
+      "requirement3": "La vivienda debe estar dentro de los rangos de precio permitidos.",
+      "requirement4": "Aplicar al crédito del Fondo MiVivienda.",
+      "requirement5": "Cumplir otros requisitos exigidos por MiVivienda y las entidades financieras autorizadas."
+    },
+    "button": {
+      "moreInfo": "Ver más información"
+    }
   }
 }

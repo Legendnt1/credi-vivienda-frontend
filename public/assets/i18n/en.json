@@ -228,5 +228,90 @@
         "required": "This field is required"
       }
     }
+  },
+  "calculations": {
+    "title": "Mortgage Loan Calculator",
+    "form": {
+      "loanAmount": "Loan amount:",
+      "term": "Term (months):",
+      "interestRate": "Interest rate:",
+      "rateType": "Rate type:",
+      "calculate": "Calculate"
+    },
+    "paymentPlan": {
+      "title": "Payment Plan (French Method)",
+      "table": {
+        "month": "Month",
+        "installment": "Installment",
+        "interest": "Interest",
+        "amortization": "Amortization",
+        "balanceWithBond": "Balance with bond"
+      }
+    },
+    "summary": {
+      "van": "NPV",
+      "tir": "IRR",
+      "cet": "CET"
+    }
+  },
+  "reports": {
+    "title": "Report Generation",
+    "form": {
+      "period": "Period:",
+      "project": "Project:",
+      "reportType": "Report type:",
+      "download": "Download"
+    },
+    "chart": {
+      "title": "Simulated credits per month",
+      "months": {
+        "january": "January",
+        "february": "February",
+        "march": "March",
+        "april": "April",
+        "may": "May",
+        "june": "June",
+        "july": "July",
+        "august": "August",
+        "september": "September",
+        "october": "October",
+        "november": "November",
+        "december": "December"
+      }
+    }
+  },
+  "support": {
+    "title": "Support Center",
+    "form": {
+      "subject": "Subject:",
+      "category": "Category:",
+      "description": "Description:",
+      "send": "Send"
+    },
+    "modal": {
+      "title": "Message sent to support!",
+      "description": "Our team will respond in less than 24 hours",
+      "continue": "Continue"
+    }
+  },
+  "bonus": {
+    "section1": {
+      "title": "What is the Techo Propio Bonus?",
+      "paragraph1": "The Techo Propio bonus is a subsidy from the Peruvian Government aimed at people with limited resources to help in the acquisition of new housing. Its objective is to reduce the amount of credit that the buyer must assume, subtracting the value of the bonus from the financeable amount.",
+      "paragraph2": "This bonus can be applied when using the",
+      "miViviendaCredit": "New MiVivienda Fund Credit",
+      "paragraph3": ", subject to certain requirements and housing price limits."
+    },
+    "section2": {
+      "title": "Requirements to access the bonus",
+      "requirement1": "Not be the owner of another property.",
+      "requirement2": "Not exceed a certain level of income (according to current regulations).",
+      "requirement3": "The housing must be within the permitted price ranges.",
+      "requirement4": "Apply for credit from the MiVivienda Fund.",
+      "requirement5": "Meet other requirements demanded by MiVivienda and authorized financial entities."
+    },
+    "button": {
+      "moreInfo": "See more information"
+    }
   }
 }
