@@ -355,12 +355,13 @@
 .modal-content {
   background: #fff;
   border-radius: 1rem;
-  max-width: 600px;
+  max-width: 900px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   animation: slideUp 0.3s ease;
+  box-sizing: border-box;
 }
 
 @keyframes slideUp {
@@ -406,7 +407,8 @@
 }
 
 .modal-body {
-  padding: 2rem;
+  padding: 2.5rem;
+  box-sizing: border-box;
 }
 
 /* Property Form */
@@ -419,12 +421,13 @@
 .form-section {
   border: 2px solid var(--color-primary);
   border-radius: 1rem;
-  padding: 1.5rem;
+  padding: 2rem;
   background: #fff;
+  box-sizing: border-box;
 }
 
 .section-title {
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--color-primary);
   margin: 0 0 1.5rem 0;
@@ -434,8 +437,8 @@
 
 .form-row {
   display: grid;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-row:last-child {
@@ -457,18 +460,19 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  box-sizing: border-box;
 }
 
 .form-label {
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--color-neutral-dark);
 }
 
 .form-input {
   width: 100%;
-  padding: 0.875rem 1rem;
-  font-size: 1rem;
+  padding: 1rem 1.25rem;
+  font-size: 1.05rem;
   font-family: var(--font-regular);
   color: var(--color-neutral-dark);
   background: #fff;
@@ -476,6 +480,7 @@
   border-radius: 0.5rem;
   outline: none;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .form-input:focus {
@@ -646,8 +651,16 @@
   }
 
   .modal-content {
-    max-width: 100%;
+    max-width: 95%;
     margin: 1rem;
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+  }
+
+  .form-section {
+    padding: 1.5rem;
   }
 
   .form-row-two {
@@ -673,4 +686,3 @@
     width: 100%;
   }
 }
-

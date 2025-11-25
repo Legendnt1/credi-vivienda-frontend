@@ -1,1 +1,97 @@
-<p>calculations works!</p>
+<div class="calculations-container">
+  <h1 class="page-title">{{ 'calculations.title' | translate }}</h1>
+
+  <!-- Calculation Form -->
+  <div class="calculation-form-card">
+    <form [formGroup]="calculationForm" (ngSubmit)="onCalculate()">
+      <div class="form-row">
+        <label class="form-label">{{ 'calculations.form.loanAmount' | translate }}</label>
+        <input
+          type="number"
+          class="form-input"
+          formControlName="loanAmount"
+          placeholder="0.00"
+        />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">{{ 'calculations.form.term' | translate }}</label>
+        <input
+          type="number"
+          class="form-input"
+          formControlName="term"
+          placeholder="0"
+        />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">{{ 'calculations.form.interestRate' | translate }}</label>
+        <input
+          type="number"
+          class="form-input"
+          formControlName="interestRate"
+          placeholder="0.00"
+          step="0.01"
+        />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">{{ 'calculations.form.rateType' | translate }}</label>
+        <input
+          type="text"
+          class="form-input"
+          formControlName="rateType"
+          placeholder=""
+        />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-calculate" [disabled]="calculationForm.invalid">
+          {{ 'calculations.form.calculate' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Payment Plan Section -->
+  <h2 class="section-title">{{ 'calculations.paymentPlan.title' | translate }}</h2>
+
+  <div class="payment-plan-table">
+    <table>
+      <thead>
+        <tr>
+          <th>{{ 'calculations.paymentPlan.table.month' | translate }}</th>
+          <th>{{ 'calculations.paymentPlan.table.installment' | translate }}</th>
+          <th>{{ 'calculations.paymentPlan.table.interest' | translate }}</th>
+          <th>{{ 'calculations.paymentPlan.table.amortization' | translate }}</th>
+          <th>{{ 'calculations.paymentPlan.table.balanceWithBond' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (payment of mockPaymentSchedule(); track payment.month) {
+          <tr>
+            <td>{{ payment.month }}</td>
+            <td>S/ {{ payment.installment | number:'1.2-2' }}</td>
+            <td>S/ {{ payment.interest | number:'1.2-2' }}</td>
+            <td>S/ {{ payment.amortization | number:'1.2-2' }}</td>
+            <td>S/ {{ payment.balanceWithBond | number:'1.2-2' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Summary Section -->
+  <div class="summary-cards">
+    <div class="summary-card">
+      <span class="summary-label">{{ 'calculations.summary.van' | translate }}: S/ {{ mockSummary().van | number:'1.2-2' }}</span>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">{{ 'calculations.summary.tir' | translate }}: {{ mockSummary().tir }}%</span>
+    </div>
+    <div class="summary-card">
+      <span class="summary-label">{{ 'calculations.summary.cet' | translate }}: {{ mockSummary().cet }}%</span>
+    </div>
+  </div>
+</div>
+
