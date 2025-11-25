@@ -141,7 +141,25 @@ export class Dashboard {
   });
 
   readonly maxChartValue = computed(() => {
-    return Math.max(...this.chartData().map(item => item.value));
+    const values = this.chartData().map(d => d.value);
+    const max = Math.max(...values, 10);
+    // Round up to nearest 5 or 10 for better scale
+    return Math.ceil(max / 10) * 10;
+  });
+
+  /**
+   * Generate Y-axis labels dynamically
+   */
+  readonly yAxisLabels = computed(() => {
+    const max = this.maxChartValue();
+    const labels: number[] = [];
+    const steps = 10; // Number of grid lines
+
+    for (let i = steps; i >= 0; i--) {
+      labels.push(Math.round((max / steps) * i));
+    }
+
+    return labels;
   });
 
   // Featured property
@@ -159,6 +177,13 @@ export class Dashboard {
 
 
   // Methods
+  /**
+   * Calculate bar height percentage
+   */
+  getBarHeight(value: number): number {
+    return (value / this.maxChartValue()) * 100;
+  }
+
   setDateRange(range: string): void {
     this.selectedDateRange.set(range);
   }

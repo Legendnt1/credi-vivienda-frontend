@@ -142,7 +142,7 @@ export class FrenchAmortizationService {
 
 
     const periodsPerYear = daysInYear / frequencyDays;
-    const totalPeriods = Math.round(periodsPerYear * input.years); // N
+    const totalPeriods = Math.floor(periodsPerYear * input.years); // N
 
 
     const downPayment = this.round2(input.downPaymentAmount);

@@ -59,16 +59,36 @@
   <section class="chart-section">
     <h2>{{ 'dashboard.performanceChart.title' | translate }}</h2>
     <div class="chart-wrapper">
-      <div class="chart-container">
-        @for (item of chartData(); track item.label) {
-          <div class="chart-column">
-            <div class="chart-bar" [style.height.%]="(item.value / maxChartValue()) * 100" [style.background-color]="item.color">
-              <span class="bar-value">{{ item.value }}</span>
-            </div>
-            <div class="chart-label">{{ item.label }}</div>
+      <div class="chart-full-container">
+        <div class="chart-y-axis">
+          @for (label of yAxisLabels(); track $index) {
+            <span class="y-axis-label">{{ label }}</span>
+          }
+        </div>
+
+        <div class="chart-content">
+          <div class="chart-grid">
+            @for (_ of yAxisLabels(); track $index) {
+              <div class="grid-line"></div>
+            }
           </div>
-        }
+
+          <div class="chart-bars">
+            @for (data of chartData(); track data.label) {
+              <div class="bar-container">
+                <div
+                  class="bar"
+                  [style.height.%]="getBarHeight(data.value)"
+                  [style.background-color]="data.color"
+                  [attr.data-value]="data.value">
+                </div>
+                <span class="bar-label">{{ data.label }}</span>
+              </div>
+            }
+          </div>
+        </div>
       </div>
+
       <div class="chart-summary">
         <div class="summary-item">
           <span class="summary-label">{{ 'dashboard.performanceChart.summary.simulationsThisWeek' | translate }}:</span>
