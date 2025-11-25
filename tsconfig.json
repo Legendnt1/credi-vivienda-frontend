@@ -19,6 +19,8 @@
       "@env/*": ["environments/*"],
       "@shared/*": ["app/shared/*"],
       "@iam/*": ["app/iam/*"],
+      "@projects/*": ["app/projects/*"],
+      "@financial/*": ["app/financial/*"],
     }
   },
   "angularCompilerOptions": {

@@ -1,1 +1,61 @@
-<p>side-bar works!</p>
+<aside class="sidebar">
+  <!-- Logo Section -->
+  <div class="sidebar-header">
+    <a class="logo-container" routerLink="/dashboard" [attr.aria-label]="'Ir al Dashboard'">
+      <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32">
+        <use [attr.href]="spriteUrl + '#home'"></use>
+      </svg>
+      <div class="brand-text">
+        <span class="brand-credi">Credi</span>
+        <span class="brand-vivienda">Vivienda</span>
+      </div>
+    </a>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav class="sidebar-nav">
+    <ul class="menu-list">
+      @for (item of menuItems(); track item.route) {
+        <li class="menu-item">
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            class="menu-link"
+            [attr.aria-label]="item.label">
+            <svg class="menu-icon" width="24" height="24">
+              <use [attr.href]="spriteUrl + '#' + item.iconId"></use>
+            </svg>
+            <span class="menu-label">{{ item.translationKey | translate }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <!-- Bonus Action Button -->
+  <div class="bonus-section">
+    <a
+      [routerLink]="bonusAction().route"
+      routerLinkActive="active"
+      class="bonus-link"
+      [attr.aria-label]="bonusAction().label">
+      <svg class="bonus-icon" width="24" height="24">
+        <use [attr.href]="spriteUrl + '#' + bonusAction().iconId"></use>
+      </svg>
+      <span class="bonus-label">{{ bonusAction().translationKey | translate }}</span>
+    </a>
+  </div>
+
+  <!-- User & Logout Section -->
+  <div class="sidebar-footer">
+    <app-button-logout />
+    <div class="user-info">
+      <svg class="user-icon" width="20" height="20">
+        <use [attr.href]="spriteUrl + '#user'"></use>
+      </svg>
+      <span class="user-label">{{ 'sidebar.user' | translate }}</span>
+    </div>
+  </div>
+</aside>
+
+

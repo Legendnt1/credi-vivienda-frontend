@@ -1,104 +1,78 @@
-import {Injectable} from '@angular/core';
-import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {environment} from '@env/environment';
-import {Observable} from 'rxjs';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { environment } from '@env/environment';
 
 /**
- * Forma del objeto de sesión almacenado en local storage.
+ * Interceptor that adds authentication headers to outgoing HTTP requests.
  */
 interface SessionShape {
   token?: { accessToken?: string };
 }
 
+const API_KEY = environment.crediViviendaProviderApiKey;
+const API_BASE = environment.crediViviendaProviderApiBaseUrl;
+const AUTH_STORAGE_KEY = 'cv_iam_auth';
+
 /**
- * Un interceptor HTTP que agrega encabezados de autenticación a las solicitudes salientes.
- * Adjunta una clave API y, si está disponible, un token Bearer desde el almacenamiento local.
- * Las solicitudes a URL de activos están excluidas de esta intercepción.
+ * Reads the access token from local storage.
+ * @returns The access token if available, otherwise null.
  */
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  /**
-   * La clave API utilizada para la autenticación.
-   * @private
-   */
-  private readonly API_KEY = environment.crediViviendaProviderApiKey;
-  /**
-   * La URL base de la API a la que se aplica el interceptor.
-   * @private
-   */
-  private readonly API_BASE = environment.crediViviendaProviderApiBaseUrl;
-  /**
-   * La clave utilizada para almacenar datos de autenticación en el almacenamiento local.
-   * @private
-   */
-  private readonly AUTH_STORAGE_KEY = 'cv_iam_auth';
-
-  /**
-   * Intercepta las solicitudes HTTP para agregar encabezados de autenticación.
-   * @param request - La solicitud HTTP saliente.
-   * @param next - El siguiente manejador en la cadena de solicitudes HTTP.
-   * @return Un observable del evento HTTP.
-   */
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    if (this.isAssetsRequest(request.url) || !this.matchesApiBase(request.url)) {
-      return next.handle(request);
-    }
-
-    const accessToken = this.readAccessToken();
-    const setHeaders: Record<string, string> = {
-      'apiKey': this.API_KEY,
-    };
-
-    if (!request.headers.has('Authorization')) {
-      if (accessToken) {
-        setHeaders['Authorization'] = `Bearer ${accessToken}`;
-      } else {
-      }
-    }
-
-    const authReq = request.clone({ setHeaders });
-    return next.handle(authReq);
-  }
-
-  /**
-   * Lee el token de acceso del almacenamiento local.
-   * @return El token de acceso o null si no está disponible.
-   * @private
-   */
-  private readAccessToken(): string | null {
-    try {
-      const raw = localStorage.getItem(this.AUTH_STORAGE_KEY);
-      if (!raw) return null;
-      const snap = JSON.parse(raw) as SessionShape;
-      return snap?.token?.accessToken ?? null;
-    } catch {
-      return null;
-    }
-  }
-
-  /**
-   * Determina si la URL de la solicitud es para activos.
-   * @param url - La URL de la solicitud.
-   * @return True si la URL es para activos, de lo contrario false.
-   * @private
-   */
-  private isAssetsRequest(url: string): boolean {
-    return url.startsWith('/assets/') || url.includes('/assets/i18n/');
-  }
-
-  /**
-   * Verifica si la URL de la solicitud coincide con la URL base de la API.
-   * @param url - La URL de la solicitud.
-   * @return True si la URL coincide con la base de la API, de lo contrario false.
-   * @private
-   */
-  private matchesApiBase(url: string): boolean {
-    try {
-      const req = new URL(url, window.location.origin);
-      const api = new URL(this.API_BASE, window.location.origin);
-      return req.origin === api.origin && req.pathname.startsWith(api.pathname);
-    } catch {
-      return true;
-    }
+function readAccessToken(): string | null {
+  try {
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (!raw) return null;
+    const snap = JSON.parse(raw) as SessionShape;
+    return snap?.token?.accessToken ?? null;
+  } catch {
+    return null;
   }
 }
+
+/**
+ * Determines if the request is for assets.
+ * @param url - The request URL.
+ * @returns True if the request is for assets, otherwise false.
+ */
+function isAssetsRequest(url: string): boolean {
+  return url.startsWith('/assets/') || url.includes('/assets/i18n/');
+}
+
+/**
+ * Checks if the URL matches the API base URL.
+ * @param url - The request URL.
+ * @returns True if the URL matches the API base, otherwise false.
+ */
+function matchesApiBase(url: string): boolean {
+  try {
+    const req = new URL(url, window.location.origin);
+    const api = new URL(API_BASE, window.location.origin);
+    return req.origin === api.origin && req.pathname.startsWith(api.pathname);
+  } catch {
+    return true;
+  }
+}
+
+/**
+ * Interceptor function that appends authentication headers to HTTP requests
+ * targeting the CrediVivienda Provider API.
+ */
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  if (isAssetsRequest(req.url) || !matchesApiBase(req.url)) {
+    return next(req);
+  }
+
+  const accessToken = readAccessToken();
+  const setHeaders: Record<string, string> = {
+    'apikey': API_KEY,
+  };
+
+  if (!req.headers.has('Authorization')) {
+    if (accessToken) {
+      setHeaders['Authorization'] = `Bearer ${accessToken}`;
+    } else {
+      // Si no hay token de acceso, usar la API key como fallback
+      setHeaders['Authorization'] = `Bearer ${API_KEY}`;
+    }
+  }
+  const authReq = req.clone({ setHeaders });
+  return next(authReq);
+};

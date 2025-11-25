@@ -1,1 +1,19 @@
-<p>language-switcher works!</p>
+<div class="form-group">
+  <label for="language" class="form-label">
+    {{ 'settings.form.language.label' | translate }}
+  </label>
+  <div class="select-wrapper">
+    <select
+      id="language"
+      class="form-select"
+      [value]="currentLang"
+      (change)="useLanguage($event)">
+      @for (language of languages; track language.code) {
+        <option [value]="language.code">{{ language.name }}</option>
+      }
+    </select>
+    <svg class="select-icon">
+      <use href="assets/icons/sprite.symbol.svg#chevron-down"></use>
+    </svg>
+  </div>
+</div>

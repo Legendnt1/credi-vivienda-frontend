@@ -1,73 +1,77 @@
 import {BaseResource, BaseResponse} from '@shared/infrastructure/http/base-response';
 
 /**
- * Estructura de la respuesta que contiene una lista de usuarios.
+ * Response structure for user-related API calls.
  */
 export interface UserResponse extends BaseResponse {
   /**
-   * Lista de usuarios.
+   * List of user resources.
    */
   users: UserResource[];
 }
 
 /**
- * Estructura del recurso que representa a un usuario.
+ * Represents a user resource in the system.
  */
 export interface UserResource extends BaseResource {
   /**
-   * Identificador único del usuario.
+   * Unique identifier of the user.
    */
   id: number;
   /**
-   * Nombre de usuario.
+   * Username of the user.
    */
   username: string;
   /**
-   * Contraseña del usuario.
+   * Password of the user.
    */
   password: string;
   /**
-   * Indica si el usuario está habilitado.
+   * Indicates if the user is enabled.
    */
-  enable: boolean;
+  enabled: boolean;
   /**
-   * Correo electrónico del usuario.
+   * Email of the user.
    */
   email: string;
   /**
-   * Dirección del usuario.
+   * Address of the user.
    */
-  direccion: string;
+  address: string;
   /**
-   * Fecha de registro del usuario.
+   * Registration date of the user.
    */
-  fecha_registro: string;
+  registration_date: string;
   /**
-   * Nombre real de usuario.
+   * Name of the user.
    */
-  nombre: string;
+  name: string;
   /**
-   * Apellido del usuario.
+   * Last name of the user.
    */
-  apellido: string;
+  last_name: string;
   /**
-   * Dni del usuario.
+   * DNI of the user.
    */
   dni: string;
   /**
-   * Ingresos del usuario.
+   * Income of the user.
    */
-  ingreso: number;
+  income: number;
   /**
-   * Ahorros del usuario.
+   * Savings of the user.
    */
-  ahorro: number;
+  savings: number;
   /**
-   * Indica si el usuario tiene el bono vivienda.
+   * Indicates if the user has a bond.
    */
-  vivienda: boolean;
+  has_bond: boolean;
   /**
-   * Indica el rol del usuario.
+   * Indicates if the user has a home.
    */
-  rol_id: number;
+  has_home: boolean;
+  /**
+   * Role ID associated with the user.
+   */
+  role_id: number;
 }

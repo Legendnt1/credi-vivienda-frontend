@@ -1,0 +1,266 @@
+.reports-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-family: var(--font-semibold);
+  font-size: 2rem;
+  color: var(--color-neutral-dark);
+  margin-bottom: 2rem;
+}
+
+/* Report Form Card */
+.report-form-card {
+  background-color: var(--color-neutral-light);
+  border: 2px solid #D1D1D1;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 3rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  align-items: end;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-family: var(--font-medium);
+  font-size: 0.95rem;
+  color: var(--color-neutral-dark);
+}
+
+.form-input {
+  padding: 0.75rem 1rem;
+  border: 1px solid #999;
+  border-radius: 0.25rem;
+  font-family: var(--font-regular);
+  font-size: 1rem;
+  background-color: white;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.form-actions-inline {
+  display: flex;
+  align-items: flex-end;
+}
+
+.btn-download {
+  background-color: var(--color-secondary);
+  color: white;
+  font-family: var(--font-semibold);
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.btn-download:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.btn-download:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.icon-download {
+  flex-shrink: 0;
+}
+
+/* Chart Section */
+.chart-section {
+  margin-top: 3rem;
+}
+
+.chart-title {
+  font-family: var(--font-semibold);
+  font-size: 1.5rem;
+  color: var(--color-neutral-dark);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.chart-container {
+  display: flex;
+  gap: 1rem;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  min-height: 500px;
+}
+
+.chart-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 1rem;
+  padding-top: 10px;
+  padding-bottom: 50px;
+  min-width: 50px;
+}
+
+.y-axis-label {
+  font-family: var(--font-regular);
+  font-size: 0.85rem;
+  color: #666;
+  text-align: right;
+  line-height: 1;
+}
+
+.chart-content {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-grid {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.grid-line {
+  width: 100%;
+  height: 1px;
+  background-color: #E0E0E0;
+}
+
+.chart-bars {
+  position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  gap: 2rem;
+  padding: 10px 2rem 50px 2rem;
+  z-index: 1;
+  min-height: 400px;
+}
+
+.bar-container {
+  flex: 1;
+  max-width: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  position: relative;
+}
+
+.bar {
+  width: 100%;
+  background-color: var(--color-secondary);
+  border-radius: 4px 4px 0 0;
+  transition: all 0.3s ease;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bar:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+
+.bar::after {
+  content: attr(data-value);
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-semibold);
+  font-size: 1rem;
+  color: var(--color-neutral-dark);
+  white-space: nowrap;
+}
+
+.bar-label {
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-regular);
+  font-size: 0.9rem;
+  color: var(--color-neutral-dark);
+  text-align: center;
+  white-space: nowrap;
+  width: max-content;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-actions-inline {
+    grid-column: span 2;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .reports-container {
+    padding: 1rem;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions-inline {
+    grid-column: 1;
+  }
+
+  .chart-container {
+    padding: 1rem;
+  }
+
+  .chart-bars {
+    gap: 1rem;
+    padding: 0 1rem 40px 1rem;
+  }
+
+  .bar-container {
+    max-width: 100px;
+  }
+
+  .bar-label {
+    font-size: 0.8rem;
+  }
+}
+

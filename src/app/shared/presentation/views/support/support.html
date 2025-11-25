@@ -1,0 +1,66 @@
+<div class="support-container">
+  <h1 class="page-title">{{ 'support.title' | translate }}</h1>
+
+  <!-- Support Form -->
+  <div class="support-form-card">
+    <form [formGroup]="supportForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label class="form-label">{{ 'support.form.subject' | translate }}</label>
+        <input
+          type="text"
+          class="form-input"
+          formControlName="subject"
+          placeholder=""
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">{{ 'support.form.category' | translate }}</label>
+        <input
+          type="text"
+          class="form-input"
+          formControlName="category"
+          placeholder=""
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">{{ 'support.form.description' | translate }}</label>
+        <textarea
+          class="form-textarea"
+          formControlName="description"
+          rows="6"
+          placeholder=""
+        ></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-submit" [disabled]="supportForm.invalid">
+          {{ 'support.form.send' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Success Modal -->
+@if (showModal()) {
+  <div class="modal-overlay" (click)="onCloseModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" [attr.stroke-width]="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+
+      <h2 class="modal-title">{{ 'support.modal.title' | translate }}</h2>
+      <p class="modal-description">{{ 'support.modal.description' | translate }}</p>
+
+      <button class="btn-continue" (click)="onCloseModal()">
+        {{ 'support.modal.continue' | translate }}
+      </button>
+    </div>
+  </div>
+}
+

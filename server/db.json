@@ -2,35 +2,232 @@
   "users": [
     {
       "id": 1,
-      "username": "johndoe",
-      "password": "password123",
-      "enable": true,
-      "email": "johndoe@gmail.com",
-      "direccion": "123 Main St, Cityville",
-      "fecha_registro": "2023-01-15",
-      "nombre": "John",
-      "apellido": "Doe",
-      "dni": "12345678",
-      "ingreso": 5550,
-      "ahorro": 2323,
-      "vivienda": false,
-      "rol_id": 1
+      "username": "jhon_perez",
+      "password": "123456",
+      "enabled": true,
+      "email": "jhon.perez@example.com",
+      "address": "Av. Principal 123, San Miguel, Lima",
+      "registration_date": "2024-01-15T10:00:00Z",
+      "name": "Jhon",
+      "last_name": "Pérez",
+      "dni": "74859632",
+      "income": 3500,
+      "savings": 8000,
+      "has_bond": true,
+      "has_home": false,
+      "role_id": 1
     },
     {
       "id": 2,
-      "username": "janedoe",
-      "password": "securepass",
-      "enable": true,
-      "email": "janedoe@hotmail.com",
-      "direccion": "456 Elm St, Townsville",
-      "fecha_registro": "2023-02-20",
-      "nombre": "Jane",
-      "apellido": "Doe",
-      "dni": "87654321",
-      "ingreso": 6200,
-      "ahorro": 3100,
-      "vivienda": true,
-      "rol_id": 2
+      "username": "ana_torres",
+      "password": "abcdef",
+      "enabled": true,
+      "email": "ana.torres@example.com",
+      "address": "Jr. Los Sauces 456, Callao",
+      "registration_date": "2024-02-10T09:30:00Z",
+      "name": "Ana",
+      "last_name": "Torres",
+      "dni": "73584219",
+      "income": 4200,
+      "savings": 12000,
+      "has_bond": false,
+      "has_home": false,
+      "role_id": 1
+    },
+    {
+      "id": 3,
+      "username": "luis_ramos",
+      "password": "qwerty",
+      "enabled": true,
+      "email": "luis.ramos@example.com",
+      "address": "Calle Primavera 789, Arequipa",
+      "registration_date": "2024-03-05T15:45:00Z",
+      "name": "Luis",
+      "last_name": "Ramos",
+      "dni": "70123456",
+      "income": 6000,
+      "savings": 20000,
+      "has_bond": false,
+      "has_home": true,
+      "role_id": 1
+    }
+  ],
+  "roles": [
+    {
+      "id": 1,
+      "role": "USER"
+    },
+    {
+      "id": 2,
+      "role": "ADMIN"
+    }
+  ],
+  "bonds": [
+    {
+      "id": 1,
+      "name": "Techo Propio",
+      "total_bond": 46545
+    },
+    {
+      "id": 2,
+      "name": "Bono del Buen Pagador",
+      "total_bond": 25000
+    }
+  ],
+  "property_projects": [
+    {
+      "id": 1,
+      "property_code": "001",
+      "project": "Condominio Las Flores",
+      "type": "Departamento",
+      "area": 72,
+      "price": 220000,
+      "availability": 5,
+      "status": "Disponible"
+    },
+    {
+      "id": 2,
+      "property_code": "002",
+      "project": "Residencial El Sol",
+      "type": "Casa",
+      "area": 120,
+      "price": 320000,
+      "availability": 2,
+      "status": "Reservado"
+    },
+    {
+      "id": 3,
+      "property_code": "003",
+      "project": "Residencial Miramar",
+      "type": "Departamento",
+      "area": 85,
+      "price": 280000,
+      "availability": 3,
+      "status": "Vendido"
+    }
+  ],
+  "currency_catalogs": [
+    {
+      "id": 1,
+      "currency": "PEN"
+    },
+    {
+      "id": 2,
+      "currency": "USD"
+    }
+  ],
+  "credits": [
+    {
+      "id": 1,
+      "down_payment": 44000,
+      "credit_term_months": 240,
+      "grace_period_total": 3,
+      "grace_period_partial": 0,
+      "interest_rate": 8.5,
+      "interest_type": "EFFECTIVE",
+      "payment_frequency": "MENSUAL",
+      "program": "MIVIVIENDA",
+      "tcea": 9.3,
+      "currency_catalogs_id": 1,
+      "bond_id": 2,
+      "user_id": 1,
+      "property_project_id": 1
+    },
+    {
+      "id": 2,
+      "down_payment": 35000,
+      "credit_term_months": 180,
+      "grace_period_total": 0,
+      "grace_period_partial": 2,
+      "interest_rate": 7.2,
+      "interest_type": "NOMINAL",
+      "payment_frequency": "MENSUAL",
+      "program": "TECHO_PROPIO",
+      "tcea": 8.1,
+      "currency_catalogs_id": 1,
+      "bond_id": 1,
+      "user_id": 2,
+      "property_project_id": 2
+    },
+    {
+      "id": 3,
+      "down_payment": 56000,
+      "credit_term_months": 120,
+      "grace_period_total": 0,
+      "grace_period_partial": 0,
+      "interest_rate": 6.9,
+      "interest_type": "EFFECTIVE",
+      "payment_frequency": "MENSUAL",
+      "program": "OTRO",
+      "tcea": 7.4,
+      "currency_catalogs_id": 2,
+      "bond_id": 0,
+      "user_id": 3,
+      "property_project_id": 3
+    }
+  ],
+  "payments": [
+    {
+      "id": 1,
+      "period": 1,
+      "payment_date": "2025-02-28",
+      "payment_amount": 2100.5,
+      "capital_amortization": 800.3,
+      "interest_paid": 1300.2,
+      "effective_rate_period": 0.0075,
+      "grace_type": "SIN_PLAZO",
+      "remaining_balance": 175699.7,
+      "credit_id": 1
+    },
+    {
+      "id": 2,
+      "period": 2,
+      "payment_date": "2025-03-31",
+      "payment_amount": 2100.5,
+      "capital_amortization": 810.1,
+      "interest_paid": 1290.4,
+      "effective_rate_period": 0.0075,
+      "grace_type": "SIN_PLAZO",
+      "remaining_balance": 174889.6,
+      "credit_id": 1
+    },
+    {
+      "id": 3,
+      "period": 1,
+      "payment_date": "2025-01-31",
+      "payment_amount": 1850.75,
+      "capital_amortization": 650.4,
+      "interest_paid": 1200.35,
+      "effective_rate_period": 0.0065,
+      "grace_type": "GRACIA_PARCIAL",
+      "remaining_balance": 214349.6,
+      "credit_id": 2
+    },
+    {
+      "id": 4,
+      "period": 1,
+      "payment_date": "2025-04-30",
+      "payment_amount": 2800,
+      "capital_amortization": 1900,
+      "interest_paid": 900,
+      "effective_rate_period": 0.0056,
+      "grace_type": "SIN_PLAZO",
+      "remaining_balance": 168100,
+      "credit_id": 3
+    }
+  ],
+  "settings": [
+    {
+      "id": 1,
+      "default_currency_catalog_id": 1,
+      "default_interest_type": "EFFECTIVE",
+      "default_grace_period": "TOTAL"
+    },
+    {
+      "id": 2,
+      "default_currency_catalog_id": 2,
+      "default_interest_type": "EFFECTIVE",
+      "default_grace_period": "TOTAL"
     }
   ]
 }

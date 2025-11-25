@@ -1,0 +1,86 @@
+<div class="reports-container">
+  <h1 class="page-title">{{ 'reports.title' | translate }}</h1>
+
+  <!-- Report Form -->
+  <div class="report-form-card">
+    <form [formGroup]="reportsForm" (ngSubmit)="onDownload()">
+      <div class="form-grid">
+        <div class="form-field">
+          <label class="form-label">{{ 'reports.form.period' | translate }}</label>
+          <input
+            type="text"
+            class="form-input"
+            formControlName="period"
+            placeholder=""
+          />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">{{ 'reports.form.project' | translate }}</label>
+          <input
+            type="text"
+            class="form-input"
+            formControlName="project"
+            placeholder=""
+          />
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">{{ 'reports.form.reportType' | translate }}</label>
+          <input
+            type="text"
+            class="form-input"
+            formControlName="reportType"
+            placeholder=""
+          />
+        </div>
+
+        <div class="form-actions-inline">
+          <button type="submit" class="btn-download" [disabled]="reportsForm.invalid">
+            <svg class="icon-download" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" [attr.stroke-width]="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            {{ 'reports.form.download' | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Chart Section -->
+  <div class="chart-section">
+    <h2 class="chart-title">{{ 'reports.chart.title' | translate }}</h2>
+
+    <div class="chart-container">
+      <div class="chart-y-axis">
+        @for (label of yAxisLabels(); track $index) {
+          <span class="y-axis-label">{{ label }}</span>
+        }
+      </div>
+
+      <div class="chart-content">
+        <div class="chart-grid">
+          @for (_ of yAxisLabels(); track $index) {
+            <div class="grid-line"></div>
+          }
+        </div>
+
+        <div class="chart-bars">
+          @for (data of chartData(); track data.month) {
+            <div class="bar-container">
+              <div
+                class="bar"
+                [style.height.%]="getBarHeight(data.value)"
+                [attr.data-value]="data.value">
+              </div>
+              <span class="bar-label">{{ data.month | translate }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

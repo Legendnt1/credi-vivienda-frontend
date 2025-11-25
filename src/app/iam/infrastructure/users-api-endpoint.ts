@@ -6,15 +6,15 @@ import {HttpClient} from '@angular/common/http';
 import {environment} from '@env/environment';
 
 /**
- * Api endpoint para manejar usuarios.
+ * API endpoint for managing users.
  */
 export class UsersApiEndpoint extends BaseApiEndpoint<User, UserResource, UserResponse, UserAssembler> {
   /**
-   * Constructor del UsersApiEndpoint.
-   * @param http - El cliente HTTP.
+   * Creates an instance of UsersApiEndpoint.
+   * @param http - The HTTP client to be used for API calls.
    */
   constructor(http: HttpClient) {
-    super(http, environment.crediViviendaProviderUsersEndpointPath, new UserAssembler(),
-      { usePathParams: environment.usePathParams });
+    super(http, `${environment.crediViviendaProviderApiBaseUrl}${environment.crediViviendaProviderUsersEndpointPath}`,
+      new UserAssembler(), { usePathParams: environment.usePathParams });
   }
 }

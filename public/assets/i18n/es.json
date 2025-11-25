@@ -1,9 +1,317 @@
 {
   "login": {
-    "title": "Iniciar sesión",
-    "username": "Nombre de usuario",
+    "title": "Iniciar Sesión",
+    "username": "Correo electrónico",
     "password": "Contraseña",
-    "submit": "Enviar",
-    "forgotPassword": "¿Olvidaste tu contraseña?"
+    "submit": "Iniciar sesión",
+    "submitting": "Iniciando sesión...",
+    "noAccount": "¿No tienes una cuenta?",
+    "registerLink": "Regístrate",
+    "errors": {
+      "emailRequired": "El correo electrónico es obligatorio",
+      "emailInvalid": "Ingresa un correo electrónico válido",
+      "passwordRequired": "La contraseña es obligatoria",
+      "passwordMinLength": "La contraseña debe tener al menos 6 caracteres"
+    }
+  },
+  "register": {
+    "title": "Crear Cuenta",
+    "subtitle": "Completa tus datos para registrarte",
+    "name": "Nombre",
+    "lastName": "Apellido",
+    "dni": "DNI",
+    "email": "Correo Electrónico",
+    "username": "Nombre de Usuario",
+    "address": "Dirección",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "submit": "Registrarse",
+    "submitting": "Registrando...",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "loginLink": "Iniciar Sesión",
+    "errors": {
+      "passwordMismatch": "Las contraseñas no coinciden"
+    }
+  },
+  "logout": {
+    "button": "Cerrar Sesión"
+  },
+  "sidebar": {
+    "settings": "Configuración",
+    "projects": "Inmuebles",
+    "calculations": "Cálculos",
+    "reports": "Reportes",
+    "support": "Soporte",
+    "bonus": "Bono Techo Propio",
+    "user": "Usuario"
+  },
+  "home": {
+    "welcome": "¡Bienvenido",
+    "completeProfile": "Completa tu perfil para continuar",
+    "form": {
+      "income": "Ingreso mensual",
+      "incomePlaceholder": "Ingrese su ingreso mensual",
+      "savings": "Monto Ahorrado",
+      "savingsPlaceholder": "Ingrese el monto ahorrado",
+      "hasProperty": "¿Cuenta con una vivienda?",
+      "submit": "Completar Perfil"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Bienvenido a tu panel de control",
+      "comingSoon": "Próximamente - Dashboard en desarrollo"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard – CrediVivienda",
+    "filters": {
+      "today": "Hoy",
+      "thisWeek": "Esta semana",
+      "thisMonth": "Este mes",
+      "custom": "Personalizado",
+      "allPrograms": "Todos",
+      "miVivienda": "MiVivienda",
+      "techoPropio": "Techo Propio",
+      "others": "Otros"
+    },
+    "kpis": {
+      "creditsSimulated": "Créditos simulados",
+      "totalAmount": "Monto simulado",
+      "availableProperties": "Inmuebles disponibles",
+      "approvedCredits": "Créditos aprobados",
+      "vsPreviousMonth": "vs mes anterior"
+    },
+    "recentClients": {
+      "title": "Clientes recientes",
+      "columns": {
+        "name": "Nombre",
+        "date": "Fecha",
+        "project": "Proyecto",
+        "program": "Programa",
+        "amount": "Monto",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "status": {
+        "pending": "Pendiente",
+        "inEvaluation": "En evaluación",
+        "approved": "Aprobado",
+        "rejected": "Rechazado"
+      },
+      "actions": {
+        "viewDetail": "Ver detalle",
+        "simulateAgain": "Simular de nuevo"
+      }
+    },
+    "performanceChart": {
+      "title": "Créditos por estado",
+      "summary": {
+        "simulationsThisWeek": "Simulaciones esta semana",
+        "approved": "Aprobados"
+      }
+    },
+    "properties": {
+      "title": "Inmuebles destacados",
+      "featured": "Campaña del mes",
+      "viewDetails": "Ver más detalles",
+      "simulateCredit": "Simular crédito",
+      "available": "disponibles",
+      "location": "Ubicación"
+    },
+    "education": {
+      "title": "Guía de la semana para el inversionista",
+      "description": "Tips para elegir tu primera vivienda con crédito MiVivienda",
+      "download": "Descargar PDF",
+      "updated": "Actualizado"
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "form": {
+      "currency": {
+        "label": "Moneda por defecto",
+        "placeholder": "Selecciona una moneda"
+      },
+      "interestType": {
+        "label": "Tipo de tasa",
+        "options": {
+          "effective": "Efectiva",
+          "nominal": "Nominal"
+        }
+      },
+      "gracePeriod": {
+        "label": "Periodo de gracia",
+        "options": {
+          "total": "Total",
+          "partial": "Parcial"
+        }
+      },
+      "language": {
+        "label": "Idioma"
+      },
+      "buttons": {
+        "save": "Guardar cambios",
+        "saving": "Guardando..."
+      }
+    }
+  },
+  "projects": {
+    "title": "Inmuebles",
+    "filter": {
+      "label": "Filtrar:",
+      "placeholder": "Buscar por código, proyecto, tipo o estado...",
+      "apply": "Aplicar"
+    },
+    "buttons": {
+      "add": "Agregar Inmueble",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "table": {
+      "code": "Código",
+      "project": "Proyecto",
+      "type": "Tipo",
+      "area": "Área (m²)",
+      "price": "Precio",
+      "status": "Estado",
+      "availability": "Disponibilidad",
+      "actions": "Acciones"
+    },
+    "loading": "Cargando inmuebles...",
+    "noResults": "No se encontraron inmuebles",
+    "summary": {
+      "total": "Total",
+      "filtered": "de"
+    },
+    "form": {
+      "titleCreate": "Agregar Inmueble",
+      "titleEdit": "Editar Inmueble",
+      "sections": {
+        "general": "Datos generales",
+        "physical": "Características Físicas",
+        "economic": "Datos Económicos",
+        "location": "Ubicación"
+      },
+      "fields": {
+        "code": "Código del inmueble",
+        "project": "Proyecto",
+        "type": "Tipo",
+        "status": "Estado",
+        "area": "Área (m²)",
+        "price": "Precio",
+        "address": "Dirección",
+        "district": "Distrito"
+      },
+      "placeholders": {
+        "code": "Ej: 001",
+        "project": "Ej: Residencia A",
+        "type": "Ej: Departamento, Casa",
+        "status": "Ej: Disponible, Reservado",
+        "area": "Ej: 80",
+        "price": "Ej: 250000",
+        "address": "Ingrese la dirección",
+        "district": "Ingrese el distrito"
+      },
+      "currency": {
+        "soles": "Soles (S/)"
+      },
+      "bondsApplicable": "Bono aplicable",
+      "bonds": {
+        "techoPropio": "Techo propio"
+      },
+      "buttons": {
+        "save": "Agregar",
+        "saving": "Guardando...",
+        "cancel": "Cancelar"
+      },
+      "errors": {
+        "required": "Este campo es obligatorio"
+      }
+    }
+  },
+  "calculations": {
+    "title": "Calculadora de Préstamo Hipotecario",
+    "form": {
+      "loanAmount": "Monto del préstamo:",
+      "term": "Plazo (meses):",
+      "interestRate": "Tasa de interés:",
+      "rateType": "Tipo de tasa:",
+      "calculate": "Calcular"
+    },
+    "paymentPlan": {
+      "title": "Plan de Pagos (Método Francés)",
+      "table": {
+        "month": "Mes",
+        "installment": "Cuota",
+        "interest": "Interés",
+        "amortization": "Amortización",
+        "balanceWithBond": "Saldo con bono"
+      }
+    },
+    "summary": {
+      "van": "VAN",
+      "tir": "TIR",
+      "cet": "CET"
+    }
+  },
+  "reports": {
+    "title": "Generación de reportes",
+    "form": {
+      "period": "Periodo:",
+      "project": "Proyecto:",
+      "reportType": "Tipo de reporte:",
+      "download": "Descargar"
+    },
+    "chart": {
+      "title": "Créditos simulados por mes",
+      "months": {
+        "january": "Enero",
+        "february": "Febrero",
+        "march": "Marzo",
+        "april": "Abril",
+        "may": "Mayo",
+        "june": "Junio",
+        "july": "Julio",
+        "august": "Agosto",
+        "september": "Septiembre",
+        "october": "Octubre",
+        "november": "Noviembre",
+        "december": "Diciembre"
+      }
+    }
+  },
+  "support": {
+    "title": "Centro de soporte",
+    "form": {
+      "subject": "Asunto:",
+      "category": "Categoría:",
+      "description": "Descripción:",
+      "send": "Enviar"
+    },
+    "modal": {
+      "title": "¡Se mandó el mensaje a soporte!",
+      "description": "Nuestro equipo te responderá en menos de 24 horas",
+      "continue": "Continuar"
+    }
+  },
+  "bonus": {
+    "section1": {
+      "title": "¿Qué es el Bono Techo Propio?",
+      "paragraph1": "El bono Techo Propio es un subsidio del Gobierno Peruano dirigido a personas de escasos recursos para ayudar en la adquisición de vivienda nueva. Su objetivo es reducir el monto del crédito que el comprador debe asumir, restando el valor del bono al monto financiable.",
+      "paragraph2": "Este bono puede aplicarse cuando se utiliza el",
+      "miViviendaCredit": "Nuevo Crédito del Fondo MiVivienda",
+      "paragraph3": ", sujeto a ciertos requisitos y límites de precio de la vivienda."
+    },
+    "section2": {
+      "title": "Requisitos para acceder al bono",
+      "requirement1": "No ser propietario de otra vivienda.",
+      "requirement2": "No superar un determinado nivel de ingresos (según normativa vigente).",
+      "requirement3": "La vivienda debe estar dentro de los rangos de precio permitidos.",
+      "requirement4": "Aplicar al crédito del Fondo MiVivienda.",
+      "requirement5": "Cumplir otros requisitos exigidos por MiVivienda y las entidades financieras autorizadas."
+    },
+    "button": {
+      "moreInfo": "Ver más información"
+    }
   }
 }

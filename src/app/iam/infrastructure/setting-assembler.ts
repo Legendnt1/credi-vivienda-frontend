@@ -1,0 +1,45 @@
+import {BaseAssembler} from '@shared/infrastructure/http/base-assembler';
+import {Setting} from '@iam/domain/model/setting.entity';
+import {SettingResource, SettingResponse} from '@iam/infrastructure/setting-response';
+
+/**
+ * Assembler class for converting between Setting entities and resources.
+ */
+export class SettingAssembler implements BaseAssembler<Setting, SettingResource, SettingResponse> {
+  /**
+   * Converts a SettingResponse to an array of Setting entities.
+   * @param response - The SettingResponse to convert.
+   * @returns An array of Setting entities.
+   */
+  toEntitiesFromResponse(response: SettingResponse): Setting[] {
+    return response.settings.map(resource => this.toEntityFromResource(resource as SettingResource));
+  }
+
+  /**
+   * Converts a SettingResource to a Setting entity.
+   * @param resource - The SettingResource to convert.
+   * @returns A Setting entity.
+   */
+  toEntityFromResource(resource: SettingResource): Setting {
+    return new Setting({
+      id: resource.id,
+      default_currency_catalog_id: resource.default_currency_catalog_id,
+      default_interest_type: resource.default_interest_type,
+      default_grace_period: resource.default_grace_period,
+    });
+  }
+
+  /**
+   * Converts a Setting entity to a SettingResource.
+   * @param entity - The Setting entity to convert.
+   */
+  toResourceFromEntity(entity: Setting): SettingResource {
+    return {
+      id: entity.id,
+      default_currency_catalog_id: entity.default_currency_catalog_id,
+      default_interest_type: entity.default_interest_type,
+      default_grace_period: entity.default_grace_period,
+    } as SettingResource;
+  }
+
+}

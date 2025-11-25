@@ -1,1 +1,109 @@
-<p>login works!</p>
+<div class="login-container">
+  <div class="login-form-section">
+    <div class="login-form-wrapper">
+      <div class="logo-container">
+        <img src="/assets/images/big-logo.webp" alt="Credi Vivienda" class="logo" />
+      </div>
+
+      <h1 class="login-title">{{ 'login.title' | translate }}</h1>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <div class="form-group">
+          <label for="email" class="form-label">{{ 'login.username' | translate }}</label>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            class="form-input"
+            [class.input-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+            placeholder="ejemplo@correo.com"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">{{ 'login.password' | translate }}</label>
+          <div class="password-input-wrapper">
+            <input
+              [type]="isPasswordVisible() ? 'text' : 'password'"
+              id="password"
+              formControlName="password"
+              class="form-input"
+              [class.input-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+              placeholder="••••••"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="isPasswordVisible() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            >
+              <svg class="icon" width="24" height="24">
+                @if (isPasswordVisible()) {
+                  <use href="/assets/icons/sprite.symbol.svg#eye"></use>
+                } @else {
+                  <use href="/assets/icons/sprite.symbol.svg#eye-off"></use>
+                }
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Error Messages Section -->
+        @if (store.error()) {
+          <div class="error-message">
+            <svg class="error-icon" width="20" height="20">
+              <use href="/assets/icons/sprite.symbol.svg#alert-circle"></use>
+            </svg>
+            <span>{{ store.error() }}</span>
+          </div>
+        }
+
+        @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+          <div class="field-error">
+            @if (loginForm.get('email')?.errors?.['required']) {
+              {{ 'login.errors.emailRequired' | translate }}
+            }
+            @if (loginForm.get('email')?.errors?.['email']) {
+              {{ 'login.errors.emailInvalid' | translate }}
+            }
+          </div>
+        }
+
+        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+          <div class="field-error">
+            @if (loginForm.get('password')?.errors?.['required']) {
+              {{ 'login.errors.passwordRequired' | translate }}
+            }
+            @if (loginForm.get('password')?.errors?.['minlength']) {
+              {{ 'login.errors.passwordMinLength' | translate }}
+            }
+          </div>
+        }
+
+        <button
+          type="submit"
+          class="submit-button"
+          [disabled]="store.loading()"
+          [class.loading]="store.loading()"
+        >
+          @if (store.loading()) {
+            <span class="spinner"></span>
+            {{ 'login.submitting' | translate }}
+          } @else {
+            {{ 'login.submit' | translate }}
+          }
+        </button>
+
+        <div class="register-link-container">
+          <span class="register-text">{{ 'login.noAccount' | translate }}</span>
+          <a routerLink="/register" class="register-link">{{ 'login.registerLink' | translate }}</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="login-illustration-section">
+    <img src="/assets/images/login.webp" alt="Credi Vivienda House" class="illustration-image" />
+  </div>
+</div>
+

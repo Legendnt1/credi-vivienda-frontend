@@ -1,1 +1,8 @@
-<p>button-logout works!</p>
+<button class="logout-button" (click)="logout()" type="button" aria-label="Cerrar sesión">
+  <svg class="logout-icon" width="24" height="24" aria-hidden="true">
+    <use href="/assets/icons/sprite.symbol.svg#logout"></use>
+  </svg>
+  <span class="logout-text">{{ 'logout.button' | translate }}</span>
+</button>
+
+

@@ -1,9 +1,317 @@
 {
   "login": {
     "title": "Login",
-    "username": "Username",
+    "username": "Email",
     "password": "Password",
-    "submit": "Submit",
-    "forgotPassword": "Forgot your password?"
+    "submit": "Login",
+    "submitting": "Logging in...",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Sign Up",
+    "errors": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters"
+    }
+  },
+  "register": {
+    "title": "Create Account",
+    "subtitle": "Fill in your details to register",
+    "name": "Name",
+    "lastName": "Last Name",
+    "dni": "ID Number",
+    "email": "Email",
+    "username": "Username",
+    "address": "Address",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "submit": "Register",
+    "submitting": "Registering...",
+    "alreadyHaveAccount": "Already have an account?",
+    "loginLink": "Login",
+    "errors": {
+      "passwordMismatch": "Passwords do not match"
+    }
+  },
+  "logout": {
+    "button": "Logout"
+  },
+  "sidebar": {
+    "settings": "Settings",
+    "projects": "Properties",
+    "calculations": "Calculations",
+    "reports": "Reports",
+    "support": "Support",
+    "bonus": "Roof Bonus",
+    "user": "User"
+  },
+  "home": {
+    "welcome": "Welcome",
+    "completeProfile": "Complete your profile to continue",
+    "form": {
+      "income": "Monthly Income",
+      "incomePlaceholder": "Enter your monthly income",
+      "savings": "Saved Amount",
+      "savingsPlaceholder": "Enter the saved amount",
+      "hasProperty": "Do you have a property?",
+      "submit": "Complete Profile"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Welcome to your control panel",
+      "comingSoon": "Coming Soon - Dashboard under development"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard – CrediVivienda",
+    "filters": {
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "custom": "Custom",
+      "allPrograms": "All",
+      "miVivienda": "MiVivienda",
+      "techoPropio": "Techo Propio",
+      "others": "Others"
+    },
+    "kpis": {
+      "creditsSimulated": "Credits Simulated",
+      "totalAmount": "Total Amount Simulated",
+      "availableProperties": "Available Properties",
+      "approvedCredits": "Approved Credits",
+      "vsPreviousMonth": "vs Previous Month"
+    },
+    "recentClients": {
+      "title": "Recent Clients",
+      "columns": {
+        "name": "Name",
+        "date": "Date",
+        "project": "Project",
+        "program": "Program",
+        "amount": "Amount",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "pending": "Pending",
+        "inEvaluation": "In Evaluation",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "actions": {
+        "viewDetail": "View Detail",
+        "simulateAgain": "Simulate Again"
+      }
+    },
+    "performanceChart": {
+      "title": "Performance Over Time",
+      "summary": {
+        "simulationsThisWeek": "Simulations This Week",
+        "approved": "Approved"
+      }
+    },
+    "properties": {
+      "title": "Featured Properties",
+      "featured": "Campaign of the Month",
+      "viewDetails": "View More Details",
+      "simulateCredit": "Simulate Credit",
+      "available": "available",
+      "location": "Location"
+    },
+    "education": {
+      "title": "Guide of the week for the investor",
+      "description": "Tips and advice to make the best investment decisions",
+      "download": "Download PDF",
+      "updated": "Updated"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "form": {
+      "currency": {
+        "label": "Default Currency",
+        "placeholder": "Select a currency"
+      },
+      "interestType": {
+        "label": "Interest Type",
+        "options": {
+          "effective": "Effective",
+          "nominal": "Nominal"
+        }
+      },
+      "gracePeriod": {
+        "label": "Grace Period",
+        "options": {
+          "total": "Total",
+          "partial": "Partial"
+        }
+      },
+      "language": {
+        "label": "Language"
+      },
+      "buttons": {
+        "save": "Save Changes",
+        "saving": "Saving..."
+      }
+    }
+  },
+  "projects": {
+    "title": "Properties",
+    "filter": {
+      "label": "Filter:",
+      "placeholder": "Search by code, project, type or status...",
+      "apply": "Apply"
+    },
+    "buttons": {
+      "add": "Add Property",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "table": {
+      "code": "Code",
+      "project": "Project",
+      "type": "Type",
+      "area": "Area (m²)",
+      "price": "Price",
+      "status": "Status",
+      "availability": "Availability",
+      "actions": "Actions"
+    },
+    "loading": "Loading properties...",
+    "noResults": "No properties found",
+    "summary": {
+      "total": "Total",
+      "filtered": "of"
+    },
+    "form": {
+      "titleCreate": "Add Property",
+      "titleEdit": "Edit Property",
+      "sections": {
+        "general": "General Information",
+        "physical": "Physical Characteristics",
+        "economic": "Economic Data",
+        "location": "Location"
+      },
+      "fields": {
+        "code": "Property Code",
+        "project": "Project",
+        "type": "Type",
+        "status": "Status",
+        "area": "Area (m²)",
+        "price": "Price",
+        "address": "Address",
+        "district": "District"
+      },
+      "placeholders": {
+        "code": "E.g: 001",
+        "project": "E.g: Residence A",
+        "type": "E.g: Apartment, House",
+        "status": "E.g: Available, Reserved",
+        "area": "E.g: 80",
+        "price": "E.g: 250000",
+        "address": "Enter address",
+        "district": "Enter district"
+      },
+      "currency": {
+        "soles": "Soles (S/)"
+      },
+      "bondsApplicable": "Applicable Bond",
+      "bonds": {
+        "techoPropio": "Own Roof"
+      },
+      "buttons": {
+        "save": "Add",
+        "saving": "Saving...",
+        "cancel": "Cancel"
+      },
+      "errors": {
+        "required": "This field is required"
+      }
+    }
+  },
+  "calculations": {
+    "title": "Mortgage Loan Calculator",
+    "form": {
+      "loanAmount": "Loan amount:",
+      "term": "Term (months):",
+      "interestRate": "Interest rate:",
+      "rateType": "Rate type:",
+      "calculate": "Calculate"
+    },
+    "paymentPlan": {
+      "title": "Payment Plan (French Method)",
+      "table": {
+        "month": "Month",
+        "installment": "Installment",
+        "interest": "Interest",
+        "amortization": "Amortization",
+        "balanceWithBond": "Balance with bond"
+      }
+    },
+    "summary": {
+      "van": "NPV",
+      "tir": "IRR",
+      "cet": "CET"
+    }
+  },
+  "reports": {
+    "title": "Report Generation",
+    "form": {
+      "period": "Period:",
+      "project": "Project:",
+      "reportType": "Report type:",
+      "download": "Download"
+    },
+    "chart": {
+      "title": "Simulated credits per month",
+      "months": {
+        "january": "January",
+        "february": "February",
+        "march": "March",
+        "april": "April",
+        "may": "May",
+        "june": "June",
+        "july": "July",
+        "august": "August",
+        "september": "September",
+        "october": "October",
+        "november": "November",
+        "december": "December"
+      }
+    }
+  },
+  "support": {
+    "title": "Support Center",
+    "form": {
+      "subject": "Subject:",
+      "category": "Category:",
+      "description": "Description:",
+      "send": "Send"
+    },
+    "modal": {
+      "title": "Message sent to support!",
+      "description": "Our team will respond in less than 24 hours",
+      "continue": "Continue"
+    }
+  },
+  "bonus": {
+    "section1": {
+      "title": "What is the Techo Propio Bonus?",
+      "paragraph1": "The Techo Propio bonus is a subsidy from the Peruvian Government aimed at people with limited resources to help in the acquisition of new housing. Its objective is to reduce the amount of credit that the buyer must assume, subtracting the value of the bonus from the financeable amount.",
+      "paragraph2": "This bonus can be applied when using the",
+      "miViviendaCredit": "New MiVivienda Fund Credit",
+      "paragraph3": ", subject to certain requirements and housing price limits."
+    },
+    "section2": {
+      "title": "Requirements to access the bonus",
+      "requirement1": "Not be the owner of another property.",
+      "requirement2": "Not exceed a certain level of income (according to current regulations).",
+      "requirement3": "The housing must be within the permitted price ranges.",
+      "requirement4": "Apply for credit from the MiVivienda Fund.",
+      "requirement5": "Meet other requirements demanded by MiVivienda and authorized financial entities."
+    },
+    "button": {
+      "moreInfo": "See more information"
+    }
   }
 }

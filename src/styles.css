@@ -1,6 +1,22 @@
-/* Estilos globales */
+/* Global styles */
 :root {
+  /* Color Palette */
+  --color-primary: #00005C;
+  --color-secondary: #F2AA1F;
+  --color-tertiary: #88F4FF;
+  --color-success: #2E7D32;
+  --color-error: #C62828;
+  --color-neutral-dark: #1E1E1E;
+  --color-neutral-light: #F7F7F7;
 
+  /* Font families */
+  --font-sans: "Poppins", sans-serif;
+  --font-regular: "Poppins", sans-serif;
+  --font-medium: "PoppinsMedium", sans-serif;
+  --font-semibold: "PoppinsSemiBold", sans-serif;
+  --font-bold: "PoppinsBold", sans-serif;
+  --font-extrabold: "PoppinsExtraBold", sans-serif;
+  --font-italic: "PoppinsItalic", sans-serif;
 }
 
 body {
@@ -66,7 +82,7 @@ html, body {
   height: 100%;
 }
 
-/* Estilos globales de iconos */
+/* Icon styles */
 .icon use {
   fill: currentColor;
 }

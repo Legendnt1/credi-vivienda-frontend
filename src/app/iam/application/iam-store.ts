@@ -3,103 +3,144 @@ import {User} from '@iam/domain/model/user.entity';
 import {IamApi} from '@iam/infrastructure/iam-api';
 import {retry} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {Role} from '@iam/domain/model/role.entity';
+import {Setting} from '@iam/domain/model/setting.entity';
 
 /**
- * Store para manejar el estado de IAM (Identity and Access Management).
+ * IAM Store to manage users and roles state.
  */
 @Injectable({
   providedIn: 'root'
 })
 export class IamStore {
   /**
-   * Lista de usuarios.
+   * Users signal.
    * @private
    */
   private readonly usersSignal = signal<User[]>([]);
   /**
-   * Usuarios registrados.
+   * Users readonly signal.
    */
   readonly users = this.usersSignal.asReadonly();
+
   /**
-   * Indica si se está cargando información.
+   * Roles signal.
+   * @private
+   */
+  private readonly rolesSignal = signal<Role[]>([]);
+
+  /**
+   * Roles readonly signal.
+   */
+  readonly roles = this.rolesSignal.asReadonly();
+
+  /**
+   * Settings signal.
+   * @private
+   */
+  private readonly settingsSignal = signal<Setting[]>([]);
+
+  /**
+   * Settings readonly signal.
+   */
+  readonly settings = this.settingsSignal.asReadonly();
+
+  /**
+   * Loading signal.
    * @private
    */
   private readonly loadingSignal = signal<boolean>(false);
 
   /**
-   * Estado de carga.
+   * Loading readonly signal.
    */
   readonly loading = this.loadingSignal.asReadonly();
   /**
-   * Mensaje de error.
+   * Error signal.
    * @private
    */
   private readonly errorSignal = signal<string | null>(null);
   /**
-   * Mensaje de error.
+   * Error readonly signal.
    */
   readonly error = this.errorSignal.asReadonly();
 
   /**
-   * Cantidad de usuarios registrados.
+   * User count computed signal.
    */
   readonly userCount = computed(() => this.users().length);
 
   /**
-   * Usuario de la sesión actual.
+   * Role count computed signal.
+   */
+  readonly roleCount = computed(() => this.roles().length);
+
+  /**
+   * Session user signal.
    * @private
    */
   private readonly sessionUserSignal = signal<User | null>(null);
 
   /**
-   * Usuario de la sesión actual.
+   * Session user readonly signal.
    */
   readonly sessionUser = this.sessionUserSignal.asReadonly();
 
   /**
-   * Indica si el usuario está autenticado.
+   * Is authenticated computed signal.
    */
   readonly isAuthenticated = computed(() => !!this.sessionUser());
 
   /**
-   * Identificador del rol del usuario en sesión.
+   * Role ID computed signal.
    */
-  readonly rolId = computed(() => this.sessionUser()?.rol_id ?? '');
+  readonly roleId = computed(() => this.sessionUser()?.role_id ?? '');
 
   /**
-   * Identificador del usuario en sesión.
+   * Session user ID computed signal.
    */
   readonly sessionUserId = computed(() => this.sessionUser()?.id ?? 0);
 
-  // Flujo de registro y autenticación
+  // Registration Flow
 
   /**
-   * Usuario registrado.
+   * Register user signal.
    * @private
    */
   private readonly registerUserSignal = signal<User | null>(null);
 
   /**
-   * Rol del usuario registrado.
+   * Register role signal.
    * @private
    */
   private readonly registerRoleSignal = signal<string | null>(null);
 
   /**
-   * Usuario registrado.
+   * Register user readonly signal.
    */
   readonly registerUser = this.registerUserSignal.asReadonly();
 
   /**
-   * Rol del usuario registrado.
+   * Register role readonly signal.
    */
   readonly registerRole = this.registerRoleSignal.asReadonly();
 
+  /**
+   * Constructor of the IAM Store.
+   * @param iamApi - The IAM API service.
+   */
   constructor(private iamApi: IamApi) {
     this.loadUsers();
+    this.loadRoles();
+    this.loadSettings();
+    this.restoreSessionFromStorage();
   }
 
-
+  /**
+   * Logs in a user with the given email and password.
+   * @param email - The email of the user.
+   * @param password - The password of the user.
+   */
   login(email: string, password: string): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -108,27 +149,27 @@ export class IamStore {
       const user = this.users().find(u =>
         u.email === email && u.password === password);
       if (!user) {
-        this.errorSignal.set('Correo o contraseña incorrectos');
+        this.errorSignal.set('Correo electrónico o contraseña incorrectos');
         this.loadingSignal.set(false);
         return;
       }
 
-      if (!password || password.length <1) {
-        this.errorSignal.set('Contraseña inválida');
+      if (!password || password.length < 1) {
+        this.errorSignal.set('La contraseña no puede estar vacía');
         this.loadingSignal.set(false);
         return;
       }
 
       const storedPassword = user.password ?? '';
       if (storedPassword !== password) {
-        this.errorSignal.set('Correo o contraseña incorrectos');
+        this.errorSignal.set('Correo electrónico o contraseña incorrectos');
         this.loadingSignal.set(false);
         return;
       }
 
       this.sessionUserSignal.set(user);
       this.saveSessionToStorage();
-      console.log(`Usuario ${user.username} ha iniciado sesión.`);
+      console.log(`Usuario ${user.username} ha iniciado sesión correctamente.`);
       this.loadingSignal.set(false);
     };
 
@@ -139,7 +180,7 @@ export class IamStore {
           tryFromMemory();
         },
         error: err => {
-          this.errorSignal.set(this.formatError(err, 'Error al cargar los usuarios'));
+          this.errorSignal.set(this.formatError(err, 'Error al cargar los usuarios. Por favor, intenta nuevamente.'));
           this.loadingSignal.set(false);
         }
       });
@@ -149,8 +190,19 @@ export class IamStore {
   }
 
   /**
-   * Define el usuario de la sesión actual.
-   * @param userId - ID del usuario.
+   * Logs out the current user.
+   */
+  logout(): void {
+    const username = this.sessionUser()?.username ?? 'unknown';
+    this.sessionUserSignal.set(null);
+    this.clearSessionStorage();
+    console.log(`User ${username} has logged out.`);
+  }
+
+  /**
+   * Checks if the given user ID matches the current session user ID.
+   * @param userId - The ID of the user to check.
+   * @returns True if the IDs match, false otherwise.
    */
   isCurrentUser(userId: number | null | undefined): boolean {
     const currentUserId = this.sessionUserId();
@@ -161,7 +213,7 @@ export class IamStore {
   }
 
   /**
-   * Restaura la sesión del usuario desde el almacenamiento local.
+   * Restores the user session from local storage.
    * @private
    */
   private restoreSessionFromStorage(): void {
@@ -172,61 +224,133 @@ export class IamStore {
 
     try {
       const sessionData = localStorage.getItem('credi-vivienda-session');
-      if (sessionData) {
-        const parsed = JSON.parse(sessionData);
-        const { user: rawUser } = parsed;
-        const hasUserData = rawUser && typeof rawUser._id === 'number';
-        if (hasUserData) {
-          const user = new User({
-            id: rawUser._id,
-            username: rawUser._username,
-            password: rawUser._password,
-            enable: rawUser._enable,
-            email: rawUser._email,
-            direccion: rawUser._direccion,
-            fecha_registro: rawUser._fecha_registro,
-            nombre: rawUser._nombre,
-            apellido: rawUser._apellido,
-            dni: rawUser._dni,
-            ingreso: rawUser._ingreso,
-            ahorro: rawUser._ahorro,
-            vivienda: rawUser._vivienda,
-            rol_id: rawUser._rol_id
-          });
-          this.sessionUserSignal.set(user);
-          console.log("Sesión de usuario: ", user.username);
-        } else {
-          console.error('Invalid user data in session storage.');
-          this.clearSessionStorage();
-          console.log('Sesión de usuario eliminada debido a datos inválidos.');
-        }
-      } else {
-        console.log('No hay sesión de usuario en el almacenamiento local.');
+      if (!sessionData) {
+        console.log('No session data found in localStorage.');
+        return;
+      }
+
+      let parsed: any;
+      try {
+        parsed = JSON.parse(sessionData);
+      } catch (parseError) {
+        console.error('Failed to parse session data:', parseError);
+        this.clearSessionStorage();
+        return;
+      }
+
+      console.log('Parsed sessionData:', parsed);
+
+      // Check if parsed data has the expected structure
+      if (!parsed || typeof parsed !== 'object') {
+        console.warn('Parsed data is not an object:', parsed);
+        this.clearSessionStorage();
+        return;
+      }
+
+      const { user: userData } = parsed;
+      console.log('userData extracted:', userData);
+
+      if (!userData || typeof userData !== 'object') {
+        console.warn('No valid user data in session object:', userData);
+        this.clearSessionStorage();
+        return;
+      }
+
+      // Validate all required user data fields with detailed logging
+      const validations = {
+        hasValidId: typeof userData.id === 'number',
+        hasValidUsername: typeof userData.username === 'string' && userData.username.length > 0,
+        hasValidEmail: typeof userData.email === 'string' && userData.email.length > 0,
+        hasValidRoleId: typeof userData.role_id === 'number'
+      };
+
+      console.log('Validation results:', validations);
+
+      if (!validations.hasValidId || !validations.hasValidUsername ||
+          !validations.hasValidEmail || !validations.hasValidRoleId) {
+        console.warn('Invalid user data in session storage - Validation failed:', validations);
+        console.warn('User data:', userData);
+        this.clearSessionStorage();
+        return;
+      }
+
+      console.log('User data is valid, creating User instance...');
+
+      try {
+        const user = new User({
+          id: userData.id,
+          username: userData.username,
+          password: userData.password || '',
+          enabled: userData.enabled ?? true,
+          email: userData.email,
+          address: userData.address || '',
+          registration_date: userData.registration_date || new Date().toISOString(),
+          name: userData.name || '',
+          last_name: userData.last_name || '',
+          dni: userData.dni || '',
+          income: Number(userData.income) || 0,
+          savings: Number(userData.savings) || 0,
+          has_bond: userData.has_bond ?? false,
+          has_home: userData.has_home ?? false,
+          role_id: userData.role_id
+        });
+        this.sessionUserSignal.set(user);
+        console.log('Session restored from localStorage for user:', user.username);
+      } catch (userCreationError) {
+        console.error('Error creating User instance:', userCreationError);
+        this.clearSessionStorage();
       }
     } catch (error) {
-      console.error('Error al restaurar la sesión desde el Localstorage', error);
+      console.error('Unexpected error restoring session from localStorage:', error);
       this.clearSessionStorage();
     }
   }
 
   /**
-   * Guarda la sesión del usuario en el almacenamiento local.
-   * @private
+   * Saves the current user session to local storage.
    */
-  private saveSessionToStorage(): void {
+  saveSessionToStorage(): void {
+    if (typeof localStorage === 'undefined') {
+      console.warn('LocalStorage is not available.');
+      return;
+    }
+
     try {
       const user = this.sessionUser();
 
       if (user) {
-        const sessionData = { user, timestamp: Date.now() };
+        // Serialize user with public properties (getters) - ensure correct types
+        const userPlainObject = {
+          id: Number(user.id),
+          username: String(user.username),
+          password: String(user.password),
+          enabled: Boolean(user.enabled),
+          email: String(user.email),
+          address: String(user.address || ''),
+          registration_date: String(user.registration_date),
+          name: String(user.name || ''),
+          last_name: String(user.last_name || ''),
+          dni: String(user.dni || ''),
+          income: Number(user.income),
+          savings: Number(user.savings),
+          has_bond: Boolean(user.has_bond),
+          has_home: Boolean(user.has_home),
+          role_id: Number(user.role_id)
+        };
+
+        const sessionData = { user: userPlainObject, timestamp: Date.now() };
         localStorage.setItem('credi-vivienda-session', JSON.stringify(sessionData));
-        console.log('Sesión de usuario guardada en el almacenamiento local.');
+        console.log('Session saved to localStorage:', userPlainObject);
       }
     } catch (error) {
-      console.warn("Error al guardar la sesión en el Localstorage", error);
+      console.error("Error saving session to localStorage:", error);
     }
   }
 
+  /**
+   * Clears the user session from local storage.
+   * @private
+   */
   private clearSessionStorage(): void {
     if (typeof localStorage === 'undefined') {
       console.warn('LocalStorage is not available.');
@@ -235,23 +359,25 @@ export class IamStore {
 
     try {
       localStorage.removeItem('credi-vivienda-session');
-      console.log('Sesión de usuario eliminada del almacenamiento local.');
+      console.log('Session data removed from local storage (corrupted or invalid data).');
+      console.log('Please login again to create a new session.');
     } catch (error) {
-      console.error('Error al eliminar la sessión desde el Localstorage', error);
+      console.error('Error deleting session from localStorage:', error);
     }
   }
 
   /**
-   * Obtiene un usuario por su ID.
-   * @param id - ID del usuario.
+   * Gets a user by ID.
+   * @param id - The ID of the user to retrieve.
+   * @returns A signal of the user or undefined if not found.
    */
   getUserById(id: number | null | undefined): Signal<User | undefined> {
     return computed(() => id ? this.users().find(u => u.id === id) : undefined);
   }
 
   /**
-   * Agrega un nuevo usuario.
-   * @param user - Usuario a agregar.
+   * Adds a new user.
+   * @param user - The user to add.
    */
   addUser(user: User): void {
     this.loadingSignal.set(true);
@@ -262,15 +388,15 @@ export class IamStore {
         this.loadingSignal.set(false);
       },
       error: (error) => {
-        this.errorSignal.set(this.formatError(error, 'Error al crear el usuario'));
+        this.errorSignal.set(this.formatError(error, 'Error at create new user'));
         this.loadingSignal.set(false);
       }
     })
   }
 
   /**
-   * Actualiza un usuario existente.
-   * @param updatedUser - Usuario con los datos actualizados.
+   * Updates an existing user.
+   * @param updatedUser - The user with updated information.
    */
   updateUser(updatedUser: User): void {
     this.loadingSignal.set(true);
@@ -281,20 +407,20 @@ export class IamStore {
           users.map(u => u.id === user.id ? user : u))
         if (this.sessionUser()?.id === user.id) {
           this.sessionUserSignal.set(user);
-          this.saveSessionToStorage(); // Actualiza la sesión en el almacenamiento
+          this.saveSessionToStorage();
         }
         this.loadingSignal.set(false);
       },
       error: err => {
-        this.errorSignal.set(this.formatError(err, 'Error al actualizar el usuario'));
+        this.errorSignal.set(this.formatError(err, 'Error at update user'));
         this.loadingSignal.set(false);
       }
     });
   }
 
   /**
-   * Elimina un usuario por su ID.
-   * @param id - ID del usuario a eliminar.
+   * Deletes a user by ID.
+   * @param id - The ID of the user to delete.
    */
   deleteUser(id: number): void {
     this.loadingSignal.set(true);
@@ -305,37 +431,211 @@ export class IamStore {
         this.loadingSignal.set(false);
       },
       error: err => {
-        this.errorSignal.set(this.formatError(err, 'Error al eliminar el usuario'));
+        this.errorSignal.set(this.formatError(err, 'Error at delete user'));
         this.loadingSignal.set(false);
       }
     });
   }
 
   /**
-   * Carga la lista de usuarios desde la API.
-   * @private
+   * Gets a role by ID.
+   * @param id - The ID of the role to retrieve.
+   * @returns A signal of the role or undefined if not found.
    */
-  private loadUsers(): void {
+  getRoleById(id: number | null | undefined): Signal<Role | undefined> {
+    return computed(() => id ? this.roles().find(r => r.id === id) : undefined);
+  }
+
+  /**
+   * Adds a new role.
+   * @param role - The role to add.
+   */
+  addRole(role: Role): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
-    this.iamApi.getUsers().pipe(takeUntilDestroyed()).subscribe({
-      next: users => {
-        console.log(users);
-        this.usersSignal.set(users);
+    this.iamApi.createRole(role).pipe(retry(2)).subscribe({
+      next: (createdRole) => {
+        this.rolesSignal.set([...this.roles(), createdRole]);
         this.loadingSignal.set(false);
       },
-      error: err => {
-        this.errorSignal.set(this.formatError(err, 'Error al cargar los usuarios'));
+      error: (error) => {
+        this.errorSignal.set(this.formatError(error, 'Error at create new role'));
         this.loadingSignal.set(false);
       }
     })
   }
 
   /**
-   * Formatea el mensaje de error.
-   * @param error - Error recibido.
-   * @param fallback - Mensaje de respaldo.
-   * @returns Mensaje de error formateado.
+   * Updates an existing role.
+   * @param updatedRole - The role with updated information.
+   */
+  updateRol(updatedRole: Role): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.updateRole(updatedRole).pipe(retry(2)).subscribe({
+      next: role => {
+        this.rolesSignal.update(roles =>
+          roles.map(r => r.id === role.id ? role : r))
+        this.loadingSignal.set(false);
+      },
+      error: err => {
+        this.errorSignal.set(this.formatError(err, 'Error at update role'));
+        this.loadingSignal.set(false);
+      }
+    });
+  }
+
+  /**
+   * Deletes a role by ID.
+   * @param id - The ID of the role to delete.
+   */
+  deleteRol(id: number): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.deleteRol(id).pipe(retry(2)).subscribe({
+      next: () => {
+        this.rolesSignal.update(roles => roles.filter(r => r.id !== id))
+        this.loadingSignal.set(false);
+      },
+      error: err => {
+        this.errorSignal.set(this.formatError(err, 'Error at delete role'));
+        this.loadingSignal.set(false);
+      }
+    });
+  }
+
+  /**
+   * Gets a setting by ID.
+   * @param id - The ID of the setting to retrieve.
+   * @returns A signal of the setting or undefined if not found.
+   */
+  getSettingById(id: number | null | undefined): Signal<Setting | undefined> {
+    return computed(() => id ? this.settings().find(s => s.id === id) : undefined);
+  }
+
+  /**
+   * Adds a new setting.
+   * @param setting - The setting to add.
+   */
+  addSetting(setting: Setting): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.createSetting(setting).pipe(retry(2)).subscribe({
+      next: (createdSetting) => {
+        this.settingsSignal.set([...this.settings(), createdSetting]);
+        this.loadingSignal.set(false);
+      },
+      error: (error) => {
+        this.errorSignal.set(this.formatError(error, 'Error at create new setting'));
+        this.loadingSignal.set(false);
+      }
+    })
+  }
+
+  /**
+   * Updates an existing setting.
+   * @param updatedSetting - The setting with updated information.
+   */
+  updateSetting(updatedSetting: Setting): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.updateSetting(updatedSetting).pipe(retry(2)).subscribe({
+      next: setting => {
+        this.settingsSignal.update(settings =>
+          settings.map(s => s.id === setting.id ? setting : s))
+        this.loadingSignal.set(false);
+      },
+      error: err => {
+        this.errorSignal.set(this.formatError(err, 'Error at update setting'));
+        this.loadingSignal.set(false);
+      }
+    });
+  }
+
+  /**
+   * Deletes a setting by ID.
+   * @param id - The ID of the setting to delete.
+   */
+  deleteSetting(id: number): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.deleteSetting(id).pipe(retry(2)).subscribe({
+      next: () => {
+        this.settingsSignal.update(settings => settings.filter(s => s.id !== id))
+        this.loadingSignal.set(false);
+      },
+      error: err => {
+        this.errorSignal.set(this.formatError(err, 'Error at delete setting'));
+        this.loadingSignal.set(false);
+      }
+    });
+  }
+
+  /**
+   * Loads users from the API.
+   * @private
+   */
+  private loadUsers(): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.getUsers().pipe(retry(2)).subscribe({
+      next: users => {
+        console.log('Users loaded:', users);
+        this.usersSignal.set(users);
+        this.loadingSignal.set(false);
+      },
+      error: err => {
+        this.errorSignal.set(this.formatError(err, 'Error at load users'));
+        this.loadingSignal.set(false);
+      }
+    })
+  }
+
+  /**
+   * Loads roles from the API.
+   * @private
+   */
+  private loadRoles(): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.getRoles().pipe(retry(2)).subscribe({
+      next: roles => {
+        console.log('Roles loaded:', roles);
+        this.rolesSignal.set(roles);
+        this.loadingSignal.set(false);
+      },
+      error: err => {
+        this.errorSignal.set(this.formatError(err, 'Error at load roles'));
+        this.loadingSignal.set(false);
+      }
+    })
+  }
+
+  /**
+   * Loads settings from the API.
+   * @private
+   */
+  private loadSettings(): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.iamApi.getSettings().pipe(retry(2)).subscribe({
+      next: settings => {
+        console.log('Settings loaded:', settings);
+        this.settingsSignal.set(settings);
+        this.loadingSignal.set(false);
+      },
+      error: err => {
+        this.errorSignal.set(this.formatError(err, 'Error at load settings'));
+        this.loadingSignal.set(false);
+      }
+    })
+  }
+
+  /**
+   * Format error messages.
+   * @param error - The error object.
+   * @param fallback - The fallback message.
+   * @returns The formatted error message.
    * @private
    */
   private formatError(error: any, fallback: string): string {
