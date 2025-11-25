@@ -146,6 +146,9 @@
           "partial": "Partial"
         }
       },
+      "language": {
+        "label": "Language"
+      },
       "buttons": {
         "save": "Save Changes",
         "saving": "Saving..."

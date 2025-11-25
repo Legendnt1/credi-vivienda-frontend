@@ -5,10 +5,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IamStore } from '@iam/application/iam-store';
 import { FinancialStore } from '@financial/application/financial-store';
 import { Setting } from '@iam/domain/model/setting.entity';
+import {LanguageSwitcher} from '@shared/presentation/components/language-switcher/language-switcher';
 
 @Component({
   selector: 'app-settings',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, LanguageSwitcher],
   templateUrl: './settings.html',
   styleUrl: './settings.css',
   changeDetection: ChangeDetectionStrategy.OnPush
