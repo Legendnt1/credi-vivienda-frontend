@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {IamStore} from '@iam/application/iam-store';
 import {TranslateModule} from '@ngx-translate/core';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {FrenchAmortizationService} from '@financial/application/services/french-amortization.service';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ export class Login {
   private fb = inject(FormBuilder);
   readonly store = inject(IamStore);
   private route = inject(ActivatedRoute);
-    private router = inject(Router);
+  private router = inject(Router);
 
   isPasswordVisible = signal(false);
 

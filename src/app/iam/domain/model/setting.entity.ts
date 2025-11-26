@@ -11,6 +11,10 @@ export class Setting implements BaseEntity {
   /**
    * The identifier of the user associated with the setting.
    */
+  _user_id: number;
+  /**
+   * The identifier of the user associated with the setting.
+   */
   _default_currency_catalog_id: number;
   /**
    * The default interest type for the user.
@@ -25,9 +29,10 @@ export class Setting implements BaseEntity {
    * Creates a new UserSetting instance.
    * @param setting - An object containing user setting properties.
    */
-  constructor(setting: { id: number; default_currency_catalog_id: number; default_interest_type: string;
+  constructor(setting: { id: number; user_id: number; default_currency_catalog_id: number; default_interest_type: string;
     default_grace_period: string; }) {
     this._id = setting.id;
+    this._user_id = setting.user_id;
     this._default_currency_catalog_id = setting.default_currency_catalog_id;
     this._default_interest_type = setting.default_interest_type;
     this._default_grace_period = setting.default_grace_period;
@@ -36,6 +41,8 @@ export class Setting implements BaseEntity {
   /** Getters and Setters */
   get id(): number { return this._id; }
   set id(value: number) { this._id = value; }
+  get user_id(): number { return this._user_id; }
+  set user_id(value: number) { this._user_id = value; }
   get default_currency_catalog_id(): number { return this._default_currency_catalog_id; }
   set default_currency_catalog_id(value: number) { this._default_currency_catalog_id = value; }
   get default_interest_type(): string { return this._default_interest_type; }

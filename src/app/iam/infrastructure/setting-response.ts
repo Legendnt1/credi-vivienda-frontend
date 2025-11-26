@@ -21,6 +21,10 @@ export interface SettingResource extends BaseResource {
   /**
    * The identifier of the user associated with the setting.
    */
+  user_id: number;
+  /**
+   * The identifier of the user associated with the setting.
+   */
   default_currency_catalog_id: number;
   /**
    * The default interest type for the user.

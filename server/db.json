@@ -219,15 +219,24 @@
   "settings": [
     {
       "id": 1,
-      "default_currency_catalog_id": 1,
+      "user_id": 1,
+      "default_currency_catalog_id": "2",
+      "default_interest_type": "EFFECTIVE",
+      "default_grace_period": "PARTIAL"
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "default_currency_catalog_id": "1",
       "default_interest_type": "EFFECTIVE",
       "default_grace_period": "TOTAL"
     },
     {
-      "id": 2,
-      "default_currency_catalog_id": 2,
-      "default_interest_type": "EFFECTIVE",
-      "default_grace_period": "TOTAL"
+      "id": 3,
+      "default_currency_catalog_id": 1,
+      "default_interest_type": "NOMINAL",
+      "default_grace_period": "PARTIAL",
+      "user_id": 3
     }
   ]
 }

@@ -23,6 +23,7 @@ export class SettingAssembler implements BaseAssembler<Setting, SettingResource,
   toEntityFromResource(resource: SettingResource): Setting {
     return new Setting({
       id: resource.id,
+      user_id: resource.user_id,
       default_currency_catalog_id: resource.default_currency_catalog_id,
       default_interest_type: resource.default_interest_type,
       default_grace_period: resource.default_grace_period,
@@ -36,6 +37,7 @@ export class SettingAssembler implements BaseAssembler<Setting, SettingResource,
   toResourceFromEntity(entity: Setting): SettingResource {
     return {
       id: entity.id,
+      user_id: entity.user_id,
       default_currency_catalog_id: entity.default_currency_catalog_id,
       default_interest_type: entity.default_interest_type,
       default_grace_period: entity.default_grace_period,

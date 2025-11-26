@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -40,11 +40,7 @@ export class Settings implements OnInit {
   ];
 
   // Current Setting
-  readonly currentSetting = computed(() => {
-    const userId = this.currentUser()?.id;
-    if (!userId) return null;
-    return this.iamStore.settings().find(s => s.id === userId) || null;
-  });
+  readonly currentSetting = this.iamStore.getCurrentUserSetting();
 
   constructor() {
     this.settingsForm = this.fb.group({
@@ -106,6 +102,7 @@ export class Settings implements OnInit {
       // Update existing setting
       const updatedSetting = new Setting({
         id: existingSetting.id,
+        user_id: existingSetting.user_id,
         default_currency_catalog_id: formValue.default_currency_catalog_id,
         default_interest_type: formValue.default_interest_type,
         default_grace_period: formValue.default_grace_period
@@ -114,16 +111,20 @@ export class Settings implements OnInit {
       this.iamStore.updateSetting(updatedSetting);
       this.successMessage.set('Configuración actualizada exitosamente.');
     } else {
-      // Create new setting
+      // Create new setting for this user
+      const settings = this.iamStore.settings();
+      const newId = settings.length > 0 ? Math.max(...settings.map(s => s.id)) + 1 : 1;
+
       const newSetting = new Setting({
-        id: userId,
+        id: newId,
+        user_id: userId,
         default_currency_catalog_id: formValue.default_currency_catalog_id,
         default_interest_type: formValue.default_interest_type,
         default_grace_period: formValue.default_grace_period
       });
 
       this.iamStore.addSetting(newSetting);
-      this.successMessage.set('Configuración guardada exitosamente.');
+      this.successMessage.set('Configuración creada exitosamente.');
     }
 
     this.loading.set(false);
