@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
 /**
  * Service to handle currency conversions between PEN and USD.
@@ -12,7 +12,6 @@ export class CurrencyConversionService {
    * Exchange rate: 1 USD = 3.75 PEN (configurable for development)
    */
   private readonly EXCHANGE_RATE = 3.75;
-
   /**
    * Currency catalog IDs
    */
@@ -27,30 +26,18 @@ export class CurrencyConversionService {
    * @returns Converted amount
    */
   convert(amount: number, fromCurrencyId: number, toCurrencyId: number): number {
-    console.log(`Converting: ${amount} from currency ${fromCurrencyId} to currency ${toCurrencyId}`);
-
     // If same currency, no conversion needed
     if (fromCurrencyId === toCurrencyId) {
-      console.log('  → Same currency, no conversion needed');
       return amount;
     }
-
     // Convert from USD to PEN
     if (fromCurrencyId === this.CURRENCY_USD_ID && toCurrencyId === this.CURRENCY_PEN_ID) {
-      const result = amount * this.EXCHANGE_RATE;
-      console.log(`  → USD to PEN: ${amount} * ${this.EXCHANGE_RATE} = ${result}`);
-      return result;
+      return amount * this.EXCHANGE_RATE;
     }
-
     // Convert from PEN to USD
     if (fromCurrencyId === this.CURRENCY_PEN_ID && toCurrencyId === this.CURRENCY_USD_ID) {
-      const result = amount / this.EXCHANGE_RATE;
-      console.log(`  → PEN to USD: ${amount} / ${this.EXCHANGE_RATE} = ${result}`);
-      return result;
+      return amount / this.EXCHANGE_RATE;
     }
-
-    // Default: return original amount
-    console.log('  → No conversion rule matched, returning original amount');
     return amount;
   }
 

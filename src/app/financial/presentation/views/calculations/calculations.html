@@ -5,14 +5,23 @@
   <section class="property-selection-section">
     <h2 class="section-title">{{ 'calculations.select_property' | translate }}</h2>
     <div class="property-cards">
-      @for (property of properties(); track property.id) {
+      @for (property of propertiesWithConvertedPrices(); track property.entity.id) {
         <div
           class="property-card"
-          [class.selected]="selectedProperty() === property.id"
-          (click)="onPropertySelect(property.id)">
-          <h3>{{ property.project }}</h3>
-          <p class="property-price">{{ property.price | number:'1.2-2' }} {{ currentCurrency() }}</p>
-          <p class="property-location">{{ property.address }}, {{ property.district }}, {{ property.province }}</p>
+          [class.selected]="selectedProperty() === property.entity.id"
+          (click)="onPropertySelect(property.entity.id)">
+          <h3>{{ property.entity.project }}</h3>
+          <div class="property-price-container">
+            <p class="property-price">
+              {{ formatCurrency(property.displayPrice) }}
+            </p>
+            @if (property.originalCurrencyId !== property.displayCurrencyId) {
+              <p class="original-currency" [title]="'Precio original: ' + getCurrencySymbol(property.originalCurrencyId) + ' ' + property.originalPrice.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })">
+                ({{ getCurrencyCode(property.originalCurrencyId) }})
+              </p>
+            }
+          </div>
+          <p class="property-location">{{ property.entity.address }}, {{ property.entity.district }}, {{ property.entity.province }}</p>
         </div>
       }
     </div>

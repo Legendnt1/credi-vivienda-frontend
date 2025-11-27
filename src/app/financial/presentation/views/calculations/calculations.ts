@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, computed, inject, effect, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, inject, effect } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { DecimalPipe } from '@angular/common';
@@ -10,6 +10,7 @@ import {
 import { IamStore } from '@iam/application/iam-store';
 import { FinancialStore } from '@financial/application/financial-store';
 import { ProjectsStore } from '@projects/application/projects-store';
+import { CurrencyConversionService } from '@shared/infrastructure/services/currency-conversion.service';
 import {Report} from '@financial/domain/model/report.entity';
 import {Payment} from '@financial/domain/model/payment.entity';
 
@@ -40,6 +41,7 @@ export class Calculations {
   private readonly iamStore = inject(IamStore);
   private readonly financialStore = inject(FinancialStore);
   private readonly projectsStore = inject(ProjectsStore);
+  private readonly currencyService = inject(CurrencyConversionService);
 
   // Stores signals
   readonly currentUser = this.iamStore.sessionUser;
@@ -56,14 +58,43 @@ export class Calculations {
   readonly paymentSchedule = signal<PaymentScheduleRow[]>([]);
   readonly selectedProperty = signal<number | null>(null);
   readonly isCalculated = signal(false);
-  readonly exchangeRate = signal(3.75); // Configurable exchange rate (PEN/USD)
 
-  // Computed current currency
-  readonly currentCurrency = computed(() => {
+  // Get exchange rate from service
+  readonly exchangeRate = computed(() => this.currencyService.getExchangeRate());
+
+  // Computed current currency ID
+  readonly currentCurrencyId = computed(() => {
     const settings = this.userSettings();
-    if (!settings) return 'PEN';
-    const catalog = this.currencyCatalogs().find(c => c.id === settings.default_currency_catalog_id);
+    return settings?.default_currency_catalog_id ?? 1; // Default to PEN
+  });
+
+  // Computed current currency code
+  readonly currentCurrency = computed(() => {
+    const currencyId = this.currentCurrencyId();
+    const catalog = this.currencyCatalogs().find(c => c.id === currencyId);
     return catalog?.currency || 'PEN';
+  });
+
+  // Properties with converted prices based on user's preferred currency
+  readonly propertiesWithConvertedPrices = computed(() => {
+    const props = this.properties();
+    const userCurrencyId = this.currentCurrencyId();
+
+    return props.map(property => {
+      const displayPrice = this.currencyService.convert(
+        property.price,
+        property.currency_catalog_id,
+        userCurrencyId
+      );
+
+      return {
+        entity: property,
+        displayPrice,
+        displayCurrencyId: userCurrencyId,
+        originalPrice: property.price,
+        originalCurrencyId: property.currency_catalog_id
+      };
+    });
   });
 
   // Financial metrics
@@ -71,17 +102,52 @@ export class Calculations {
   readonly tir = signal<number>(0);
   readonly cet = signal<number>(0);
 
-  // Calculation form
-  readonly calculationForm: FormGroup = this.fb.group({
-    property_id: [null, Validators.required],
-    loanAmount: [0, [Validators.required, Validators.min(0)]],
-    downPayment: [0, [Validators.min(0)]],
-    bondAmount: [0, [Validators.min(0)]],
-    termMonths: [0, [Validators.required, Validators.min(1)]],
-    baseRate: [0, [Validators.required, Validators.min(0)]],
-    rateType: ['EFFECTIVE', Validators.required],
-    frequency: ['MENSUAL', Validators.required]
-  });
+  // Calculation form - will be initialized with user settings
+  calculationForm!: FormGroup;
+
+  constructor() {
+    // Initialize form with default values
+    this.initializeForm();
+
+    // Update form when user settings change
+    effect(() => {
+      const settings = this.userSettings();
+      if (settings && this.calculationForm) {
+        this.updateFormWithSettings(settings);
+      }
+    });
+  }
+
+  /**
+   * Initialize the calculation form
+   */
+  private initializeForm(): void {
+    const settings = this.userSettings();
+
+    this.calculationForm = this.fb.group({
+      property_id: [null, Validators.required],
+      loanAmount: [0, [Validators.required, Validators.min(0)]],
+      downPayment: [0, [Validators.min(0)]],
+      bondAmount: [0, [Validators.min(0)]],
+      termMonths: [0, [Validators.required, Validators.min(1)]],
+      baseRate: [0, [Validators.required, Validators.min(0)]],
+      rateType: [settings?.default_interest_type || 'EFFECTIVE', Validators.required],
+      frequency: ['MENSUAL', Validators.required]
+    });
+  }
+
+  /**
+   * Update form with user settings
+   */
+  private updateFormWithSettings(settings: any): void {
+    // Only update if the current value is still the default
+    const currentRateType = this.calculationForm.get('rateType')?.value;
+    if (currentRateType === 'EFFECTIVE' || currentRateType === 'NOMINAL') {
+      this.calculationForm.patchValue({
+        rateType: settings.default_interest_type
+      }, { emitEvent: false });
+    }
+  }
 
   /**
    * Generate editable table rows
@@ -93,7 +159,17 @@ export class Calculations {
     const frequency = this.calculationForm.get('frequency')?.value;
     const settings = this.userSettings();
 
-    if (!termMonths || !baseRate || !settings) return;
+    console.log('=== GENERATE TABLE DEBUG ===');
+    console.log('User Settings:', settings);
+    console.log('Rate Type:', rateType);
+    console.log('Default Interest Type:', settings?.default_interest_type);
+    console.log('Default Grace Period:', settings?.default_grace_period);
+    console.log('Current Currency:', this.currentCurrency());
+
+    if (!termMonths || !baseRate || !settings) {
+      console.warn('Missing required data for table generation');
+      return;
+    }
 
     // Calculate number of periods based on frequency
     const periodsPerYear = this.getPeriodsPerYear(frequency);
@@ -104,11 +180,14 @@ export class Calculations {
     if (rateType === 'NOMINAL') {
       // Convert nominal to effective: TEA = (1 + j/m)^m - 1
       tea = Math.pow(1 + tea / periodsPerYear, periodsPerYear) - 1;
+      console.log(`Converted NOMINAL rate to TEA: ${baseRate}% → ${(tea * 100).toFixed(2)}%`);
     }
 
     // Determine grace periods based on term
     const gracePeriods = this.calculateGracePeriods(termMonths);
     const defaultGraceType = this.mapGracePeriodToType(settings.default_grace_period);
+
+    console.log(`Grace Periods: ${gracePeriods} periods with type ${defaultGraceType}`);
 
     // Generate rows
     const rows: EditableRow[] = [];
@@ -122,6 +201,7 @@ export class Calculations {
 
     this.editableRows.set(rows);
     this.isCalculated.set(false);
+    console.log(`Generated ${rows.length} rows for calculation`);
   }
 
   /**
@@ -312,20 +392,40 @@ export class Calculations {
    * Helper: Convert amount to base currency (PEN)
    */
   private convertToBaseCurrency(amount: number, fromCurrency: string): number {
-    if (fromCurrency === 'USD') {
-      return amount * this.exchangeRate();
-    }
-    return amount;
+    const fromCurrencyId = fromCurrency === 'USD' ? 2 : 1;
+    const toCurrencyId = 1; // PEN is base currency
+    return this.currencyService.convert(amount, fromCurrencyId, toCurrencyId);
   }
 
   /**
    * Helper: Convert amount from base currency (PEN)
    */
   private convertFromBaseCurrency(amount: number, toCurrency: string): number {
-    if (toCurrency === 'USD') {
-      return amount / this.exchangeRate();
-    }
-    return amount;
+    const fromCurrencyId = 1; // PEN is base currency
+    const toCurrencyId = toCurrency === 'USD' ? 2 : 1;
+    return this.currencyService.convert(amount, fromCurrencyId, toCurrencyId);
+  }
+
+  /**
+   * Format currency with proper symbol
+   */
+  formatCurrency(amount: number): string {
+    const currencyId = this.currentCurrencyId();
+    return this.currencyService.formatAmount(amount, currencyId);
+  }
+
+  /**
+   * Get currency symbol
+   */
+  getCurrencySymbol(currencyId: number): string {
+    return this.currencyService.getCurrencySymbol(currencyId);
+  }
+
+  /**
+   * Get currency code
+   */
+  getCurrencyCode(currencyId: number): string {
+    return this.currencyService.getCurrencyCode(currencyId);
   }
 
   /**
@@ -365,10 +465,11 @@ export class Calculations {
    */
   onPropertySelect(propertyId: number): void {
     this.selectedProperty.set(propertyId);
-    const property = this.getPropertyById(propertyId);
-    if (property) {
+    const propertyWithPrice = this.propertiesWithConvertedPrices().find(p => p.entity.id === propertyId);
+    if (propertyWithPrice) {
+      // Use the converted price for the loan amount
       this.calculationForm.patchValue({
-        loanAmount: property.price,
+        loanAmount: Math.round(propertyWithPrice.displayPrice * 100) / 100,
         property_id: propertyId
       });
     }

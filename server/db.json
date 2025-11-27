@@ -238,8 +238,8 @@
       "id": 1,
       "user_id": 1,
       "default_currency_catalog_id": 2,
-      "default_interest_type": "EFFECTIVE",
-      "default_grace_period": "PARTIAL"
+      "default_interest_type": "NOMINAL",
+      "default_grace_period": "TOTAL"
     },
     {
       "id": 2,
