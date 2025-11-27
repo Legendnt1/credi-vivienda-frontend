@@ -157,6 +157,9 @@
   },
   "projects": {
     "title": "Properties",
+    "currency": {
+      "viewing": "Viewing prices in"
+    },
     "filter": {
       "label": "Filter:",
       "placeholder": "Search by code, project, type or status...",
@@ -197,10 +200,18 @@
         "project": "Project",
         "type": "Type",
         "status": "Status",
+        "statusOptions": {
+          "pending": "Pending",
+          "in_evaluation": "In Evaluation",
+          "approved": "Approved",
+          "rejected": "Rejected"
+        },
         "area": "Area (m²)",
         "price": "Price",
+        "availability": "Availability",
         "address": "Address",
-        "district": "District"
+        "district": "District",
+        "province": "Province"
       },
       "placeholders": {
         "code": "E.g: 001",
@@ -209,11 +220,14 @@
         "status": "E.g: Available, Reserved",
         "area": "E.g: 80",
         "price": "E.g: 250000",
+        "availability": "10",
         "address": "Enter address",
-        "district": "Enter district"
+        "district": "Enter district",
+        "province": "Enter province"
       },
       "currency": {
-        "soles": "Soles (S/)"
+        "soles": "Soles (S/)",
+        "dollars": "Dollars (USD)"
       },
       "bondsApplicable": "Applicable Bond",
       "bonds": {
@@ -222,6 +236,8 @@
       "buttons": {
         "save": "Add",
         "saving": "Saving...",
+        "update": "Update",
+        "updating": "Updating...",
         "cancel": "Cancel"
       },
       "errors": {
@@ -231,6 +247,44 @@
   },
   "calculations": {
     "title": "Mortgage Loan Calculator",
+    "select_property": "Select a Property",
+    "calculator_title": "Loan Configuration",
+    "loan_amount": "Loan amount",
+    "enter_amount": "Enter amount",
+    "down_payment": "Down payment",
+    "enter_down_payment": "Enter down payment",
+    "bond_amount": "Bond amount",
+    "enter_bond": "Enter bond amount",
+    "term_months": "Term (months)",
+    "enter_term": "Enter term in months",
+    "base_rate": "Base rate (%)",
+    "enter_rate": "Enter rate",
+    "rate_type": "Rate type",
+    "effective": "Effective",
+    "nominal": "Nominal",
+    "frequency": "Payment frequency",
+    "monthly": "Monthly",
+    "bimonthly": "Bimonthly",
+    "quarterly": "Quarterly",
+    "fourmonthly": "Four-monthly",
+    "semiannual": "Semi-annual",
+    "annual": "Annual",
+    "generate_table": "Generate Table",
+    "editable_schedule": "Editable Period Table",
+    "period": "Period",
+    "tea_percent": "TEA (%)",
+    "grace_type": "Grace Type",
+    "normal": "Normal",
+    "total_grace": "Total",
+    "partial_grace": "Partial",
+    "calculate": "Calculate",
+    "payment_plan": "Payment Plan (French Method)",
+    "month": "Month",
+    "installment": "Installment",
+    "interest": "Interest",
+    "amortization": "Amortization",
+    "balance_with_bond": "Balance with Bond",
+    "save_report": "Save Report",
     "form": {
       "loanAmount": "Loan amount:",
       "term": "Term (months):",

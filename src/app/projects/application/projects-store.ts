@@ -4,6 +4,9 @@ import {ProjectsApi} from '@projects/infrastructure/projects-api';
 import {retry} from 'rxjs';
 import {PropertyProject} from '@projects/domain/property-project.entity';
 
+/**
+ * Service to manage the Projects Store.
+ */
 @Injectable({
   providedIn: 'root'
 })

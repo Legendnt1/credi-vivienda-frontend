@@ -1,7 +1,23 @@
 <div class="projects-container">
   <!-- Header Section -->
   <div class="projects-header">
-    <h1 class="projects-title">{{ 'projects.title' | translate }}</h1>
+    <div class="header-top">
+      <h1 class="projects-title">{{ 'projects.title' | translate }}</h1>
+
+      <!-- Currency Indicator -->
+      <div class="currency-indicator">
+        <svg class="icon-small">
+          <use href="assets/icons/sprite.symbol.svg#dollar-sign"></use>
+        </svg>
+        <span class="currency-label">{{ 'projects.currency.viewing' | translate }}: </span>
+        <strong>{{ getUserCurrencyName() }}</strong>
+        @if (userCurrencyId() !== 1) {
+          <span class="exchange-info" [title]="'Tipo de cambio: 1 USD = S/ ' + currencyService.getExchangeRate()">
+            (TC: {{ currencyService.getExchangeRate() }})
+          </span>
+        }
+      </div>
+    </div>
 
     <!-- Filter Section -->
     <div class="filter-section">
@@ -86,25 +102,36 @@
               </td>
             </tr>
           } @else {
-            @for (property of filteredProperties(); track property.id) {
+            @for (property of filteredProperties(); track property.entity.id) {
               <tr>
-                <td class="code-cell">{{ property.property_code }}</td>
-                <td class="project-cell">{{ property.project }}</td>
-                <td>{{ property.type }}</td>
-                <td>{{ property.area }}</td>
-                <td class="price-cell">{{ formatCurrency(property.price) }}</td>
+                <td class="code-cell">{{ property.entity.property_code }}</td>
+                <td class="project-cell">{{ property.entity.project }}</td>
+                <td>{{ property.entity.type }}</td>
+                <td>{{ property.entity.area }} m²</td>
+                <td class="price-cell">
+                  <div class="price-display">
+                    <span class="converted-price">
+                      {{ formatCurrency(property.displayPrice, property.displayCurrencyId) }}
+                    </span>
+                    @if (property.originalCurrencyId !== property.displayCurrencyId) {
+                      <span class="original-price" [title]="'Precio original: ' + formatCurrency(property.originalPrice, property.originalCurrencyId)">
+                        ({{ getCurrencyCode(property.originalCurrencyId) }})
+                      </span>
+                    }
+                  </div>
+                </td>
                 <td>
-                  <span class="status-badge" [ngClass]="getStatusClass(property.status)">
-                    {{ property.status }}
+                  <span class="status-badge" [ngClass]="getStatusClass(property.entity.status)">
+                    {{ getStatusTranslation(property.entity.status) }}
                   </span>
                 </td>
-                <td class="availability-cell">{{ property.availability }}</td>
+                <td class="availability-cell">{{ property.entity.availability }}</td>
                 <td>
                   <div class="action-buttons">
                     <button
                       type="button"
                       class="btn-icon"
-                      (click)="onEditProperty(property)"
+                      (click)="onEditProperty(property.entity)"
                       [title]="'projects.buttons.edit' | translate">
                       <svg class="icon-small">
                         <use href="assets/icons/sprite.symbol.svg#edit"></use>
@@ -113,7 +140,7 @@
                     <button
                       type="button"
                       class="btn-icon btn-danger"
-                      (click)="onDeleteProperty(property.id)"
+                      (click)="onDeleteProperty(property.entity.id)"
                       [title]="'projects.buttons.delete' | translate">
                       <svg class="icon-small">
                         <use href="assets/icons/sprite.symbol.svg#x"></use>
@@ -223,14 +250,34 @@
                   <label for="status" class="form-label">
                     {{ 'projects.form.fields.status' | translate }}
                   </label>
-                  <input
-                    type="text"
+                  <select
                     id="status"
                     formControlName="status"
                     class="form-input"
-                    [class.invalid]="propertyForm.get('status')?.invalid && propertyForm.get('status')?.touched"
-                    [placeholder]="'projects.form.placeholders.status' | translate">
+                    [class.invalid]="propertyForm.get('status')?.invalid && propertyForm.get('status')?.touched">
+                    <option value="pending">{{ 'projects.form.fields.statusOptions.pending' | translate }}</option>
+                    <option value="in_evaluation">{{ 'projects.form.fields.statusOptions.in_evaluation' | translate }}</option>
+                    <option value="approved">{{ 'projects.form.fields.statusOptions.approved' | translate }}</option>
+                    <option value="rejected">{{ 'projects.form.fields.statusOptions.rejected' | translate }}</option>
+                  </select>
                   @if (propertyForm.get('status')?.invalid && propertyForm.get('status')?.touched) {
+                    <span class="error-message">{{ 'projects.form.errors.required' | translate }}</span>
+                  }
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="availabitility" class="form-label">
+                    {{ 'projects.form.fields.availability' | translate }}
+                  </label>
+                  <input
+                      type="number"
+                      id="availability"
+                      formControlName="availability"
+                      class="form-input"
+                      [class.invalid]="propertyForm.get('availability')?.invalid && propertyForm.get('availability')?.touched"
+                      [placeholder]="'projects.form.placeholders.availability' | translate"/>
+                  @if (propertyForm.get('availability')?.invalid && propertyForm.get('availability')?.touched) {
                     <span class="error-message">{{ 'projects.form.errors.required' | translate }}</span>
                   }
                 </div>
@@ -283,12 +330,19 @@
               </div>
 
               <div class="form-row form-row-buttons">
-                <button type="button" class="btn-currency active">
+                <button
+                  type="button"
+                  class="btn-currency"
+                  [class.active]="propertyForm.get('currency_catalog_id')?.value === 1"
+                  (click)="onSelectCurrency(1)">
                   {{ 'projects.form.currency.soles' | translate }}
                 </button>
-                <span class="bonds-label">{{ 'projects.form.bondsApplicable' | translate }}</span>
-                <button type="button" class="btn-bond">
-                  {{ 'projects.form.bonds.techoPropio' | translate }}
+                <button
+                  type="button"
+                  class="btn-currency"
+                  [class.active]="propertyForm.get('currency_catalog_id')?.value === 2"
+                  (click)="onSelectCurrency(2)">
+                  {{ 'projects.form.currency.dollars' | translate }}
                 </button>
               </div>
             </div>
@@ -321,6 +375,17 @@
                     class="form-input"
                     [placeholder]="'projects.form.placeholders.district' | translate">
                 </div>
+                <div class="form-group">
+                  <label for="province" class="form-label">
+                    {{ 'projects.form.fields.province' | translate }}
+                  </label>
+                  <input
+                    type="text"
+                    id="province"
+                    formControlName="province"
+                    class="form-input"
+                    [placeholder]="'projects.form.placeholders.province' | translate">
+                </div>
               </div>
             </div>
 
@@ -331,9 +396,17 @@
                 class="btn-submit"
                 [disabled]="formSubmitting()">
                 @if (formSubmitting()) {
-                  {{ 'projects.form.buttons.saving' | translate }}
+                  @if (editingProject()) {
+                    {{ 'projects.form.buttons.updating' | translate }}
+                  } @else {
+                    {{ 'projects.form.buttons.saving' | translate }}
+                  }
                 } @else {
-                  {{ 'projects.form.buttons.save' | translate }}
+                  @if (editingProject()) {
+                    {{ 'projects.form.buttons.update' | translate }}
+                  } @else {
+                    {{ 'projects.form.buttons.save' | translate }}
+                  }
                 }
               </button>
               <button

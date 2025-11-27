@@ -44,7 +44,7 @@ export class Settings implements OnInit {
 
   constructor() {
     this.settingsForm = this.fb.group({
-      default_currency_catalog_id: [null, Validators.required],
+      default_currency_catalog_id: [1, Validators.required],
       default_interest_type: ['EFFECTIVE', Validators.required],
       default_grace_period: ['TOTAL', Validators.required]
     });
@@ -103,7 +103,7 @@ export class Settings implements OnInit {
       const updatedSetting = new Setting({
         id: existingSetting.id,
         user_id: existingSetting.user_id,
-        default_currency_catalog_id: formValue.default_currency_catalog_id,
+        default_currency_catalog_id: parseInt(formValue.default_currency_catalog_id),
         default_interest_type: formValue.default_interest_type,
         default_grace_period: formValue.default_grace_period
       });

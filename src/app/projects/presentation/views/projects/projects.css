@@ -10,11 +10,54 @@
   margin-bottom: 2rem;
 }
 
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
 .projects-title {
   font-size: 2rem;
   font-weight: 700;
   color: var(--color-primary);
-  margin: 0 0 2rem 0;
+  margin: 0;
+}
+
+/* Currency Indicator */
+.currency-indicator {
+  margin-right: 4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-tertiary);
+  color: var(--color-neutral-dark);
+  border-radius: 0.75rem;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.currency-indicator .icon-small {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-primary);
+}
+
+.currency-label {
+  font-weight: 500;
+}
+
+.currency-indicator strong {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.exchange-info {
+  font-size: 0.85rem;
+  color: var(--color-neutral-dark);
+  opacity: 0.8;
+  cursor: help;
 }
 
 /* Filter Section */
@@ -216,7 +259,27 @@
 
 .price-cell {
   font-weight: 600;
-  color: var(--color-success);
+  color: var(--color-neutral-dark);
+}
+
+.price-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.converted-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.original-price {
+  font-size: 0.75rem;
+  color: var(--color-neutral-dark);
+  opacity: 0.7;
+  font-style: italic;
+  cursor: help;
 }
 
 .availability-cell {
@@ -235,25 +298,25 @@
   letter-spacing: 0.5px;
 }
 
-.status-available {
+.status-approved {
   background: rgba(46, 125, 50, 0.15);
   color: var(--color-success);
   border: 1px solid var(--color-success);
 }
 
-.status-reserved {
+.status-pending {
   background: rgba(242, 170, 31, 0.15);
   color: var(--color-secondary);
   border: 1px solid var(--color-secondary);
 }
 
-.status-sold {
+.status-rejected {
   background: rgba(198, 40, 40, 0.15);
   color: var(--color-error);
   border: 1px solid var(--color-error);
 }
 
-.status-construction {
+.status-evaluation {
   background: rgba(0, 0, 92, 0.15);
   color: var(--color-primary);
   border: 1px solid var(--color-primary);

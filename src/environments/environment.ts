@@ -12,4 +12,5 @@ export const environment = {
   crediViviendaProviderPropertiesProjectsEndpointPath: '/property_projects',
   crediViviendaProviderPaymentsEndpointPath: '/payments',
   crediViviendaProviderCurrencyCatalogsEndpointPath: '/currency_catalogs',
+  crediViviendaProviderReportsEndpointPath: '/reports',
 };

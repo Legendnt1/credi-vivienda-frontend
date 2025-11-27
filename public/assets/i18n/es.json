@@ -157,6 +157,9 @@
   },
   "projects": {
     "title": "Inmuebles",
+    "currency": {
+      "viewing": "Viendo precios en"
+    },
     "filter": {
       "label": "Filtrar:",
       "placeholder": "Buscar por código, proyecto, tipo o estado...",
@@ -197,10 +200,18 @@
         "project": "Proyecto",
         "type": "Tipo",
         "status": "Estado",
+        "statusOptions": {
+          "pending": "Pendiente",
+          "in_evaluation": "En evaluación",
+          "approved": "Aprobado",
+          "rejected": "Rechazado"
+        },
         "area": "Área (m²)",
         "price": "Precio",
+        "availability": "Disponibilidad",
         "address": "Dirección",
-        "district": "Distrito"
+        "district": "Distrito",
+        "province": "Provincia"
       },
       "placeholders": {
         "code": "Ej: 001",
@@ -209,11 +220,14 @@
         "status": "Ej: Disponible, Reservado",
         "area": "Ej: 80",
         "price": "Ej: 250000",
+        "availability": "10",
         "address": "Ingrese la dirección",
-        "district": "Ingrese el distrito"
+        "district": "Ingrese el distrito",
+        "province": "Ingrese la provincia"
       },
       "currency": {
-        "soles": "Soles (S/)"
+        "soles": "Soles (S/)",
+        "dollars": "Dólares (USD)"
       },
       "bondsApplicable": "Bono aplicable",
       "bonds": {
@@ -222,6 +236,8 @@
       "buttons": {
         "save": "Agregar",
         "saving": "Guardando...",
+        "update": "Actualizar",
+        "updating": "Actualizando...",
         "cancel": "Cancelar"
       },
       "errors": {
@@ -231,6 +247,44 @@
   },
   "calculations": {
     "title": "Calculadora de Préstamo Hipotecario",
+    "select_property": "Selecciona un Inmueble",
+    "calculator_title": "Configuración del Préstamo",
+    "loan_amount": "Monto del préstamo",
+    "enter_amount": "Ingrese el monto",
+    "down_payment": "Cuota inicial",
+    "enter_down_payment": "Ingrese la cuota inicial",
+    "bond_amount": "Monto del bono",
+    "enter_bond": "Ingrese el monto del bono",
+    "term_months": "Plazo (meses)",
+    "enter_term": "Ingrese el plazo en meses",
+    "base_rate": "Tasa base (%)",
+    "enter_rate": "Ingrese la tasa",
+    "rate_type": "Tipo de tasa",
+    "effective": "Efectiva",
+    "nominal": "Nominal",
+    "frequency": "Frecuencia de pagos",
+    "monthly": "Mensual",
+    "bimonthly": "Bimestral",
+    "quarterly": "Trimestral",
+    "fourmonthly": "Cuatrimestral",
+    "semiannual": "Semestral",
+    "annual": "Anual",
+    "generate_table": "Generar Tabla",
+    "editable_schedule": "Tabla Editable de Períodos",
+    "period": "Período",
+    "tea_percent": "TEA (%)",
+    "grace_type": "Tipo de Gracia",
+    "normal": "Normal",
+    "total_grace": "Total",
+    "partial_grace": "Parcial",
+    "calculate": "Calcular",
+    "payment_plan": "Plan de Pagos (Método Francés)",
+    "month": "Mes",
+    "installment": "Cuota",
+    "interest": "Interés",
+    "amortization": "Amortización",
+    "balance_with_bond": "Saldo con Bono",
+    "save_report": "Guardar Reporte",
     "form": {
       "loanAmount": "Monto del préstamo:",
       "term": "Plazo (meses):",

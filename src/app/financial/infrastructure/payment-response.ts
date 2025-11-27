@@ -19,39 +19,43 @@ export interface PaymentResource extends BaseResource {
    */
   id: number;
   /**
-   * The payment period.
+   * The report identifier associated with the payment.
+   */
+  report_id: number;
+  /**
+   * The period number of the payment.
    */
   period: number;
   /**
-   * The payment date.
+   * The type of grace period for the payment.
    */
-  payment_date: string;
+  grace_type: string;
   /**
-   * The payment amount.
+   * The annual interest rate for the payment.
    */
-  payment_amount: number;
+  annual_rate: number;
   /**
-   * The capital amortization amount.
+   * The effective period interest rate for the payment.
    */
-  capital_amortization: number;
+  effective_period_rate: number;
   /**
-   * The interest paid amount.
+   * The initial balance before the payment.
+   */
+  initial_balance: number;
+  /**
+   * The interest paid in the payment.
    */
   interest_paid: number;
   /**
-   * The effective rate for the period.
+   * The total payment amount.
    */
-  effective_rate_period: number;
+  payment_amount: number;
   /**
-   * The type of grace period.
+   * The capital amortization portion of the payment.
    */
-  grace_type: string;
+  capital_amortization: number;
   /**
    * The remaining balance after the payment.
    */
   remaining_balance: number;
-  /**
-   * The credit identifier associated with the payment.
-   */
-  credit_id: number;
 }

@@ -65,13 +65,13 @@
   "bonds": [
     {
       "id": 1,
-      "name": "Techo Propio",
-      "total_bond": 46545
+      "name": "No Bono",
+      "total_bond": 0
     },
     {
       "id": 2,
-      "name": "Bono del Buen Pagador",
-      "total_bond": 25000
+      "name": "Techo Propio",
+      "total_bond": 46545
     }
   ],
   "property_projects": [
@@ -82,8 +82,12 @@
       "type": "Departamento",
       "area": 72,
       "price": 220000,
+      "currency_catalog_id": 1,
       "availability": 5,
-      "status": "Disponible"
+      "status": "approved",
+      "address": "Av. Las Flores 123",
+      "district": "San Isidro",
+      "province": "Lima"
     },
     {
       "id": 2,
@@ -92,8 +96,12 @@
       "type": "Casa",
       "area": 120,
       "price": 320000,
+      "currency_catalog_id": 1,
       "availability": 2,
-      "status": "Reservado"
+      "status": "in_evaluation",
+      "address": "Calle El Sol 456",
+      "district": "Miraflores",
+      "province": "Lima"
     },
     {
       "id": 3,
@@ -102,8 +110,26 @@
       "type": "Departamento",
       "area": 85,
       "price": 280000,
+      "currency_catalog_id": 1,
       "availability": 3,
-      "status": "Vendido"
+      "status": "pending",
+      "address": "Av. Miramar 789",
+      "district": "Barranco",
+      "province": "Lima"
+    },
+    {
+      "id": 4,
+      "property_code": "004",
+      "project": "Torre Premium",
+      "type": "Departamento",
+      "area": 95,
+      "price": 85000,
+      "currency_catalog_id": 2,
+      "availability": 10,
+      "status": "approved",
+      "address": "Av. Conquistadores 1500",
+      "district": "San Isidro",
+      "province": "Lima"
     }
   ],
   "currency_catalogs": [
@@ -169,65 +195,56 @@
   "payments": [
     {
       "id": 1,
+      "report_id": 1,
       "period": 1,
-      "payment_date": "2025-02-28",
-      "payment_amount": 2100.5,
-      "capital_amortization": 800.3,
-      "interest_paid": 1300.2,
-      "effective_rate_period": 0.0075,
-      "grace_type": "SIN_PLAZO",
-      "remaining_balance": 175699.7,
-      "credit_id": 1
+      "grace_type": "TOTAL",
+      "annual_rate": 8.5,
+      "effective_period_rate": 0.0075,
+      "initial_balance": 151000,
+      "interest_paid": 1132.5,
+      "payment_amount": 0,
+      "capital_amortization": 0,
+      "remaining_balance": 152132.5
     },
     {
       "id": 2,
+      "report_id": 1,
       "period": 2,
-      "payment_date": "2025-03-31",
-      "payment_amount": 2100.5,
-      "capital_amortization": 810.1,
-      "interest_paid": 1290.4,
-      "effective_rate_period": 0.0075,
-      "grace_type": "SIN_PLAZO",
-      "remaining_balance": 174889.6,
-      "credit_id": 1
+      "grace_type": "TOTAL",
+      "annual_rate": 8.5,
+      "effective_period_rate": 0.0075,
+      "initial_balance": 152132.5,
+      "interest_paid": 1140.99,
+      "payment_amount": 0,
+      "capital_amortization": 0,
+      "remaining_balance": 153273.49
     },
     {
       "id": 3,
-      "period": 1,
-      "payment_date": "2025-01-31",
-      "payment_amount": 1850.75,
-      "capital_amortization": 650.4,
-      "interest_paid": 1200.35,
-      "effective_rate_period": 0.0065,
-      "grace_type": "GRACIA_PARCIAL",
-      "remaining_balance": 214349.6,
-      "credit_id": 2
-    },
-    {
-      "id": 4,
-      "period": 1,
-      "payment_date": "2025-04-30",
-      "payment_amount": 2800,
-      "capital_amortization": 1900,
-      "interest_paid": 900,
-      "effective_rate_period": 0.0056,
-      "grace_type": "SIN_PLAZO",
-      "remaining_balance": 168100,
-      "credit_id": 3
+      "report_id": 1,
+      "period": 3,
+      "grace_type": "TOTAL",
+      "annual_rate": 8.5,
+      "effective_period_rate": 0.0075,
+      "initial_balance": 153273.49,
+      "interest_paid": 1149.55,
+      "payment_amount": 0,
+      "capital_amortization": 0,
+      "remaining_balance": 154423.04
     }
   ],
   "settings": [
     {
       "id": 1,
       "user_id": 1,
-      "default_currency_catalog_id": "2",
+      "default_currency_catalog_id": 2,
       "default_interest_type": "EFFECTIVE",
       "default_grace_period": "PARTIAL"
     },
     {
       "id": 2,
       "user_id": 2,
-      "default_currency_catalog_id": "1",
+      "default_currency_catalog_id": 1,
       "default_interest_type": "EFFECTIVE",
       "default_grace_period": "TOTAL"
     },
@@ -237,6 +254,48 @@
       "default_interest_type": "NOMINAL",
       "default_grace_period": "PARTIAL",
       "user_id": 3
+    }
+  ],
+  "reports": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "credit_id": 1,
+      "property_project_id": 1,
+      "settings_id": 1,
+      "generated_at": "2025-11-26T10:30:00Z",
+      "price": 220000,
+      "down_payment": 44000,
+      "bond_applied": 25000,
+      "years": 20,
+      "frequency": "MENSUAL",
+      "base_tea": 8.5,
+      "total_installments_paid": 250000.5,
+      "total_amortization": 150000,
+      "total_interest": 100000.5,
+      "van": 12345.67,
+      "tir": 0.12,
+      "cet": 0.105
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "credit_id": 1,
+      "property_project_id": 1,
+      "settings_id": 1,
+      "generated_at": "2025-11-26T23:32:11.588Z",
+      "price": 225000,
+      "down_payment": 5000,
+      "bond_applied": 2500,
+      "years": 2.5,
+      "frequency": "MENSUAL",
+      "base_tea": 5.67,
+      "total_installments_paid": 217674.6500000001,
+      "total_amortization": 217500.00000000003,
+      "total_interest": 174.65,
+      "van": null,
+      "tir": 0.05668527042290705,
+      "cet": 0.03175454545454546
     }
   ]
 }

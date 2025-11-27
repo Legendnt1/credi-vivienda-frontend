@@ -1,97 +1,212 @@
 <div class="calculations-container">
   <h1 class="page-title">{{ 'calculations.title' | translate }}</h1>
 
+  <!-- Property Selection -->
+  <section class="property-selection-section">
+    <h2 class="section-title">{{ 'calculations.select_property' | translate }}</h2>
+    <div class="property-cards">
+      @for (property of properties(); track property.id) {
+        <div
+          class="property-card"
+          [class.selected]="selectedProperty() === property.id"
+          (click)="onPropertySelect(property.id)">
+          <h3>{{ property.project }}</h3>
+          <p class="property-price">{{ property.price | number:'1.2-2' }} {{ currentCurrency() }}</p>
+          <p class="property-location">{{ property.address }}, {{ property.district }}, {{ property.province }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
   <!-- Calculation Form -->
-  <div class="calculation-form-card">
-    <form [formGroup]="calculationForm" (ngSubmit)="onCalculate()">
+  <section class="calculation-form-card">
+    <h2 class="section-title">{{ 'calculations.calculator_title' | translate }}</h2>
+    <form [formGroup]="calculationForm">
       <div class="form-row">
-        <label class="form-label">{{ 'calculations.form.loanAmount' | translate }}</label>
+        <label class="form-label">{{ 'calculations.loan_amount' | translate }}</label>
         <input
           type="number"
           class="form-input"
           formControlName="loanAmount"
-          placeholder="0.00"
-        />
+          [placeholder]="'calculations.enter_amount' | translate">
       </div>
 
       <div class="form-row">
-        <label class="form-label">{{ 'calculations.form.term' | translate }}</label>
+        <label class="form-label">{{ 'calculations.down_payment' | translate }}</label>
         <input
           type="number"
           class="form-input"
-          formControlName="term"
-          placeholder="0"
-        />
+          formControlName="downPayment"
+          [placeholder]="'calculations.enter_down_payment' | translate">
       </div>
 
       <div class="form-row">
-        <label class="form-label">{{ 'calculations.form.interestRate' | translate }}</label>
+        <label class="form-label">{{ 'calculations.bond_amount' | translate }}</label>
         <input
           type="number"
           class="form-input"
-          formControlName="interestRate"
-          placeholder="0.00"
+          formControlName="bondAmount"
+          [placeholder]="'calculations.enter_bond' | translate">
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">{{ 'calculations.term_months' | translate }}</label>
+        <input
+          type="number"
+          class="form-input"
+          formControlName="termMonths"
+          [placeholder]="'calculations.enter_term' | translate">
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">{{ 'calculations.base_rate' | translate }}</label>
+        <input
+          type="number"
           step="0.01"
-        />
+          class="form-input"
+          formControlName="baseRate"
+          [placeholder]="'calculations.enter_rate' | translate">
       </div>
 
       <div class="form-row">
-        <label class="form-label">{{ 'calculations.form.rateType' | translate }}</label>
-        <input
-          type="text"
-          class="form-input"
-          formControlName="rateType"
-          placeholder=""
-        />
+        <label class="form-label">{{ 'calculations.rate_type' | translate }}</label>
+        <select class="form-input" formControlName="rateType">
+          <option value="EFFECTIVE">{{ 'calculations.effective' | translate }}</option>
+          <option value="NOMINAL">{{ 'calculations.nominal' | translate }}</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">{{ 'calculations.frequency' | translate }}</label>
+        <select class="form-input" formControlName="frequency">
+          <option value="MENSUAL">{{ 'calculations.monthly' | translate }}</option>
+          <option value="BIMESTRAL">{{ 'calculations.bimonthly' | translate }}</option>
+          <option value="TRIMESTRAL">{{ 'calculations.quarterly' | translate }}</option>
+          <option value="CUATRIMESTRAL">{{ 'calculations.fourmonthly' | translate }}</option>
+          <option value="SEMESTRAL">{{ 'calculations.semiannual' | translate }}</option>
+          <option value="ANUAL">{{ 'calculations.annual' | translate }}</option>
+        </select>
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="btn-calculate" [disabled]="calculationForm.invalid">
-          {{ 'calculations.form.calculate' | translate }}
+        <button
+          type="button"
+          class="btn-calculate"
+          (click)="onGenerateTable()"
+          [disabled]="!calculationForm.get('termMonths')?.value || !calculationForm.get('baseRate')?.value">
+          {{ 'calculations.generate_table' | translate }}
         </button>
       </div>
     </form>
-  </div>
+  </section>
 
-  <!-- Payment Plan Section -->
-  <h2 class="section-title">{{ 'calculations.paymentPlan.title' | translate }}</h2>
+  <!-- Editable Table Section -->
+  @if (editableRows().length > 0) {
+    <section class="editable-table-section">
+      <h2 class="section-title">{{ 'calculations.editable_schedule' | translate }}</h2>
+      <div class="editable-table">
+        <table>
+          <thead>
+            <tr>
+              <th>{{ 'calculations.period' | translate }}</th>
+              <th>{{ 'calculations.tea_percent' | translate }}</th>
+              <th>{{ 'calculations.grace_type' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of editableRows(); track row.period; let i = $index) {
+              <tr>
+                <td>{{ row.period }}</td>
+                <td>
+                  <input
+                    type="number"
+                    step="0.01"
+                    class="editable-input"
+                    [value]="row.tea"
+                    (input)="updateRowTea(i, +$any($event.target).value)">
+                </td>
+                <td>
+                  <select
+                    class="editable-select"
+                    [value]="row.graceType"
+                    (change)="updateRowGraceType(i, $any($event.target).value)">
+                    <option value="SIN_PLAZO">{{ 'calculations.normal' | translate }}</option>
+                    <option value="TOTAL">{{ 'calculations.total_grace' | translate }}</option>
+                    <option value="PARCIAL">{{ 'calculations.partial_grace' | translate }}</option>
+                  </select>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
-  <div class="payment-plan-table">
-    <table>
-      <thead>
-        <tr>
-          <th>{{ 'calculations.paymentPlan.table.month' | translate }}</th>
-          <th>{{ 'calculations.paymentPlan.table.installment' | translate }}</th>
-          <th>{{ 'calculations.paymentPlan.table.interest' | translate }}</th>
-          <th>{{ 'calculations.paymentPlan.table.amortization' | translate }}</th>
-          <th>{{ 'calculations.paymentPlan.table.balanceWithBond' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (payment of mockPaymentSchedule(); track payment.month) {
-          <tr>
-            <td>{{ payment.month }}</td>
-            <td>S/ {{ payment.installment | number:'1.2-2' }}</td>
-            <td>S/ {{ payment.interest | number:'1.2-2' }}</td>
-            <td>S/ {{ payment.amortization | number:'1.2-2' }}</td>
-            <td>S/ {{ payment.balanceWithBond | number:'1.2-2' }}</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn-calculate"
+          (click)="onCalculate()">
+          {{ 'calculations.calculate' | translate }}
+        </button>
+      </div>
+    </section>
+  }
 
-  <!-- Summary Section -->
-  <div class="summary-cards">
-    <div class="summary-card">
-      <span class="summary-label">{{ 'calculations.summary.van' | translate }}: S/ {{ mockSummary().van | number:'1.2-2' }}</span>
-    </div>
-    <div class="summary-card">
-      <span class="summary-label">{{ 'calculations.summary.tir' | translate }}: {{ mockSummary().tir }}%</span>
-    </div>
-    <div class="summary-card">
-      <span class="summary-label">{{ 'calculations.summary.cet' | translate }}: {{ mockSummary().cet }}%</span>
-    </div>
-  </div>
+  <!-- Payment Schedule Section -->
+  @if (isCalculated() && paymentSchedule().length > 0) {
+    <section class="payment-schedule-section">
+      <h2 class="section-title">{{ 'calculations.payment_plan' | translate }}</h2>
+      <div class="payment-plan-table">
+        <table>
+          <thead>
+            <tr>
+              <th>{{ 'calculations.month' | translate }}</th>
+              <th>{{ 'calculations.installment' | translate }}</th>
+              <th>{{ 'calculations.interest' | translate }}</th>
+              <th>{{ 'calculations.amortization' | translate }}</th>
+              <th>{{ 'calculations.balance_with_bond' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of paymentSchedule(); track row.month) {
+              <tr>
+                <td>{{ row.month }}</td>
+                <td>{{ row.installment | number:'1.2-2' }}</td>
+                <td>{{ row.interest | number:'1.2-2' }}</td>
+                <td>{{ row.amortization | number:'1.2-2' }}</td>
+                <td>{{ row.balanceWithBond | number:'1.2-2' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <p class="summary-label">VAN</p>
+          <p class="summary-value">{{ van() | number:'1.2-2' }} {{ currentCurrency() }}</p>
+        </div>
+        <div class="summary-card">
+          <p class="summary-label">TIR</p>
+          <p class="summary-value">{{ tir() | number:'1.2-2' }}%</p>
+        </div>
+        <div class="summary-card">
+          <p class="summary-label">CET</p>
+          <p class="summary-value">{{ cet() | number:'1.2-2' }}%</p>
+        </div>
+      </div>
+
+      <!-- Save Report Button -->
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn-save-report"
+          (click)="onSaveReport()">
+          {{ 'calculations.save_report' | translate }}
+        </button>
+      </div>
+    </section>
+  }
 </div>
 

@@ -321,6 +321,19 @@ export class FrenchAmortizationService {
   }
 
   /**
+   * Convert nominal annual interest rate to effective annual rate.
+   * @param nominalPercent - Nominal annual interest rate in percentage.
+   * @param m - Number of compounding periods per year.
+   * @returns Effective annual interest rate in percentage.
+   * @private
+   */
+  private nominalToEffectiveAnnual(nominalPercent: number, m: number): number {
+    const j = nominalPercent / 100;// Convert percentage to decimal
+    const tea = Math.pow(1 + j / m, m) - 1; // TEA = (1 + j/m)^m - 1
+    return tea * 100; // Convert back to percentage
+  }
+
+  /**
    * Round a number to 2 decimal places.
    * @param value - The number to round.
    * @returns The rounded number.
@@ -351,6 +364,15 @@ export class FrenchAmortizationService {
       partialPeriods: credit.grace_period_partial
     };
 
+    let teaPercent = credit.interest_rate;
+
+    if (credit.interest_type === 'NOMINAL') {
+      const daysInYear = 360;
+      const frequencyDays = this.FREQUENCY_DAYS[credit.payment_frequency as PaymentFrequency];
+      const m = daysInYear / frequencyDays;
+      teaPercent = this.nominalToEffectiveAnnual(credit.interest_rate, m);
+    }
+
     return {
       price: property.price,
       downPaymentAmount: credit.down_payment,
@@ -358,8 +380,8 @@ export class FrenchAmortizationService {
       years,
       // Assign payment frequency directly from credit entity
       frequency: credit.payment_frequency as PaymentFrequency,
-      // Assume a single interest rate for simplicity
-      annualRates: [credit.interest_rate],
+      // Use single annual rate from credit entity
+      annualRates: [teaPercent],
       graceConfig,
       daysInYear: 360
     };
