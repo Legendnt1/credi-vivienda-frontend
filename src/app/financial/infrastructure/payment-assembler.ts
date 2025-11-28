@@ -30,9 +30,16 @@ export class PaymentAssembler implements BaseAssembler<Payment, PaymentResource,
       effective_period_rate: resource.effective_period_rate,
       initial_balance: resource.initial_balance,
       interest_paid: resource.interest_paid,
-      payment_amount: resource.payment_amount,
+      installment_base: resource.installment_base,
       capital_amortization: resource.capital_amortization,
+      life_insurance: resource.life_insurance,
+      risk_insurance: resource.risk_insurance,
+      commission: resource.commission,
+      charges: resource.charges,
+      admin_expense: resource.admin_expense,
+      total_payment: resource.total_payment,
       remaining_balance: resource.remaining_balance,
+      cash_flow: resource.cash_flow,
     });
   }
 
@@ -51,9 +58,17 @@ export class PaymentAssembler implements BaseAssembler<Payment, PaymentResource,
       effective_period_rate: entity.effective_period_rate,
       initial_balance: entity.initial_balance,
       interest_paid: entity.interest_paid,
-      payment_amount: entity.payment_amount,
+      installment_base: entity.installment_base,
       capital_amortization: entity.capital_amortization,
+      life_insurance: entity.life_insurance,
+      risk_insurance: entity.risk_insurance,
+      commission: entity.commission,
+      charges: entity.charges,
+      admin_expense: entity.admin_expense,
+      total_payment: entity.total_payment,
       remaining_balance: entity.remaining_balance,
+      cash_flow: entity.cash_flow,
+
     } as PaymentResource;
   }
 

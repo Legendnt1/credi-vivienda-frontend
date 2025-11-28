@@ -54,6 +54,50 @@ export interface ReportResource extends BaseResource {
    */
   base_tea: number;
   /**
+   * The notary cost applied in calculations
+   */
+  notary: number;
+  /**
+   * The registry cost applied in calculations
+   */
+  registry: number;
+  /**
+   * The appraisal cost applied in calculations
+   */
+  appraisal: number;
+  /**
+   * The study commission applied in calculations
+   */
+  study_commission: number;
+  /**
+   * The activation commission applied in calculations
+   */
+  activation_commission: number;
+  /**
+   * The commission applied in calculations
+   */
+  commission: number;
+  /**
+   * The charges applied in calculations
+   */
+  charges: number;
+  /**
+   * The administrative expense used in calculations
+   */
+  admin_expense: number;
+  /**
+   * The life insurance annual rate used in calculations
+   */
+  life_insurance_annual_rate: number;
+  /**
+   * The risk insurance annual rate used in calculations
+   */
+  risk_insurance_annual_rate: number;
+  /**
+   * The (COK) opportunity effective annual rate (TEA) used in calculations
+   */
+  opportunity_tea: number;
+  /**
    * The total number of installments paid over the loan period
    */
   total_installments_paid: number;
@@ -66,6 +110,10 @@ export interface ReportResource extends BaseResource {
    */
   total_interest: number;
   /**
+   * The total payments made over the loan period
+   */
+  total_payments_report: number;
+  /**
    * The net present value (VAN) of the loan
    */
   van: number;
@@ -76,5 +124,5 @@ export interface ReportResource extends BaseResource {
   /**
    * The total effective cost (CET) of the loan
    */
-  cet: number;
+  tcea: number;
 }

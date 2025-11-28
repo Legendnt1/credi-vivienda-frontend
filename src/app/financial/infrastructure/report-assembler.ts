@@ -34,12 +34,24 @@ export class ReportAssembler implements BaseAssembler<Report, ReportResource, Re
       years: resource.years,
       frequency: resource.frequency,
       base_tea: resource.base_tea,
+      notary: resource.notary,
+      registry: resource.registry,
+      appraisal: resource.appraisal,
+      study_commission: resource.study_commission,
+      activation_commission: resource.activation_commission,
+      commission: resource.commission,
+      charges: resource.charges,
+      admin_expense: resource.admin_expense,
+      life_insurance_annual_rate: resource.life_insurance_annual_rate,
+      risk_insurance_annual_rate: resource.risk_insurance_annual_rate,
+      opportunity_tea: resource.opportunity_tea,
       total_installments_paid: resource.total_installments_paid,
       total_amortization: resource.total_amortization,
       total_interest: resource.total_interest,
+      total_payments_report: resource.total_payments_report,
       van: resource.van,
       tir: resource.tir,
-      cet: resource.cet
+      tcea: resource.tcea,
     });
   }
 
@@ -62,12 +74,24 @@ export class ReportAssembler implements BaseAssembler<Report, ReportResource, Re
       years: entity.years,
       frequency: entity.frequency,
       base_tea: entity.base_tea,
+      notary: entity.notary,
+      registry: entity.registry,
+      appraisal: entity.appraisal,
+      study_commission: entity.study_commission,
+      activation_commission: entity.activation_commission,
+      commission: entity.commission,
+      charges: entity.charges,
+      admin_expense: entity.admin_expense,
+      life_insurance_annual_rate: entity.life_insurance_annual_rate,
+      risk_insurance_annual_rate: entity.risk_insurance_annual_rate,
+      opportunity_tea:  entity.opportunity_tea,
       total_installments_paid: entity.total_installments_paid,
       total_amortization: entity.total_amortization,
       total_interest: entity.total_interest,
+      total_payments_report: entity.total_payments_report,
       van: entity.van,
       tir: entity.tir,
-      cet: entity.cet
+      tcea: entity.tcea,
     } as ReportResource;
   }
 

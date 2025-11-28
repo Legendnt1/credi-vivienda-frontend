@@ -35,27 +35,55 @@ export interface PaymentResource extends BaseResource {
    */
   annual_rate: number;
   /**
-   * The effective period interest rate for the payment.
+   * The payment amount for the period.
    */
   effective_period_rate: number;
   /**
-   * The initial balance before the payment.
+   * The effective period interest rate.
    */
   initial_balance: number;
   /**
-   * The interest paid in the payment.
+   * The initial balance before the payment.
    */
   interest_paid: number;
   /**
-   * The total payment amount.
+   * The interest paid during the period.
    */
-  payment_amount: number;
+  installment_base: number;
   /**
-   * The capital amortization portion of the payment.
+   * The installment base amount.
    */
   capital_amortization: number;
   /**
-   * The remaining balance after the payment.
+   * The capital amortization amount.
+   */
+  life_insurance: number;
+  /**
+   * The life insurance amount.
+   */
+  risk_insurance: number;
+  /**
+   * The risk insurance amount.
+   */
+  commission: number;
+  /**
+   * The commission amount.
+   */
+  charges: number;
+  /**
+   * The charges amount.
+   */
+  admin_expense: number;
+  /**
+   * The administrative expense amount.
+   */
+  total_payment: number;
+  /**
+   * The total payment amount.
    */
   remaining_balance: number;
+  /**
+   * The remaining balance after the payment.
+   */
+  cash_flow: number;
 }

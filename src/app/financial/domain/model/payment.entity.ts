@@ -25,38 +25,68 @@ export class Payment implements BaseEntity {
    */
   _annual_rate: number;
   /**
-   * The effective period interest rate for the payment.
+   * The payment amount for the period.
    */
   _effective_period_rate: number;
   /**
-   * The initial balance before the payment.
+   * The effective period interest rate.
    */
   _initial_balance: number;
   /**
-   * The interest paid in the payment.
+   * The initial balance before the payment.
    */
   _interest_paid: number;
   /**
-   * The total payment amount.
+   * The interest paid during the period.
    */
-  _payment_amount: number;
+  _installment_base: number;
   /**
-   * The capital amortization portion of the payment.
+   * The installment base amount.
    */
   _capital_amortization: number;
   /**
-   * The remaining balance after the payment.
+   * The capital amortization amount.
+   */
+  _life_insurance: number;
+  /**
+   * The life insurance amount.
+   */
+  _risk_insurance: number;
+  /**
+   * The risk insurance amount.
+   */
+  _commission: number;
+  /**
+   * The commission amount.
+   */
+  _charges: number;
+  /**
+   * The charges amount.
+   */
+  _admin_expense: number;
+  /**
+   * The administrative expense amount.
+   */
+  _total_payment: number;
+  /**
+   * The total payment amount.
    */
   _remaining_balance: number;
+  /**
+   * The remaining balance after the payment.
+   */
+  _cash_flow: number;
 
 
   /**
    * Creates a new Payment instance.
    * @param payment - An object containing payment properties.
    */
-  constructor(payment: { id: number; report_id: number; period: number; grace_type:
-      string; annual_rate: number; effective_period_rate: number; initial_balance: number;
-      interest_paid: number; payment_amount: number; capital_amortization: number; remaining_balance: number }) {
+  constructor(payment: { id: number; report_id: number; period: number; grace_type: string; annual_rate: number;
+    effective_period_rate: number; initial_balance: number;
+    interest_paid: number; installment_base: number; capital_amortization: number;
+    life_insurance: number; risk_insurance: number;
+    commission: number; charges: number; admin_expense: number; total_payment: number; remaining_balance: number; cash_flow: number; }) {
     this._id = payment.id;
     this._report_id = payment.report_id;
     this._period = payment.period;
@@ -65,9 +95,16 @@ export class Payment implements BaseEntity {
     this._effective_period_rate = payment.effective_period_rate;
     this._initial_balance = payment.initial_balance;
     this._interest_paid = payment.interest_paid;
-    this._payment_amount = payment.payment_amount;
+    this._installment_base = payment.installment_base;
     this._capital_amortization = payment.capital_amortization;
+    this._life_insurance = payment.life_insurance;
+    this._risk_insurance = payment.risk_insurance;
+    this._commission = payment.commission;
+    this._charges = payment.charges;
+    this._admin_expense = payment.admin_expense;
+    this._total_payment = payment.total_payment;
     this._remaining_balance = payment.remaining_balance;
+    this._cash_flow = payment.cash_flow;
   }
 
   /** Getters and Setters */
@@ -87,10 +124,24 @@ export class Payment implements BaseEntity {
   set initial_balance(value: number) { this._initial_balance = value; }
   get interest_paid(): number { return this._interest_paid; }
   set interest_paid(value: number) { this._interest_paid = value; }
-  get payment_amount(): number { return this._payment_amount; }
-  set payment_amount(value: number) { this._payment_amount = value; }
+  get installment_base(): number { return this._installment_base; }
+  set installment_base(value: number) { this._installment_base = value; }
   get capital_amortization(): number { return this._capital_amortization; }
   set capital_amortization(value: number) { this._capital_amortization = value; }
+  get life_insurance(): number { return this._life_insurance; }
+  set life_insurance(value: number) { this._life_insurance = value; }
+  get risk_insurance(): number { return this._risk_insurance; }
+  set risk_insurance(value: number) { this._risk_insurance = value; }
+  get commission(): number { return this._commission; }
+  set commission(value: number) { this._commission = value; }
+  get charges(): number { return this._charges; }
+  set charges(value: number) { this._charges = value; }
+  get admin_expense(): number { return this._admin_expense; }
+  set admin_expense(value: number) { this._admin_expense = value; }
+  get total_payment(): number { return this._total_payment; }
+  set total_payment(value: number) { this._total_payment = value; }
   get remaining_balance(): number { return this._remaining_balance; }
   set remaining_balance(value: number) { this._remaining_balance = value; }
+  get cash_flow(): number { return this._cash_flow; }
+  set cash_flow(value: number) { this._cash_flow = value; }
 }
