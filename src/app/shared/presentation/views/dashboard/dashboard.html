@@ -4,34 +4,6 @@
     <div class="header-title">
       <h1>{{ 'dashboard.title' | translate }}</h1>
     </div>
-    <div class="header-filters">
-      <div class="filter-group">
-        <button
-          class="filter-btn"
-          [class.active]="selectedDateRange() === 'today'"
-          (click)="setDateRange('today')">
-          {{ 'dashboard.filters.today' | translate }}
-        </button>
-        <button
-          class="filter-btn"
-          [class.active]="selectedDateRange() === 'thisWeek'"
-          (click)="setDateRange('thisWeek')">
-          {{ 'dashboard.filters.thisWeek' | translate }}
-        </button>
-        <button
-          class="filter-btn"
-          [class.active]="selectedDateRange() === 'thisMonth'"
-          (click)="setDateRange('thisMonth')">
-          {{ 'dashboard.filters.thisMonth' | translate }}
-        </button>
-        <button
-          class="filter-btn"
-          [class.active]="selectedDateRange() === 'custom'"
-          (click)="setDateRange('custom')">
-          {{ 'dashboard.filters.custom' | translate }}
-        </button>
-      </div>
-    </div>
   </header>
 
   <!-- KPIs Section -->

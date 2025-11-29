@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IamStore } from '@iam/application/iam-store';
 import { FinancialStore } from '@financial/application/financial-store';
 import { ProjectsStore } from '@projects/application/projects-store';
-import { Credit } from '@financial/domain/model/credit.entity';
+import { Report } from '@financial/domain/model/report.entity';
 import { User } from '@iam/domain/model/user.entity';
 import { PropertyProject } from '@projects/domain/property-project.entity';
 
@@ -18,10 +18,10 @@ interface KPI {
 
 interface ClientData {
   user: User;
-  credit: Credit;
+  report: Report;
   property: PropertyProject | undefined;
   date: string;
-  status: 'pending' | 'inEvaluation' | 'approved' | 'rejected';
+  status: 'pending' | 'in_evaluation' | 'approved' | 'rejected';
 }
 
 interface ChartData {
@@ -47,33 +47,34 @@ export class Dashboard {
   readonly selectedProgram = signal<string>('all');
 
   // Computed data from stores
-  readonly credits = this.financialStore.credits;
+  readonly reports = this.financialStore.reports;
   readonly users = this.iamStore.users;
   readonly properties = this.projectsStore.propertyProjects;
   readonly currentUser = this.iamStore.sessionUser;
 
   // KPIs computed from real data
   readonly kpis = computed<KPI[]>(() => {
-    const credits = this.credits();
-    const totalCredits = credits.length;
-    const totalAmount = credits.reduce((sum, credit) => sum + (credit.down_payment || 0), 0);
-    const availableProperties = this.properties().reduce((sum, prop) => sum + (prop.availability || 0), 0);
+    const reports = this.reports();
+    const totalSimulations = reports.length;
+    const totalAmount = reports.reduce((sum, report) => sum + (report.price || 0), 0);
+    const availableProperties = this.properties().filter(p => p.status === 'approved').length;
 
-    // Simulated approval rate
-    const approvedCount = Math.floor(totalCredits * 0.61);
-    const approvalRate = totalCredits > 0 ? Math.round((approvedCount / totalCredits) * 100) : 0;
+    // Calculate approval rate based on property status
+    const approvedProperties = this.properties().filter(p => p.status === 'approved').length;
+    const totalProperties = this.properties().length;
+    const approvalRate = totalProperties > 0 ? Math.round((approvedProperties / totalProperties) * 100) : 0;
 
     return [
       {
         icon: 'calculator',
-        value: totalCredits,
+        value: totalSimulations,
         label: 'dashboard.kpis.creditsSimulated',
         change: 12,
         changePositive: true
       },
       {
-        icon: 'gift',
-        value: `S/ ${(totalAmount / 1000000).toFixed(2)}M`,
+        icon: 'dollar-sign',
+        value: `S/ ${(totalAmount / 1000).toFixed(1)}K`,
         label: 'dashboard.kpis.totalAmount',
         change: 8,
         changePositive: true
@@ -86,7 +87,7 @@ export class Dashboard {
         changePositive: false
       },
       {
-        icon: 'file-analytics',
+        icon: 'trending-up',
         value: `${approvalRate}%`,
         label: 'dashboard.kpis.approvedCredits',
         change: 5,
@@ -97,36 +98,51 @@ export class Dashboard {
 
   // Recent clients computed from real data
   readonly clientsData = computed<ClientData[]>(() => {
-    const credits = this.credits();
+    const reports = this.reports();
     const users = this.users();
     const properties = this.properties();
 
-    const statuses: Array<'pending' | 'inEvaluation' | 'approved' | 'rejected'> =
-      ['pending', 'inEvaluation', 'approved', 'rejected'];
-
-    return credits.map((credit, index) => {
-      const user = users.find(u => u.id === credit.user_id);
-      const property = properties.find(p => p.id === credit.property_project_id);
+    return reports.slice(0, 5).map((report) => {
+      const user = users.find(u => u.id === report.user_id);
+      const property = properties.find(p => p.id === report.property_project_id);
 
       if (!user) return null;
 
+      // Determine status based on property status or random for demo
+      let status: 'pending' | 'in_evaluation' | 'approved' | 'rejected' = 'pending';
+      if (property) {
+        if (property.status === 'approved') status = 'approved';
+        else if (property.status === 'in_evaluation') status = 'in_evaluation';
+        else if (property.status === 'rejected') status = 'rejected';
+        else status = 'pending';
+      }
+
       return {
         user,
-        credit,
+        report,
         property,
-        date: new Date().toLocaleDateString('es-PE'),
-        status: statuses[index % statuses.length]
+        date: report.generated_at,
+        status
       };
     }).filter(Boolean) as ClientData[];
   });
 
-  // Chart Data
-  readonly chartData = signal<ChartData[]>([
-    { label: 'Pendiente', value: 4, color: 'var(--color-secondary)' },
-    { label: 'En evaluación', value: 6, color: 'var(--color-tertiary)' },
-    { label: 'Aprobado', value: 11, color: 'var(--color-success)' },
-    { label: 'Rechazado', value: 3, color: 'var(--color-error)' }
-  ]);
+  // Chart Data based on property status
+  readonly chartData = computed<ChartData[]>(() => {
+    const properties = this.properties();
+
+    const pending = properties.filter(p => p.status === 'pending').length;
+    const inEvaluation = properties.filter(p => p.status === 'in_evaluation').length;
+    const approved = properties.filter(p => p.status === 'approved').length;
+    const rejected = properties.filter(p => p.status === 'rejected').length;
+
+    return [
+      { label: 'Pendiente', value: pending, color: 'var(--color-secondary)' },
+      { label: 'En evaluación', value: inEvaluation, color: '#3b82f6' },
+      { label: 'Aprobado', value: approved, color: 'var(--color-success)' },
+      { label: 'Rechazado', value: rejected, color: 'var(--color-error)' }
+    ];
+  });
 
   readonly chartSummary = computed(() => {
     const data = this.chartData();
@@ -162,17 +178,18 @@ export class Dashboard {
     return labels;
   });
 
-  // Featured property
+  // Featured property - select first approved property
   readonly featuredProperty = computed(() => {
     const props = this.properties();
-    return props.length > 0 ? props[0] : null;
+    const approved = props.find(p => p.status === 'approved');
+    return approved || (props.length > 0 ? props[0] : null);
   });
 
   // Education Content
   readonly educationContent = signal({
     title: 'dashboard.education.title',
     description: 'dashboard.education.description',
-    updateDate: '15/11/2025'
+    updateDate: '28/11/2025'
   });
 
 
@@ -181,7 +198,8 @@ export class Dashboard {
    * Calculate bar height percentage
    */
   getBarHeight(value: number): number {
-    return (value / this.maxChartValue()) * 100;
+    const max = this.maxChartValue();
+    return max > 0 ? (value / max) * 100 : 0;
   }
 
   setDateRange(range: string): void {
@@ -195,7 +213,7 @@ export class Dashboard {
   getStatusClass(status: string): string {
     const statusMap: Record<string, string> = {
       pending: 'status-pending',
-      inEvaluation: 'status-evaluation',
+      in_evaluation: 'status-evaluation',
       approved: 'status-approved',
       rejected: 'status-rejected'
     };
@@ -204,7 +222,7 @@ export class Dashboard {
 
   getProgramBadgeClass(program: string): string {
     const programMap: Record<string, string> = {
-      'MIVIVIENDA': 'program-mivivienda',
+      'Fondo MIVIVIENDA': 'program-mivivienda',
       'TECHO_PROPIO': 'program-techo',
       'OTRO': 'program-other'
     };
@@ -220,27 +238,37 @@ export class Dashboard {
   }
 
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('es-PE');
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-PE', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
   }
 
   viewClientDetail(userId: number): void {
     console.log('Ver detalle del cliente:', userId);
+    // TODO: Navigate to client detail view
   }
 
-  simulateAgain(userId: number): void {
-    console.log('Simular de nuevo para cliente:', userId);
+  simulateAgain(reportId: number): void {
+    console.log('Simular de nuevo desde reporte:', reportId);
+    // TODO: Navigate to calculations with pre-filled data from report
   }
 
   viewPropertyDetail(propertyId: number): void {
     console.log('Ver detalle de propiedad:', propertyId);
+    // TODO: Navigate to property detail view
   }
 
   simulateCredit(propertyId: number): void {
     console.log('Simular crédito para propiedad:', propertyId);
+    // TODO: Navigate to calculations with selected property
   }
 
   downloadGuide(): void {
     console.log('Descargar guía PDF');
+    // TODO: Implement PDF download
   }
 }
 

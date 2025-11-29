@@ -29,12 +29,6 @@
           [(ngModel)]="searchTerm"
           class="filter-input"
           [placeholder]="'projects.filter.placeholder' | translate">
-        <button
-          type="button"
-          class="btn-filter"
-          (click)="onApplyFilter()">
-          {{ 'projects.filter.apply' | translate }}
-        </button>
         @if (searchTerm()) {
           <button
             type="button"

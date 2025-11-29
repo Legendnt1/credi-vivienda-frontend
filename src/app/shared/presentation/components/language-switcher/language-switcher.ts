@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnInit, signal, ChangeDetectionStrategy} from '@angular/core';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 
 @Component({
@@ -6,9 +6,10 @@ import {TranslateModule, TranslateService} from '@ngx-translate/core';
   imports: [TranslateModule],
   templateUrl: './language-switcher.html',
   styleUrl: './language-switcher.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LanguageSwitcher {
-  protected currentLang: string = 'es';
+export class LanguageSwitcher implements OnInit {
+  protected currentLang = signal<string>('es');
 
   /** List of available languages with display info */
   protected languages = [
@@ -17,15 +18,20 @@ export class LanguageSwitcher {
   ];
 
   /** Translation service instance */
-  private translate: TranslateService;
+  private translate = inject(TranslateService);
 
   /**
-   * Creates an instance of LanguageSwitcherComponent.
-   * Initializes the current language from the translation service.
+   * Initializes the component and syncs with the current language
    */
-  constructor() {
-    this.translate = inject(TranslateService);
-    this.currentLang = this.translate.getCurrentLang();
+  ngOnInit(): void {
+    // Get the current language from the translation service
+    const currentLanguage = this.translate.currentLang || this.translate.defaultLang || 'es';
+    this.currentLang.set(currentLanguage);
+
+    // Subscribe to language changes to keep in sync
+    this.translate.onLangChange.subscribe(event => {
+      this.currentLang.set(event.lang);
+    });
   }
 
   /**
@@ -38,6 +44,6 @@ export class LanguageSwitcher {
     const target = event.target as HTMLSelectElement;
     const language = target.value;
     this.translate.use(language);
-    this.currentLang = language;
+    this.currentLang.set(language);
   }
 }

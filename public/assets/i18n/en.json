@@ -75,10 +75,10 @@
       "others": "Others"
     },
     "kpis": {
-      "creditsSimulated": "Credits Simulated",
+      "creditsSimulated": "Generated Reports",
       "totalAmount": "Total Amount Simulated",
-      "availableProperties": "Available Properties",
-      "approvedCredits": "Approved Credits",
+      "availableProperties": "Approved Properties",
+      "approvedCredits": "Approval Rate",
       "vsPreviousMonth": "vs Previous Month"
     },
     "recentClients": {
@@ -104,9 +104,9 @@
       }
     },
     "performanceChart": {
-      "title": "Performance Over Time",
+      "title": "Properties by Status",
       "summary": {
-        "simulationsThisWeek": "Simulations This Week",
+        "simulationsThisWeek": "Total Properties",
         "approved": "Approved"
       }
     },
@@ -120,7 +120,7 @@
     },
     "education": {
       "title": "Guide of the week for the investor",
-      "description": "Tips and advice to make the best investment decisions",
+      "description": "Tips for choosing your first home with MiVivienda credit",
       "download": "Download PDF",
       "updated": "Updated"
     }
@@ -145,6 +145,19 @@
           "total": "Total",
           "partial": "Partial"
         }
+      },
+      "opportunityTea": {
+        "label": "Opportunity Cost TEA (%)",
+        "placeholder": "E.g: 10.00",
+        "error": "Must be a value greater than 0"
+      },
+      "daysInYear": {
+        "label": "Days in Year"
+      },
+      "exchangeRate": {
+        "label": "Exchange Rate USD/PEN",
+        "placeholder": "E.g: 3.75",
+        "error": "Must be a value greater than 0"
       },
       "language": {
         "label": "Language"
@@ -248,20 +261,32 @@
   "calculations": {
     "title": "Mortgage Loan Calculator",
     "select_property": "Select a Property",
+    "select_property_placeholder": "Select a property",
     "calculator_title": "Loan Configuration",
+    "costs_title": "Credit Costs",
+    "initial_costs": "Initial Costs",
+    "periodic_costs": "Periodic Costs",
+    "price": "Property Price",
+    "enter_price": "Enter price",
     "loan_amount": "Loan amount",
     "enter_amount": "Enter amount",
     "down_payment": "Down payment",
     "enter_down_payment": "Enter down payment",
+    "bond": "Bond",
     "bond_amount": "Bond amount",
     "enter_bond": "Enter bond amount",
+    "years": "Term (years)",
+    "enter_years": "Enter term in years",
     "term_months": "Term (months)",
     "enter_term": "Enter term in months",
+    "interest_rate": "Interest rate (%)",
     "base_rate": "Base rate (%)",
     "enter_rate": "Enter rate",
+    "interest_type": "Interest type",
     "rate_type": "Rate type",
     "effective": "Effective",
     "nominal": "Nominal",
+    "capitalization": "Capitalization",
     "frequency": "Payment frequency",
     "monthly": "Monthly",
     "bimonthly": "Bimonthly",
@@ -269,21 +294,51 @@
     "fourmonthly": "Four-monthly",
     "semiannual": "Semi-annual",
     "annual": "Annual",
+    "opportunity_tea": "Opportunity TEA (COK)",
+    "enter_opportunity_tea": "Enter opportunity TEA",
+    "days_in_year": "Days in year",
+    "notary": "Notary",
+    "registry": "Registry",
+    "appraisal": "Appraisal",
+    "study_commission": "Study Commission",
+    "activation_commission": "Activation Commission",
+    "commission": "Periodic Commission",
+    "charges": "Charges",
+    "admin_expense": "Administrative Expense",
+    "life_insurance_rate": "Life Insurance Rate",
+    "risk_insurance_rate": "Risk Insurance Rate",
     "generate_table": "Generate Table",
     "editable_schedule": "Editable Period Table",
+    "periods": "periods",
     "period": "Period",
     "tea_percent": "TEA (%)",
+    "tea_annual": "Annual TEA (%)",
+    "rate_period": "Period Rate (%)",
     "grace_type": "Grace Type",
+    "grace_type_short": "Grace",
     "normal": "Normal",
     "total_grace": "Total",
     "partial_grace": "Partial",
     "calculate": "Calculate",
     "payment_plan": "Payment Plan (French Method)",
     "month": "Month",
-    "installment": "Installment",
+    "installment": "Base Installment",
     "interest": "Interest",
     "amortization": "Amortization",
+    "initial_balance": "Initial Balance",
+    "remaining_balance": "Final Balance",
     "balance_with_bond": "Balance with Bond",
+    "life_insurance": "Life Insurance",
+    "risk_insurance": "Risk Insurance",
+    "commission_short": "Commission",
+    "charges_short": "Charges",
+    "admin_short": "Admin Exp",
+    "total_payment": "Total Payment",
+    "cash_flow": "Cash Flow",
+    "financial_metrics": "Financial Metrics",
+    "van": "NPV",
+    "tir": "IRR",
+    "tcea": "TCEA",
     "save_report": "Save Report",
     "form": {
       "loanAmount": "Loan amount:",
@@ -306,32 +361,79 @@
       "van": "NPV",
       "tir": "IRR",
       "cet": "CET"
+    },
+    "modal": {
+      "successTitle": "Report Saved Successfully!",
+      "errorTitle": "Error Saving Report",
+      "continue": "Continue"
     }
   },
   "reports": {
-    "title": "Report Generation",
-    "form": {
-      "period": "Period:",
-      "project": "Project:",
-      "reportType": "Report type:",
-      "download": "Download"
+    "title": "Download Reports",
+    "filter": {
+      "title": "Filter Reports",
+      "period": "Period (Year)",
+      "periodPlaceholder": "E.g: 2024",
+      "property": "Property",
+      "credit": "Credit Program",
+      "all": "All",
+      "clear": "Clear filters"
     },
-    "chart": {
-      "title": "Simulated credits per month",
-      "months": {
-        "january": "January",
-        "february": "February",
-        "march": "March",
-        "april": "April",
-        "may": "May",
-        "june": "June",
-        "july": "July",
-        "august": "August",
-        "september": "September",
-        "october": "October",
-        "november": "November",
-        "december": "December"
-      }
+    "summary": {
+      "showing": "Showing",
+      "of": "of",
+      "reports": "reports"
+    },
+    "empty": "No reports found",
+    "emptyHint": "Reports generated from the calculations view will appear here",
+    "reportNumber": "Report",
+    "download": "Download",
+    "card": {
+      "property": "Property",
+      "credit": "Program",
+      "price": "Price",
+      "term": "Term",
+      "years": "years",
+      "tea": "TEA"
+    },
+    "pdf": {
+      "title": "Mortgage Loan Simulation Report",
+      "generated": "Generated",
+      "generalInfo": "General Information",
+      "property": "Property",
+      "creditProgram": "Credit Program",
+      "propertyPrice": "Property Price",
+      "downPayment": "Down Payment",
+      "bondApplied": "Bond Applied",
+      "term": "Term",
+      "months": "months",
+      "frequency": "Payment Frequency",
+      "baseTea": "Base TEA",
+      "creditCosts": "Credit Costs",
+      "notary": "Notary",
+      "registry": "Registry",
+      "appraisal": "Appraisal",
+      "studyCommission": "Study Commission",
+      "activationCommission": "Activation Commission",
+      "insurance": "Insurance (Life + Risk)",
+      "financialMetrics": "Financial Metrics",
+      "paymentSummary": "Payment Summary",
+      "totalInstallments": "Total Installments Paid",
+      "totalAmortization": "Total Amortization",
+      "totalInterest": "Total Interest",
+      "totalPayments": "Total Payments",
+      "paymentSchedule": "Payment Schedule",
+      "period": "Period",
+      "grace": "Grace",
+      "initialBalance": "Initial Balance",
+      "interest": "Interest",
+      "amortization": "Amortization",
+      "installment": "Installment",
+      "finalBalance": "Final Balance",
+      "page": "Page",
+      "of": "of",
+      "autoGenerated": "This report was automatically generated by the CrediVivienda system",
+      "printDate": "Print date"
     }
   },
   "support": {

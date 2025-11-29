@@ -110,6 +110,9 @@ export class Register {
           default_currency_catalog_id: 1, // Default PEN currency
           default_interest_type: 'EFFECTIVE', // Default interest type
           default_grace_period: "TOTAL", // Default grace period
+          default_opportunity_tea: 10.00, // Default opportunity TEA
+          default_days_in_year: 360, // Default days in year
+          default_change_usd_pen: 3.70 // Default USD to PEN exchange rate
         });
 
         this.iamStore.addSetting(newSetting);
