@@ -305,7 +305,7 @@ export class Calculations implements OnInit {
         bondAmount: bondAmount,
         years: years,
         frequency: frequency,
-        annualRates: rows.map(r => this.round2(r.tea) / 100), // Convert to decimal
+        annualRates: rows.map(r => r.tea), // Keep as percentage with 7 decimals precision
         graceByPeriod: rows.map(r => r.graceType),
         daysInYear: daysInYear,
         initialCosts: {
@@ -333,7 +333,7 @@ export class Calculations implements OnInit {
       const displaySchedule: PaymentScheduleRow[] = result.schedule.map(row => ({
         period: row.period,
         graceType: row.graceType,
-        annualRate: this.round2(row.annualRate * 100),
+        annualRate: row.annualRate, // Already in % form with full precision
         effectivePeriodRate: this.round2(row.effectivePeriodRate * 100),
         initialBalance: this.round2(row.initialBalance),
         interest: this.round2(row.interest),
@@ -468,7 +468,7 @@ export class Calculations implements OnInit {
           report_id: newReportId,
           period: row.period,
           grace_type: row.graceType,
-          annual_rate: this.round2(row.annualRate),
+          annual_rate: row.annualRate, // Keep 7-decimal precision
           effective_period_rate: this.round2(row.effectivePeriodRate),
           initial_balance: this.round2(row.initialBalance),
           interest_paid: this.round2(row.interest),
