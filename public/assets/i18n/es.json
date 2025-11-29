@@ -75,10 +75,10 @@
       "others": "Otros"
     },
     "kpis": {
-      "creditsSimulated": "Créditos simulados",
-      "totalAmount": "Monto simulado",
-      "availableProperties": "Inmuebles disponibles",
-      "approvedCredits": "Créditos aprobados",
+      "creditsSimulated": "Reportes generados",
+      "totalAmount": "Monto total simulado",
+      "availableProperties": "Inmuebles aprobados",
+      "approvedCredits": "Tasa de aprobación",
       "vsPreviousMonth": "vs mes anterior"
     },
     "recentClients": {
@@ -104,9 +104,9 @@
       }
     },
     "performanceChart": {
-      "title": "Créditos por estado",
+      "title": "Inmuebles por estado",
       "summary": {
-        "simulationsThisWeek": "Simulaciones esta semana",
+        "simulationsThisWeek": "Total de inmuebles",
         "approved": "Aprobados"
       }
     },
@@ -146,6 +146,19 @@
           "partial": "Parcial"
         }
       },
+      "opportunityTea": {
+        "label": "TEA de Costo de Oportunidad (%)",
+        "placeholder": "Ej: 10.00",
+        "error": "Debe ser un valor mayor a 0"
+      },
+      "daysInYear": {
+        "label": "Días del año"
+      },
+      "exchangeRate": {
+        "label": "Tipo de cambio USD/PEN",
+        "placeholder": "Ej: 3.75",
+        "error": "Debe ser un valor mayor a 0"
+      },
       "language": {
         "label": "Idioma"
       },
@@ -157,6 +170,9 @@
   },
   "projects": {
     "title": "Inmuebles",
+    "currency": {
+      "viewing": "Viendo precios en"
+    },
     "filter": {
       "label": "Filtrar:",
       "placeholder": "Buscar por código, proyecto, tipo o estado...",
@@ -197,10 +213,18 @@
         "project": "Proyecto",
         "type": "Tipo",
         "status": "Estado",
+        "statusOptions": {
+          "pending": "Pendiente",
+          "in_evaluation": "En evaluación",
+          "approved": "Aprobado",
+          "rejected": "Rechazado"
+        },
         "area": "Área (m²)",
         "price": "Precio",
+        "availability": "Disponibilidad",
         "address": "Dirección",
-        "district": "Distrito"
+        "district": "Distrito",
+        "province": "Provincia"
       },
       "placeholders": {
         "code": "Ej: 001",
@@ -209,11 +233,14 @@
         "status": "Ej: Disponible, Reservado",
         "area": "Ej: 80",
         "price": "Ej: 250000",
+        "availability": "10",
         "address": "Ingrese la dirección",
-        "district": "Ingrese el distrito"
+        "district": "Ingrese el distrito",
+        "province": "Ingrese la provincia"
       },
       "currency": {
-        "soles": "Soles (S/)"
+        "soles": "Soles (S/)",
+        "dollars": "Dólares (USD)"
       },
       "bondsApplicable": "Bono aplicable",
       "bonds": {
@@ -222,6 +249,8 @@
       "buttons": {
         "save": "Agregar",
         "saving": "Guardando...",
+        "update": "Actualizar",
+        "updating": "Actualizando...",
         "cancel": "Cancelar"
       },
       "errors": {
@@ -231,6 +260,86 @@
   },
   "calculations": {
     "title": "Calculadora de Préstamo Hipotecario",
+    "select_property": "Selecciona un Inmueble",
+    "select_property_placeholder": "Selecciona un inmueble",
+    "calculator_title": "Configuración del Préstamo",
+    "costs_title": "Costos del Crédito",
+    "initial_costs": "Costos Iniciales",
+    "periodic_costs": "Costos Periódicos",
+    "price": "Precio del Inmueble",
+    "enter_price": "Ingrese el precio",
+    "loan_amount": "Monto del préstamo",
+    "enter_amount": "Ingrese el monto",
+    "down_payment": "Cuota inicial",
+    "enter_down_payment": "Ingrese la cuota inicial",
+    "bond": "Bono",
+    "bond_amount": "Monto del bono",
+    "enter_bond": "Ingrese el monto del bono",
+    "years": "Plazo (años)",
+    "enter_years": "Ingrese el plazo en años",
+    "term_months": "Plazo (meses)",
+    "enter_term": "Ingrese el plazo en meses",
+    "interest_rate": "Tasa de interés (%)",
+    "base_rate": "Tasa base (%)",
+    "enter_rate": "Ingrese la tasa",
+    "interest_type": "Tipo de tasa",
+    "rate_type": "Tipo de tasa",
+    "effective": "Efectiva",
+    "nominal": "Nominal",
+    "capitalization": "Capitalización",
+    "frequency": "Frecuencia de pagos",
+    "monthly": "Mensual",
+    "bimonthly": "Bimestral",
+    "quarterly": "Trimestral",
+    "fourmonthly": "Cuatrimestral",
+    "semiannual": "Semestral",
+    "annual": "Anual",
+    "opportunity_tea": "TEA de Oportunidad (COK)",
+    "enter_opportunity_tea": "Ingrese TEA de oportunidad",
+    "days_in_year": "Días del año",
+    "notary": "Notaría",
+    "registry": "Registro",
+    "appraisal": "Tasación",
+    "study_commission": "Comisión de Estudio",
+    "activation_commission": "Comisión de Activación",
+    "commission": "Comisión Periódica",
+    "charges": "Portes",
+    "admin_expense": "Gastos Administrativos",
+    "life_insurance_rate": "Tasa Seguro de Vida",
+    "risk_insurance_rate": "Tasa Seguro de Riesgo",
+    "generate_table": "Generar Tabla",
+    "editable_schedule": "Tabla Editable de Períodos",
+    "periods": "períodos",
+    "period": "Período",
+    "tea_percent": "TEA (%)",
+    "tea_annual": "TEA Anual (%)",
+    "rate_period": "Tasa Período (%)",
+    "grace_type": "Tipo de Gracia",
+    "grace_type_short": "Gracia",
+    "normal": "Normal",
+    "total_grace": "Total",
+    "partial_grace": "Parcial",
+    "calculate": "Calcular",
+    "payment_plan": "Plan de Pagos (Método Francés)",
+    "month": "Mes",
+    "installment": "Cuota Base",
+    "interest": "Interés",
+    "amortization": "Amortización",
+    "initial_balance": "Saldo Inicial",
+    "remaining_balance": "Saldo Final",
+    "balance_with_bond": "Saldo con Bono",
+    "life_insurance": "Seguro Vida",
+    "risk_insurance": "Seguro Riesgo",
+    "commission_short": "Comisión",
+    "charges_short": "Portes",
+    "admin_short": "G. Admin",
+    "total_payment": "Pago Total",
+    "cash_flow": "Flujo de Caja",
+    "financial_metrics": "Métricas Financieras",
+    "van": "VAN",
+    "tir": "TIR",
+    "tcea": "TCEA",
+    "save_report": "Guardar Reporte",
     "form": {
       "loanAmount": "Monto del préstamo:",
       "term": "Plazo (meses):",
@@ -252,32 +361,80 @@
       "van": "VAN",
       "tir": "TIR",
       "cet": "CET"
+
+    },
+    "modal": {
+      "successTitle": "¡Reporte Guardado Exitosamente!",
+      "errorTitle": "Error al Guardar Reporte",
+      "continue": "Continuar"
     }
   },
   "reports": {
-    "title": "Generación de reportes",
-    "form": {
-      "period": "Periodo:",
-      "project": "Proyecto:",
-      "reportType": "Tipo de reporte:",
-      "download": "Descargar"
+    "title": "Descargar Reportes",
+    "filter": {
+      "title": "Filtrar Reportes",
+      "period": "Período (Año)",
+      "periodPlaceholder": "Ej: 2024",
+      "property": "Inmueble",
+      "credit": "Programa de Crédito",
+      "all": "Todos",
+      "clear": "Limpiar filtros"
     },
-    "chart": {
-      "title": "Créditos simulados por mes",
-      "months": {
-        "january": "Enero",
-        "february": "Febrero",
-        "march": "Marzo",
-        "april": "Abril",
-        "may": "Mayo",
-        "june": "Junio",
-        "july": "Julio",
-        "august": "Agosto",
-        "september": "Septiembre",
-        "october": "Octubre",
-        "november": "Noviembre",
-        "december": "Diciembre"
-      }
+    "summary": {
+      "showing": "Mostrando",
+      "of": "de",
+      "reports": "reportes"
+    },
+    "empty": "No se encontraron reportes",
+    "emptyHint": "Los reportes generados desde la vista de cálculos aparecerán aquí",
+    "reportNumber": "Reporte",
+    "download": "Descargar",
+    "card": {
+      "property": "Inmueble",
+      "credit": "Programa",
+      "price": "Precio",
+      "term": "Plazo",
+      "years": "años",
+      "tea": "TEA"
+    },
+    "pdf": {
+      "title": "Reporte de Simulación de Crédito Hipotecario",
+      "generated": "Generado",
+      "generalInfo": "Información General",
+      "property": "Inmueble",
+      "creditProgram": "Programa de Crédito",
+      "propertyPrice": "Precio del Inmueble",
+      "downPayment": "Cuota Inicial",
+      "bondApplied": "Bono Aplicado",
+      "term": "Plazo",
+      "months": "meses",
+      "frequency": "Frecuencia de Pago",
+      "baseTea": "TEA Base",
+      "creditCosts": "Costos del Crédito",
+      "notary": "Notaría",
+      "registry": "Registro",
+      "appraisal": "Tasación",
+      "studyCommission": "Comisión de Estudio",
+      "activationCommission": "Comisión de Activación",
+      "insurance": "Seguros (Vida + Riesgo)",
+      "financialMetrics": "Métricas Financieras",
+      "paymentSummary": "Resumen de Pagos",
+      "totalInstallments": "Total Cuotas Pagadas",
+      "totalAmortization": "Total Amortización",
+      "totalInterest": "Total Intereses",
+      "totalPayments": "Total Pagos",
+      "paymentSchedule": "Cronograma de Pagos",
+      "period": "Período",
+      "grace": "Gracia",
+      "initialBalance": "Saldo Inicial",
+      "interest": "Interés",
+      "amortization": "Amortización",
+      "installment": "Cuota",
+      "finalBalance": "Saldo Final",
+      "page": "Página",
+      "of": "de",
+      "autoGenerated": "Este reporte fue generado automáticamente por el sistema CrediVivienda",
+      "printDate": "Fecha de impresión"
     }
   },
   "support": {

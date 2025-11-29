@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { IamStore } from '@iam/application/iam-store';
 import { User } from '@iam/domain/model/user.entity';
+import {Setting} from '@iam/domain/model/setting.entity';
 
 @Component({
   selector: 'app-register',
@@ -75,7 +76,7 @@ export class Register {
 
     // Create new user with enabled=false (needs to complete profile)
     const newUser = new User({
-      id: Date.now(), // Temporary ID generation
+      id: 0, // ID will be set by the store/backend
       username: formValue.username,
       password: formValue.password,
       enabled: false, // Needs to complete profile
@@ -92,14 +93,38 @@ export class Register {
       role_id: 1 // USER role
     });
 
+    // Add user first
     this.iamStore.addUser(newUser);
+
+    // Wait for user to be created and then create setting
+    // Using a small delay to allow the user to be added to the store
     setTimeout(() => {
-      console.log('Usuario registrado:', newUser);
+      const users = this.iamStore.users();
+      const createdUser = users.find(u => u.username === formValue.username);
+
+      if (createdUser) {
+        // Now create the setting with the correct user_id
+        const newSetting = new Setting({
+          id: 0, // ID will be set by the backend
+          user_id: createdUser.id,
+          default_currency_catalog_id: 1, // Default PEN currency
+          default_interest_type: 'EFFECTIVE', // Default interest type
+          default_grace_period: "TOTAL", // Default grace period
+          default_opportunity_tea: 10.00, // Default opportunity TEA
+          default_days_in_year: 360, // Default days in year
+          default_change_usd_pen: 3.70 // Default USD to PEN exchange rate
+        });
+
+        this.iamStore.addSetting(newSetting);
+
+        console.log('Usuario y configuración registrados:', createdUser);
+      }
+
       this.isLoading.set(false);
 
-      // Redirect to log in after successful registration
+      // Redirect to login after successful registration
       this.router.navigate(['/login']).then();
-    }, 1000);
+    }, 1500);
   }
 
   goToLogin() {

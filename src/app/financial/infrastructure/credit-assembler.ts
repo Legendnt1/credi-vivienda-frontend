@@ -23,19 +23,24 @@ export class CreditAssembler implements BaseAssembler<Credit, CreditResource, Cr
   toEntityFromResource(resource: CreditResource): Credit {
     return new Credit({
       id: resource.id,
-      down_payment: resource.down_payment,
-      credit_term_months: resource.credit_term_months,
-      grace_period_total: resource.grace_period_total,
-      grace_period_partial: resource.grace_period_partial,
-      interest_rate: resource.interest_rate,
-      interest_type: resource.interest_type,
-      payment_frequency: resource.payment_frequency,
       program: resource.program,
-      tcea: resource.tcea,
-      currency_catalogs_id: resource.currency_catalogs_id,
-      bond_id: resource.bond_id,
-      user_id: resource.user_id,
-      property_project_id: resource.property_project_id
+      default_credit_term_months: resource.default_credit_term_months,
+      default_grace_period_total_months: resource.default_grace_period_total_months,
+      default_grace_period_partial_months: resource.default_grace_period_partial_months,
+      default_interest_rate: resource.default_interest_rate,
+      default_interest_type: resource.default_interest_type,
+      default_payment_frequency: resource.default_payment_frequency,
+      default_bond_id: resource.default_bond_id,
+      notary_cost: resource.notary_cost,
+      registry_cost: resource.registry_cost,
+      appraisal_cost: resource.appraisal_cost,
+      study_commission: resource.study_commission,
+      activation_commission: resource.activation_commission,
+      periodic_commission: resource.periodic_commission,
+      periodic_charges: resource.periodic_charges,
+      periodic_admin_expense: resource.periodic_admin_expense,
+      life_insurance_annual_rate: resource.life_insurance_annual_rate,
+      risk_insurance_annual_rate: resource.risk_insurance_annual_rate,
     })
   }
 
@@ -47,19 +52,24 @@ export class CreditAssembler implements BaseAssembler<Credit, CreditResource, Cr
   toResourceFromEntity(entity: Credit): CreditResource {
     return {
       id: entity.id,
-      down_payment: entity.down_payment,
-      credit_term_months: entity.credit_term_months,
-      grace_period_total: entity.grace_period_total,
-      grace_period_partial: entity.grace_period_partial,
-      interest_rate: entity.interest_rate,
-      interest_type: entity.interest_type,
-      payment_frequency: entity.payment_frequency,
       program: entity.program,
-      tcea: entity.tcea,
-      currency_catalogs_id: entity.currency_catalogs_id,
-      bond_id: entity.bond_id,
-      user_id: entity.user_id,
-      property_project_id: entity.property_project_id
+      default_credit_term_months: entity.default_credit_term_months,
+      default_grace_period_total_months: entity.default_grace_period_total_months,
+      default_grace_period_partial_months: entity.default_grace_period_partial_months,
+      default_interest_rate: entity.default_interest_rate,
+      default_interest_type: entity.default_interest_type,
+      default_payment_frequency: entity.default_payment_frequency,
+      default_bond_id: entity.default_bond_id,
+      notary_cost: entity.notary_cost,
+      registry_cost: entity.registry_cost,
+      appraisal_cost: entity.appraisal_cost,
+      study_commission: entity.study_commission,
+      activation_commission: entity.activation_commission,
+      periodic_commission: entity.periodic_commission,
+      periodic_charges: entity.periodic_charges,
+      periodic_admin_expense: entity.periodic_admin_expense,
+      life_insurance_annual_rate: entity.life_insurance_annual_rate,
+      risk_insurance_annual_rate: entity.risk_insurance_annual_rate,
     } as CreditResource;
   }
 

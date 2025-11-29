@@ -23,6 +23,16 @@
             ],
             "styles": [
               "src/styles.css"
+            ],
+            "allowedCommonJsDependencies": [
+              "jspdf",
+              "jspdf-autotable",
+              "canvg",
+              "html2canvas",
+              "dompurify",
+              "core-js",
+              "raf",
+              "rgbcolor"
             ]
           },
           "configurations": {

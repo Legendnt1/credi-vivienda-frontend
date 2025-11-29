@@ -65,13 +65,13 @@
   "bonds": [
     {
       "id": 1,
-      "name": "Techo Propio",
-      "total_bond": 46545
+      "name": "No Bono",
+      "total_bond": 0
     },
     {
       "id": 2,
-      "name": "Bono del Buen Pagador",
-      "total_bond": 25000
+      "name": "Techo Propio",
+      "total_bond": 46545
     }
   ],
   "property_projects": [
@@ -82,8 +82,12 @@
       "type": "Departamento",
       "area": 72,
       "price": 220000,
+      "currency_catalog_id": 1,
       "availability": 5,
-      "status": "Disponible"
+      "status": "approved",
+      "address": "Av. Las Flores 123",
+      "district": "San Isidro",
+      "province": "Lima"
     },
     {
       "id": 2,
@@ -92,8 +96,12 @@
       "type": "Casa",
       "area": 120,
       "price": 320000,
+      "currency_catalog_id": 1,
       "availability": 2,
-      "status": "Reservado"
+      "status": "in_evaluation",
+      "address": "Calle El Sol 456",
+      "district": "Miraflores",
+      "province": "Lima"
     },
     {
       "id": 3,
@@ -102,8 +110,26 @@
       "type": "Departamento",
       "area": 85,
       "price": 280000,
+      "currency_catalog_id": 1,
       "availability": 3,
-      "status": "Vendido"
+      "status": "pending",
+      "address": "Av. Miramar 789",
+      "district": "Barranco",
+      "province": "Lima"
+    },
+    {
+      "id": 4,
+      "property_code": "004",
+      "project": "Torre Premium",
+      "type": "Departamento",
+      "area": 95,
+      "price": 85000,
+      "currency_catalog_id": 2,
+      "availability": 10,
+      "status": "approved",
+      "address": "Av. Conquistadores 1500",
+      "district": "San Isidro",
+      "province": "Lima"
     }
   ],
   "currency_catalogs": [
@@ -119,115 +145,112 @@
   "credits": [
     {
       "id": 1,
-      "down_payment": 44000,
-      "credit_term_months": 240,
-      "grace_period_total": 3,
-      "grace_period_partial": 0,
-      "interest_rate": 8.5,
-      "interest_type": "EFFECTIVE",
-      "payment_frequency": "MENSUAL",
-      "program": "MIVIVIENDA",
-      "tcea": 9.3,
-      "currency_catalogs_id": 1,
-      "bond_id": 2,
-      "user_id": 1,
-      "property_project_id": 1
-    },
-    {
-      "id": 2,
-      "down_payment": 35000,
-      "credit_term_months": 180,
-      "grace_period_total": 0,
-      "grace_period_partial": 2,
-      "interest_rate": 7.2,
-      "interest_type": "NOMINAL",
-      "payment_frequency": "MENSUAL",
-      "program": "TECHO_PROPIO",
-      "tcea": 8.1,
-      "currency_catalogs_id": 1,
-      "bond_id": 1,
-      "user_id": 2,
-      "property_project_id": 2
-    },
-    {
-      "id": 3,
-      "down_payment": 56000,
-      "credit_term_months": 120,
-      "grace_period_total": 0,
-      "grace_period_partial": 0,
-      "interest_rate": 6.9,
-      "interest_type": "EFFECTIVE",
-      "payment_frequency": "MENSUAL",
-      "program": "OTRO",
-      "tcea": 7.4,
-      "currency_catalogs_id": 2,
-      "bond_id": 0,
-      "user_id": 3,
-      "property_project_id": 3
+      "program": "Fondo MIVIVIENDA",
+      "default_credit_term_months": 240,
+      "default_grace_period_total_months": 0,
+      "default_grace_period_partial_months": 0,
+      "default_interest_rate": 8.5,
+      "default_interest_type": "EFFECTIVE",
+      "default_payment_frequency": "MENSUAL",
+      "default_bond_id": 2,
+      "notary_cost": 150,
+      "registry_cost": 200,
+      "appraisal_cost": 120,
+      "study_commission": 100,
+      "activation_commission": 0,
+      "periodic_commission": 3,
+      "periodic_charges": 3.5,
+      "periodic_admin_expense": 10,
+      "life_insurance_annual_rate": 4.5,
+      "risk_insurance_annual_rate": 40
     }
   ],
   "payments": [
     {
       "id": 1,
+      "report_id": 1,
       "period": 1,
-      "payment_date": "2025-02-28",
-      "payment_amount": 2100.5,
-      "capital_amortization": 800.3,
-      "interest_paid": 1300.2,
-      "effective_rate_period": 0.0075,
-      "grace_type": "SIN_PLAZO",
-      "remaining_balance": 175699.7,
-      "credit_id": 1
-    },
-    {
-      "id": 2,
-      "period": 2,
-      "payment_date": "2025-03-31",
-      "payment_amount": 2100.5,
-      "capital_amortization": 810.1,
-      "interest_paid": 1290.4,
-      "effective_rate_period": 0.0075,
-      "grace_type": "SIN_PLAZO",
-      "remaining_balance": 174889.6,
-      "credit_id": 1
-    },
-    {
-      "id": 3,
-      "period": 1,
-      "payment_date": "2025-01-31",
-      "payment_amount": 1850.75,
-      "capital_amortization": 650.4,
-      "interest_paid": 1200.35,
-      "effective_rate_period": 0.0065,
-      "grace_type": "GRACIA_PARCIAL",
-      "remaining_balance": 214349.6,
-      "credit_id": 2
-    },
-    {
-      "id": 4,
-      "period": 1,
-      "payment_date": "2025-04-30",
-      "payment_amount": 2800,
-      "capital_amortization": 1900,
-      "interest_paid": 900,
-      "effective_rate_period": 0.0056,
-      "grace_type": "SIN_PLAZO",
-      "remaining_balance": 168100,
-      "credit_id": 3
+      "grace_type": "TOTAL",
+      "annual_rate": 8.5,
+      "effective_period_rate": 0.026433,
+      "initial_balance": 280570,
+      "interest_paid": 7416.4,
+      "installment_base": 0,
+      "capital_amortization": 0,
+      "life_insurance": 378.77,
+      "risk_insurance": 350,
+      "commission": 3,
+      "charges": 3.5,
+      "admin_expense": 10,
+      "total_payment": 7457.77,
+      "remaining_balance": 287986.4,
+      "cash_flow": -7457.77
     }
   ],
   "settings": [
     {
       "id": 1,
-      "default_currency_catalog_id": 1,
+      "user_id": 1,
+      "default_currency_catalog_id": 2,
       "default_interest_type": "EFFECTIVE",
-      "default_grace_period": "TOTAL"
+      "default_grace_period": "TOTAL",
+      "default_opportunity_tea": 10.53,
+      "default_days_in_year": 360,
+      "default_change_usd_pen": 3.75
     },
     {
       "id": 2,
-      "default_currency_catalog_id": 2,
+      "user_id": 2,
+      "default_currency_catalog_id": 1,
       "default_interest_type": "EFFECTIVE",
-      "default_grace_period": "TOTAL"
+      "default_grace_period": "TOTAL",
+      "default_opportunity_tea": 10,
+      "default_days_in_year": 360,
+      "default_change_usd_pen": 3.75
+    },
+    {
+      "id": 3,
+      "user_id": 3,
+      "default_currency_catalog_id": 1,
+      "default_interest_type": "NOMINAL",
+      "default_grace_period": "PARTIAL",
+      "default_opportunity_tea": 10,
+      "default_days_in_year": 360,
+      "default_change_usd_pen": 3.75
+    }
+  ],
+  "reports": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "credit_id": 1,
+      "property_project_id": 1,
+      "currency_catalog_id": 1,
+      "generated_at": "2025-11-26T10:30:00Z",
+      "price": 220000,
+      "down_payment": 44000,
+      "bond_applied": 25000,
+      "years": 20,
+      "frequency": "MENSUAL",
+      "base_tea": 8.5,
+      "notary": 150,
+      "registry": 200,
+      "appraisal": 120,
+      "study_commission": 100,
+      "activation_commission": 0,
+      "commission": 3,
+      "charges": 3.5,
+      "admin_expense": 10,
+      "life_insurance_annual_rate": 4.5,
+      "risk_insurance_annual_rate": 40,
+      "opportunity_tea": 10,
+      "total_installments_paid": 250000.5,
+      "total_amortization": 150000,
+      "total_interest": 100000.5,
+      "total_payments_report": 270000,
+      "van": 12345.67,
+      "tir": 0.12,
+      "tcea": 0.105
     }
   ]
 }

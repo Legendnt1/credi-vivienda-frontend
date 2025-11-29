@@ -9,108 +9,147 @@ export class Credit implements BaseEntity {
    */
   _id: number;
   /**
-   * The down payment amount.
-   */
-  _down_payment: number;
-  /**
-   * The credit term in months.
-   */
-  _credit_term_months: number;
-  /**
-   * The total grace period in months.
-   */
-  _grace_period_total: number;
-  /**
-   * The partial grace period in months.
-   */
-  _grace_period_partial: number;
-  /**
-   * The interest rate.
-   */
-  _interest_rate: number;
-  /**
-   * The type of interest.
-   */
-  _interest_type: string;
-  /**
-   * The payment frequency.
-   */
-  _payment_frequency: string;
-  /**
-   * The credit program.
+   * The program associated with the credit.
    */
   _program: string;
   /**
-   * The effective annual cost rate (TCEA).
+   * The type of credit.
    */
-  _tcea: number;
+  _default_credit_term_months: number;
   /**
-   * The currency catalog identifier.
+   * The default grace period in total months.
    */
-  _currency_catalogs_id: number;
+  _default_grace_period_total_months: number;
   /**
-   * The bond identifier.
+   * The default grace period in partial months.
    */
-  _bond_id: number;
+  _default_grace_period_partial_months: number;
   /**
-   * The user identifier.
+   * The default interest rate for the credit.
    */
-  _user_id: number;
+  _default_interest_rate: number;
   /**
-   * The property project identifier.
+   * The default interest type for the credit.
    */
-  _property_project_id: number;
+  _default_interest_type: string;
+  /**
+   * The default payment frequency for the credit.
+   */
+  _default_payment_frequency: string;
+  /**
+   * The default bond ID associated with the credit.
+   */
+  _default_bond_id: number;
+  /**
+   * The default currency ID for the credit.
+   */
+  _notary_cost: number;
+  /**
+   * The default currency ID for the credit.
+   */
+  _registry_cost: number;
+  /**
+   * The default currency ID for the credit.
+   */
+  _appraisal_cost: number;
+  /**
+   * The default currency ID for the credit.
+   */
+  _study_commission: number;
+  /**
+   * The activation commission for the credit.
+   */
+  _activation_commission: number;
+  /**
+   * The periodic commission for the credit.
+   */
+  _periodic_commission: number;
+  /**
+   * The periodic charges for the credit.
+   */
+  _periodic_charges: number;
+  /**
+   * The periodic admin expense for the credit.
+   */
+  _periodic_admin_expense: number;
+  /**
+   * The life insurance annual rate for the credit.
+   */
+  _life_insurance_annual_rate: number;
+  /**
+   * The risk insurance annual rate for the credit.
+   */
+  _risk_insurance_annual_rate: number;
+
 
   /**
    * Creates a new Credit instance.
    * @param credit - An object containing credit properties.
    */
-  constructor(credit: { id: number; down_payment: number; credit_term_months: number; grace_period_total: number;
-    grace_period_partial: number; interest_rate: number; interest_type: string; payment_frequency: string; program: string;
-    tcea: number; currency_catalogs_id: number; bond_id: number; user_id: number; property_project_id: number; }) {
+  constructor(credit: { id: number; program: string; default_credit_term_months: number; default_grace_period_total_months: number;
+    default_grace_period_partial_months: number; default_interest_rate: number; default_interest_type: string;
+    default_payment_frequency: string; default_bond_id: number; notary_cost: number; registry_cost: number;
+    appraisal_cost: number; study_commission: number; activation_commission: number; periodic_commission: number;
+    periodic_charges: number; periodic_admin_expense: number; life_insurance_annual_rate: number; risk_insurance_annual_rate: number; }) {
     this._id = credit.id;
-    this._down_payment = credit.down_payment;
-    this._credit_term_months = credit.credit_term_months;
-    this._grace_period_total = credit.grace_period_total;
-    this._grace_period_partial = credit.grace_period_partial;
-    this._interest_rate = credit.interest_rate;
-    this._interest_type = credit.interest_type;
-    this._payment_frequency = credit.payment_frequency;
     this._program = credit.program;
-    this._tcea = credit.tcea;
-    this._currency_catalogs_id = credit.currency_catalogs_id;
-    this._bond_id = credit.bond_id;
-    this._user_id = credit.user_id;
-    this._property_project_id = credit.property_project_id;
+    this._default_credit_term_months = credit.default_credit_term_months;
+    this._default_grace_period_total_months = credit.default_grace_period_total_months;
+    this._default_grace_period_partial_months = credit.default_grace_period_partial_months;
+    this._default_interest_rate = credit.default_interest_rate;
+    this._default_interest_type = credit.default_interest_type;
+    this._default_payment_frequency = credit.default_payment_frequency;
+    this._default_bond_id = credit.default_bond_id;
+    this._notary_cost = credit.notary_cost;
+    this._registry_cost = credit.registry_cost;
+    this._appraisal_cost = credit.appraisal_cost;
+    this._study_commission = credit.study_commission;
+    this._activation_commission = credit.activation_commission;
+    this._periodic_commission = credit.periodic_commission;
+    this._periodic_charges = credit.periodic_charges;
+    this._periodic_admin_expense = credit.periodic_admin_expense;
+    this._life_insurance_annual_rate = credit.life_insurance_annual_rate;
+    this._risk_insurance_annual_rate = credit.risk_insurance_annual_rate;
+
   }
 
   /** Getters and Setters */
   get id(): number { return this._id; }
   set id(value: number) { this._id = value; }
-  get down_payment(): number { return this._down_payment; }
-  set down_payment(value: number) { this._down_payment = value; }
-  get credit_term_months(): number { return this._credit_term_months; }
-  set credit_term_months(value: number) { this._credit_term_months = value; }
-  get grace_period_total(): number { return this._grace_period_total; }
-  set grace_period_total(value: number) { this._grace_period_total = value; }
-  get grace_period_partial(): number { return this._grace_period_partial; }
-  set grace_period_partial(value: number) { this._grace_period_partial = value; }
-  get interest_rate(): number { return this._interest_rate; }
-  set interest_rate(value: number) { this._interest_rate = value; }
-  get interest_type(): string { return this._interest_type; }
-  set interest_type(value: string) { this._interest_type = value; }
-  get payment_frequency(): string { return this._payment_frequency; }
-  set payment_frequency(value: string) { this._payment_frequency = value; }
   get program(): string { return this._program; }
   set program(value: string) { this._program = value; }
-  get tcea(): number { return this._tcea; }
-  set tcea(value: number) { this._tcea = value; }
-  get currency_catalogs_id(): number { return this._currency_catalogs_id; }
-  set currency_catalogs_id(value: number) { this._currency_catalogs_id = value; }
-  get bond_id(): number { return this._bond_id; }
-  set bond_id(value: number) { this._bond_id = value; }
-  get user_id(): number { return this._user_id; }
-  set user_id(value: number) { this._user_id = value; }
-  get property_project_id(): number { return this._property_project_id; }
-  set property_project_id(value: number) { this._property_project_id = value; }
+  get default_credit_term_months(): number { return this._default_credit_term_months; }
+  set default_credit_term_months(value: number) { this._default_credit_term_months = value; }
+  get default_grace_period_total_months(): number { return this._default_grace_period_total_months; }
+  set default_grace_period_total_months(value: number) { this._default_grace_period_total_months = value; }
+  get default_grace_period_partial_months(): number { return this._default_grace_period_partial_months; }
+  set default_grace_period_partial_months(value: number) { this._default_grace_period_partial_months = value; }
+  get default_interest_rate(): number { return this._default_interest_rate; }
+  set default_interest_rate(value: number) { this._default_interest_rate = value; }
+  get default_interest_type(): string { return this._default_interest_type; }
+  set default_interest_type(value: string) { this._default_interest_type = value; }
+  get default_payment_frequency(): string { return this._default_payment_frequency; }
+  set default_payment_frequency(value: string) { this._default_payment_frequency = value; }
+  get default_bond_id(): number { return this._default_bond_id; }
+  set default_bond_id(value: number) { this._default_bond_id = value; }
+  get notary_cost(): number { return this._notary_cost; }
+  set notary_cost(value: number) { this._notary_cost = value; }
+  get registry_cost(): number { return this._registry_cost; }
+  set registry_cost(value: number) { this._registry_cost = value; }
+  get appraisal_cost(): number { return this._appraisal_cost; }
+  set appraisal_cost(value: number) { this._appraisal_cost = value; }
+  get study_commission(): number { return this._study_commission; }
+  set study_commission(value: number) { this._study_commission = value; }
+  get activation_commission(): number { return this._activation_commission; }
+  set activation_commission(value: number) { this._activation_commission = value; }
+  get periodic_commission(): number { return this._periodic_commission; }
+  set periodic_commission(value: number) { this._periodic_commission = value; }
+  get periodic_charges(): number { return this._periodic_charges; }
+  set periodic_charges(value: number) { this._periodic_charges = value; }
+  get periodic_admin_expense(): number { return this._periodic_admin_expense; }
+  set periodic_admin_expense(value: number) { this._periodic_admin_expense = value; }
+  get life_insurance_annual_rate(): number { return this._life_insurance_annual_rate; }
+  set life_insurance_annual_rate(value: number) { this._life_insurance_annual_rate = value; }
+  get risk_insurance_annual_rate(): number { return this._risk_insurance_annual_rate; }
+  set risk_insurance_annual_rate(value: number) { this._risk_insurance_annual_rate = value; }
 }

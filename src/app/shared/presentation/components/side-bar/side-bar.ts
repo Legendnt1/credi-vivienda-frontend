@@ -1,7 +1,8 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import {Component, ChangeDetectionStrategy, signal, inject} from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ButtonLogout } from '../button-logout/button-logout';
+import {IamStore} from '@iam/application/iam-store';
 
 interface MenuItem {
   label: string;
@@ -19,6 +20,8 @@ interface MenuItem {
 })
 export class SideBar {
   readonly spriteUrl = '/assets/icons/sprite.symbol.svg';
+  private readonly iamStore = inject(IamStore);
+  readonly sessionUser = this.iamStore.sessionUser;
 
   menuItems = signal<MenuItem[]>([
     {

@@ -1,0 +1,32 @@
+@if (isOpen()) {
+  <div class="modal-overlay" (click)="close()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header" [class.success]="isSuccess()" [class.error]="!isSuccess()">
+        <div class="modal-icon">
+          @if (isSuccess()) {
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <use href="assets/icons/sprite.symbol.svg#check-circle"></use>
+            </svg>
+          } @else {
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <use href="assets/icons/sprite.symbol.svg#alert-circle"></use>
+            </svg>
+          }
+        </div>
+        <h2 class="modal-title">{{ title() }}</h2>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-message">{{ message() }}</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-close" (click)="close()">
+          {{ 'calculations.modal.continue' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+

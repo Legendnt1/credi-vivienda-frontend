@@ -514,6 +514,26 @@ export class IamStore {
   }
 
   /**
+   * Gets a setting by user ID.
+   * @param userId - The ID of the user.
+   * @returns A signal of the setting or undefined if not found.
+   */
+  getSettingByUserId(userId: number | null | undefined): Signal<Setting | undefined> {
+    return computed(() => userId ? this.settings().find(s => s.user_id === userId) : undefined);
+  }
+
+  /**
+   * Gets the current session user's setting.
+   * @returns A signal of the setting or undefined if not found.
+   */
+  getCurrentUserSetting(): Signal<Setting | undefined> {
+    return computed(() => {
+      const userId = this.sessionUserId();
+      return userId ? this.settings().find(s => s.user_id === userId) : undefined;
+    });
+  }
+
+  /**
    * Adds a new setting.
    * @param setting - The setting to add.
    */

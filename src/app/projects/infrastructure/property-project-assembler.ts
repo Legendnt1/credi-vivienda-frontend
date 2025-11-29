@@ -28,8 +28,12 @@ export class PropertyProjectAssembler implements BaseAssembler<PropertyProject, 
       type: resource.type,
       area: resource.area,
       price: resource.price,
+      currency_catalog_id: resource.currency_catalog_id,
       availability: resource.availability,
       status: resource.status,
+      address: resource.address,
+      district: resource.district,
+      province: resource.province,
     });
   }
 
@@ -46,8 +50,12 @@ export class PropertyProjectAssembler implements BaseAssembler<PropertyProject, 
       type: entity.type,
       area: entity.area,
       price: entity.price,
+      currency_catalog_id: entity.currency_catalog_id,
       availability: entity.availability,
       status: entity.status,
+      address: entity.address,
+      district: entity.district,
+      province: entity.province,
     } as PropertyProjectResource;
   }
 

@@ -1,7 +1,10 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
+import {Credit} from '@financial/domain/model/credit.entity';
+import {PropertyProject} from '@projects/domain/property-project.entity';
+import {Bond} from '@projects/domain/bond.entity';
 
 /**
- * Service for calculating French amortization schedules.
+ * Payment frequency options.
  */
 export type PaymentFrequency =
   | 'DIARIA'
@@ -21,7 +24,7 @@ export type GraceType = 'TOTAL' | 'PARCIAL' | 'SIN_PLAZO';
 
 
 /**
- *  Configuration for grace periods in amortization schedules.
+ * Configuration for grace periods.
  */
 export interface GraceConfig {
   /**
@@ -39,11 +42,11 @@ export interface GraceConfig {
  */
 export interface FrenchInput {
   /**
-   * Property price.
+   * Property price: PV
    */
   price: number;
   /**
-   * Amount of down payment.
+   * Amount of down payment(no percentage): CI
    */
   downPaymentAmount: number;
   /**
@@ -59,7 +62,7 @@ export interface FrenchInput {
    */
   frequency: PaymentFrequency;
   /**
-   * Annual interest rates for each year.
+   * Array of annual interest rates in percentage (TEA(NC) %).
    */
   annualRates: number[];
   /**
@@ -67,11 +70,72 @@ export interface FrenchInput {
    */
   graceConfig?: GraceConfig;
   /**
-   * Number of days in a year (optional, defaults to 360).
+   * Grace type by period.
+   */
+  graceByPeriod?: GraceType[];
+  /**
+   * Number of capitalization periods per year used if converting nominal to effective rates.
+   */
+  capitalizationPeriodsPerYear?: number;
+  /**
+   * Nominal annual interest rate in percentage (optional, used if converting to effective rate).
+   */
+  opportunityAnnualRatePercent?: number;
+  /**
+   * Number of days in a year (optional, defaults to 360): NDxA
    */
   daysInYear?: number;
+  /**
+   * Initial costs.
+   */
+  initialCosts?: {
+    /**
+     * Notary costs.
+     */
+    notary: number;
+    /**
+     * Registry costs.
+     */
+    registry: number;
+    /**
+     * Appraisal costs.
+     */
+    appraisal: number;
+    /**
+     * Study commission.
+     */
+    studyCommission: number;
+    /**
+     * Activation commission.
+     */
+    activationCommission: number;
+  };
+  /**
+   * Periodic costs.
+   */
+  periodicCosts?: {
+    /**
+     * Commission percentage.
+     */
+    commission: number;
+    /**
+     * Fees or charges.
+     */
+    charges: number;
+    /**
+     * Administrative expense.
+     */
+    adminExpense: number;
+    /**
+     * Life insurance annual rate in percentage.
+     */
+    lifeInsuranceAnnualRate: number;
+    /**
+     * Risk insurance annual rate in percentage.
+     */
+    riskInsuranceAnnualRate: number;
+  };
 }
-
 
 /**
  * A row in the French amortization schedule.
@@ -86,23 +150,33 @@ export interface FrenchScheduleRow {
   installment: number;        // R(NC)
   amortization: number;       // A(NC)
   finalBalance: number;       // SF(NC)
+  lifeInsurance?: number; // Life insurance
+  riskInsurance?: number; // Risk insurance
+  commission?: number; // Commission
+  charges?: number; // Fees or charges
+  adminExpense?: number; // Administrative expense
+  totalInstallmentWithCharges?: number; // R(NC) + charges
+  cashFlow?: number; // F
 }
 
 /**
  * Result of French amortization schedule calculation.
  */
 export interface FrenchScheduleResult {
-  price: number;
-  downPayment: number;
-  bondApplied: number;
+  price: number; // PV
+  downPayment: number; // CI
+  bondApplied: number; // Bond applied
   financedCapital: number;     // C
-  frequency: PaymentFrequency;
+  frequency: PaymentFrequency; // F
   periodsPerYear: number;      // NCxA
   totalPeriods: number;        // N
-  schedule: FrenchScheduleRow[];
+  schedule: FrenchScheduleRow[]; // Amortization schedule
   totalInstallmentsPaid: number; // SumaR
   totalAmortization: number;     // SumaA
   totalInterest: number;         // SumaI
+  irrPerPeriod?: number; // IRR per period as decimal
+  tcea?: number;        // TCEA in %
+  npv?: number;        // NPV
 }
 
 /**
@@ -128,7 +202,7 @@ export class FrenchAmortizationService {
   };
 
   /**
-   * Calculates the French amortization schedule based on the provided input.
+   * Calculate the French amortization schedule.
    * @param input - Input parameters for the calculation.
    * @returns The calculated French amortization schedule result.
    */
@@ -137,13 +211,11 @@ export class FrenchAmortizationService {
     const frequencyDays = this.FREQUENCY_DAYS[input.frequency];
 
     if (!frequencyDays) {
-      throw new Error(`Frecuencia de pago no soportada: ${input.frequency}`);
+      throw new Error(`Frequency not supported: ${input.frequency}`);
     }
 
-
     const periodsPerYear = daysInYear / frequencyDays;
-    const totalPeriods = Math.round(periodsPerYear * input.years); // N
-
+    const totalPeriods = Math.floor(periodsPerYear * input.years); // N
 
     const downPayment = this.round2(input.downPaymentAmount);
     const bond = this.round2(input.bondAmount ?? 0);
@@ -166,35 +238,41 @@ export class FrenchAmortizationService {
     let currentInitialBalance = financedCapital; // SI(NC)
 
     for (let period = 1; period <= totalPeriods; period++) {
-      const graceType = this.resolveGraceType(period, graceConfig);
+      const index = period - 1;
+
+      // Determine grace type for the current period
+      const graceType: GraceType =
+        input.graceByPeriod?.[index] ?? this.resolveGraceType(period, graceConfig);
+
+      // Resolve annual interest rate for the current period
       const annualRatePercent = this.resolveAnnualRateForPeriod(period, input.annualRates);
-      const annualRate = annualRatePercent / 100; // TEA(NC) in fraction
+      const annualRate = annualRatePercent / 100; // TEA(NC) as decimal
 
       // TES(NC) = (1 + TEA(NC))^(F / NDxA) - 1
       const effectivePeriodRate = Math.pow(1 + annualRate, frequencyDays / daysInYear) - 1;
 
-      // SI(NC): Initial Balance
+      // SI(NC)
       const initialBalance = currentInitialBalance;
 
       // I(NC) = TES(NC) * SI(NC)
       const interest = this.round2(effectivePeriodRate * initialBalance);
 
-      let installment = 0;     // R(NC)
-      let amortization = 0;    // A(NC)
-      let finalBalance = 0;    // SF(NC)
+      let installment = 0;   // R(NC)
+      let amortization = 0;  // A(NC)
+      let finalBalance = 0;  // SF(NC)
 
       if (graceType === 'TOTAL') {
-        // Grace TOTAL: it does not pay anything
+        // TOTAL: it does not pay anything
         installment = 0;
         amortization = 0;
         finalBalance = this.round2(initialBalance + interest);
       } else if (graceType === 'PARCIAL') {
-        // Grace PARCIAL: pays only interest
+        // PARCIAL: only interest is paid
         installment = interest;
         amortization = 0;
-        finalBalance = initialBalance; // No amortization
+        finalBalance = initialBalance;
       } else {
-
+        // SIN_PLAZO: normal payment
         const remainingPeriods = totalPeriods - period + 1; // (N - NC + 1)
         const r = this.computeFrenchInstallment(
           initialBalance,
@@ -206,6 +284,39 @@ export class FrenchAmortizationService {
         finalBalance = this.round2(initialBalance - amortization);
       }
 
+      // Periodic costs
+      let lifeInsurance = 0;
+      let riskInsurance = 0;
+      let commission = 0;
+      let charges = 0;
+      let adminExpense = 0;
+
+      if (input.periodicCosts) {
+        const pc = input.periodicCosts;
+
+        const lifeAnnual = (pc.lifeInsuranceAnnualRate ?? 0) / 100;
+        const riskAnnual = (pc.riskInsuranceAnnualRate ?? 0) / 100;
+
+        const lifeRatePerPeriod =
+          lifeAnnual > 0 ? Math.pow(1 + lifeAnnual, frequencyDays / daysInYear) - 1 : 0;
+        const riskRatePerPeriod =
+          riskAnnual > 0 ? Math.pow(1 + riskAnnual, frequencyDays / daysInYear) - 1 : 0;
+
+        lifeInsurance = this.round2(initialBalance * lifeRatePerPeriod);
+        riskInsurance = this.round2(initialBalance * riskRatePerPeriod);
+
+        commission = pc.commission ?? 0;
+        charges = pc.charges ?? 0;
+        adminExpense = pc.adminExpense ?? 0;
+      }
+
+      const totalInstallmentWithCharges = this.round2(
+        installment + lifeInsurance + riskInsurance + commission + charges + adminExpense
+      );
+
+      const cashFlow = -totalInstallmentWithCharges;
+
+      // Accumulate totals
       sumInstallments += installment;
       sumAmortization += amortization;
 
@@ -218,7 +329,14 @@ export class FrenchAmortizationService {
         interest,
         installment,
         amortization,
-        finalBalance
+        finalBalance,
+        lifeInsurance,
+        riskInsurance,
+        commission,
+        charges,
+        adminExpense,
+        totalInstallmentWithCharges,
+        cashFlow
       });
 
       // Update for next period
@@ -228,6 +346,30 @@ export class FrenchAmortizationService {
     const totalInstallmentsPaid = this.round2(sumInstallments);
     const totalAmortization = this.round2(sumAmortization);
     const totalInterest = this.round2(totalInstallmentsPaid - totalAmortization);
+
+    // Build cash flows for IRR and NPV calculations
+    const flows = this.buildBorrowerCashFlows(
+      financedCapital,
+      schedule,
+      input.initialCosts
+    );
+
+    let irrPerPeriod: number | undefined;
+    let tcea: number | undefined;
+    let npv: number | undefined;
+
+    const irr = this.calculateIrr(flows);
+    if (irr != null) {
+      irrPerPeriod = irr;
+      tcea = this.calculateTceaFromIrr(irr, periodsPerYear);
+    }
+
+    if (input.opportunityAnnualRatePercent != null) {
+      const annualKOpp = input.opportunityAnnualRatePercent / 100;
+      const kPerPeriod =
+        Math.pow(1 + annualKOpp, frequencyDays / daysInYear) - 1;
+      npv = this.calculateNpv(kPerPeriod, flows);
+    }
 
     return {
       price: input.price,
@@ -240,12 +382,16 @@ export class FrenchAmortizationService {
       schedule,
       totalInstallmentsPaid,
       totalAmortization,
-      totalInterest
+      totalInterest,
+      irrPerPeriod,
+      tcea,
+      npv
     };
   }
 
   /**
    * Compute the French installment amount.
+   * R = SI * [ i * (1 + i)^(n) ] / [ (1 + i)^(n) - 1 ]
    * @param initialBalance - Initial balance.
    * @param effectivePeriodRate - Effective period interest rate.
    * @param remainingPeriods - Remaining number of periods.
@@ -308,6 +454,130 @@ export class FrenchAmortizationService {
   }
 
   /**
+   * Convert nominal annual interest rate to effective annual rate.
+   * @param nominalPercent - Nominal annual interest rate in percentage.
+   * @param m - Number of compounding periods per year.
+   * @returns Effective annual interest rate in percentage.
+   * @private
+   */
+  private nominalToEffectiveAnnual(nominalPercent: number, m: number): number {
+    const j = nominalPercent / 100;// Convert percentage to decimal
+    const tea = Math.pow(1 + j / m, m) - 1; // TEA = (1 + j/m)^m - 1
+    return tea * 100; // Convert back to percentage
+  }
+
+  /**
+   * Get number of capitalization periods per year from capitalization type.
+   * @param cap - Capitalization type.
+   * @returns Number of capitalization periods per year.
+   * @private
+   */
+  private getMFromCapitalization(cap: 'MENSUAL'|'BIMESTRAL'|'TRIMESTRAL'|'SEMESTRAL'|'ANUAL'): number {
+    switch (cap) {
+      case 'MENSUAL': return 12;
+      case 'BIMESTRAL': return 6;
+      case 'TRIMESTRAL': return 4;
+      case 'SEMESTRAL': return 2;
+      case 'ANUAL': return 1;
+      default: return 12; // Default to monthly if unknown
+    }
+  }
+
+
+  /**
+   * Calculate NPV for given cash flows and rate.
+   * @param ratePerPeriod - Rate per period as decimal.
+   * @param flows - Cash flows array.
+   * @returns The calculated NPV.
+   * @private
+   */
+  private calculateNpv(ratePerPeriod: number, flows: number[]): number {
+    return flows.reduce(
+      (acc, cf, idx) => acc + cf / Math.pow(1 + ratePerPeriod, idx),
+      0
+    );
+  }
+
+  /**
+   * Build borrower cash flows for IRR calculation.
+   * @param financedCapital - Financed capital amount.
+   * @param schedule - Amortization schedule.
+   * @param initialCosts - Initial costs.
+   * @returns Array of cash flows.
+   * @private
+   */
+  private buildBorrowerCashFlows(
+    financedCapital: number,
+    schedule: FrenchScheduleRow[],
+    initialCosts?: FrenchInput['initialCosts']
+  ): number[] {
+    const costs =
+      initialCosts
+        ? initialCosts.notary +
+        initialCosts.registry +
+        initialCosts.appraisal +
+        initialCosts.studyCommission +
+        initialCosts.activationCommission
+        : 0;
+
+    const flows: number[] = [];
+    flows.push(financedCapital - costs);
+
+    for (const row of schedule) {
+      const total = row.totalInstallmentWithCharges ?? row.installment;
+      flows.push(-total);
+    }
+
+    return flows;
+  }
+
+  /**
+   * Calculate IRR using the bisection method.
+   * @param flows - Cash flows array.
+   * @param maxIterations - Maximum number of iterations.
+   * @param tolerance - Tolerance for convergence.
+   * @returns The calculated IRR as a decimal, or null if not found.
+   * @private
+   */
+  private calculateIrr(
+    flows: number[],
+    maxIterations = 100,
+    tolerance = 1e-7
+  ): number | null {
+    let low = -0.9999;
+    let high = 10;
+    let mid = 0;
+
+    const npvAt = (rate: number) => this.calculateNpv(rate, flows);
+
+    let npvLow = npvAt(low);
+    let npvHigh = npvAt(high);
+
+    if (npvLow * npvHigh > 0) {
+      return null;
+    }
+
+    for (let i = 0; i < maxIterations; i++) {
+      mid = (low + high) / 2;
+      const npvMid = npvAt(mid);
+
+      if (Math.abs(npvMid) < tolerance) {
+        break;
+      }
+
+      if (npvLow * npvMid < 0) {
+        high = mid;
+        npvHigh = npvMid;
+      } else {
+        low = mid;
+        npvLow = npvMid;
+      }
+    }
+
+    return mid;
+  }
+
+  /**
    * Round a number to 2 decimal places.
    * @param value - The number to round.
    * @returns The rounded number.
@@ -315,5 +585,178 @@ export class FrenchAmortizationService {
    */
   private round2(value: number): number {
     return Math.round(value * 100) / 100;
+  }
+
+  /**
+   * Calculate TCEA from IRR per period.
+   * @param irrPerPeriod - IRR per period as decimal.
+   * @param periodsPerYear - Number of periods per year.
+   * @returns TCEA in percentage.
+   * @private
+   */
+  private calculateTceaFromIrr(
+    irrPerPeriod: number,
+    periodsPerYear: number
+  ): number {
+    const tea = Math.pow(1 + irrPerPeriod, periodsPerYear) - 1;
+    return tea * 100;
+  }
+
+
+  /**
+   * Build FrenchInput from Credit, PropertyProject, and Bond entities.
+   * @param credit - Credit entity.
+   * @param property - Property project entity.
+   * @param bond - Optional bond entity.
+   * @param overrides - Optional overrides for input parameters.
+   * @returns The constructed FrenchInput object.
+   */
+  buildInputFromEntities(
+    credit: Credit,
+    property: PropertyProject,
+    bond: Bond | null = null,
+    overrides: {
+      price?: number;
+      downPaymentAmount?: number;
+      years?: number;
+      interestRate?: number;
+      interestType?: 'EFFECTIVE' | 'NOMINAL';
+      paymentFrequency?: PaymentFrequency;
+      graceConfig?: GraceConfig;
+      graceByPeriod?: GraceType[];
+      annualRates?: number[];
+      opportunityAnnualRatePercent?: number;
+      initialCosts?: FrenchInput['initialCosts'];
+      periodicCosts?: FrenchInput['periodicCosts'];
+      capitalization?: 'MENSUAL' | 'BIMESTRAL' | 'TRIMESTRAL' | 'SEMESTRAL' | 'ANUAL';
+    } = {}
+  ): FrenchInput {
+    const price = overrides.price ?? property.price; // PV
+    const downPaymentAmount = overrides.downPaymentAmount ?? 0; // CI
+    const bondAmount = bond ? bond.total_bond : 0; // Bond amount
+
+    // Years
+    const years =
+      overrides.years ??
+      (credit.default_credit_term_months
+        ? credit.default_credit_term_months / 12
+        : 0);
+
+    // Grace config
+    const graceConfig: GraceConfig =
+      overrides.graceConfig ?? {
+        totalPeriods: credit.default_grace_period_total_months ?? 0,
+        partialPeriods: credit.default_grace_period_partial_months ?? 0
+      };
+
+    // Interest rate and type
+    const interestType: 'EFFECTIVE' | 'NOMINAL' =
+      overrides.interestType ??
+      (credit.default_interest_type as 'EFFECTIVE' | 'NOMINAL');
+
+    // Base interest rate
+    const baseRate =
+      overrides.interestRate ?? credit.default_interest_rate;
+
+    // Convert to effective annual rate if necessary
+    let teaPercent = baseRate;
+    let capitalizationPeriodsPerYear: number | undefined;
+
+    // Convert nominal to effective if needed
+    if (interestType === 'NOMINAL') {
+      const cap: 'MENSUAL' | 'BIMESTRAL' | 'TRIMESTRAL' | 'SEMESTRAL' | 'ANUAL' =
+        overrides.capitalization ?? 'MENSUAL';
+
+      const m = this.getMFromCapitalization(cap);
+      teaPercent = this.nominalToEffectiveAnnual(baseRate, m);
+      capitalizationPeriodsPerYear = m;
+    }
+
+    // Annual rates array
+    const annualRates = overrides.annualRates ?? [teaPercent];
+
+    // Payment frequency
+    const frequency: PaymentFrequency =
+      overrides.paymentFrequency ??
+      (credit.default_payment_frequency as PaymentFrequency);
+
+
+    // Initial costs
+    const initialCostsDefaults = {
+      notary: credit.notary_cost ?? 0,
+      registry: credit.registry_cost ?? 0,
+      appraisal: credit.appraisal_cost ?? 0,
+      studyCommission: credit.study_commission ?? 0,
+      activationCommission: credit.activation_commission ?? 0
+    };
+
+    // Initial costs with overrides
+    const initialCosts: FrenchInput['initialCosts'] = {
+      notary: overrides.initialCosts?.notary ?? initialCostsDefaults.notary,
+      registry: overrides.initialCosts?.registry ?? initialCostsDefaults.registry,
+      appraisal: overrides.initialCosts?.appraisal ?? initialCostsDefaults.appraisal,
+      studyCommission:
+        overrides.initialCosts?.studyCommission ?? initialCostsDefaults.studyCommission,
+      activationCommission:
+        overrides.initialCosts?.activationCommission ??
+        initialCostsDefaults.activationCommission
+    };
+
+    // Periodic costs
+    const periodicDefaults = {
+      commission: credit.periodic_commission ?? 0,
+      charges: credit.periodic_charges ?? 0,
+      adminExpense: credit.periodic_admin_expense ?? 0,
+      lifeInsuranceAnnualRate: credit.life_insurance_annual_rate ?? 0,
+      riskInsuranceAnnualRate: credit.risk_insurance_annual_rate ?? 0
+    };
+
+    // Periodic costs with overrides
+    const periodicCosts: FrenchInput['periodicCosts'] = {
+      commission: overrides.periodicCosts?.commission ?? periodicDefaults.commission,
+      charges: overrides.periodicCosts?.charges ?? periodicDefaults.charges,
+      adminExpense:
+        overrides.periodicCosts?.adminExpense ?? periodicDefaults.adminExpense,
+      lifeInsuranceAnnualRate:
+        overrides.periodicCosts?.lifeInsuranceAnnualRate ??
+        periodicDefaults.lifeInsuranceAnnualRate,
+      riskInsuranceAnnualRate:
+        overrides.periodicCosts?.riskInsuranceAnnualRate ??
+        periodicDefaults.riskInsuranceAnnualRate
+    };
+
+    // Build and return the FrenchInput object
+    return {
+      price,
+      downPaymentAmount,
+      bondAmount,
+      years,
+      frequency,
+      annualRates,
+      graceConfig,
+      graceByPeriod: overrides.graceByPeriod,
+      daysInYear: 360,
+      capitalizationPeriodsPerYear,
+      opportunityAnnualRatePercent: overrides.opportunityAnnualRatePercent,
+      initialCosts,
+      periodicCosts
+    };
+  }
+
+  /**
+   * Calculate the French amortization schedule using entities.
+   * @param credit - Credit entity.
+   * @param property - Property project entity.
+   * @param bond - Optional bond entity.
+   * @returns The calculated French amortization schedule result.
+   * @example const result = service.calculateFromStore(creditSignal(),selectedPropertySignal(),selectedBondSignal());
+   */
+  calculateFromStore(
+    credit: Credit,
+    property: PropertyProject,
+    bond?: Bond | null
+  ): FrenchScheduleResult {
+    const input = this.buildInputFromEntities(credit, property, bond);
+    return this.calculateSchedule(input);
   }
 }

@@ -8,6 +8,8 @@ import {CreditsApiEndpoint} from '@financial/infrastructure/credits-api-endpoint
 import {PaymentsApiEndpoint} from '@financial/infrastructure/payments-api-endpoint';
 import {Credit} from '@financial/domain/model/credit.entity';
 import {Payment} from '@financial/domain/model/payment.entity';
+import {ReportsApiEndpoint} from '@financial/infrastructure/reports-api-endpoint';
+import {Report} from '@financial/domain/model/report.entity';
 
 /**
  * Service to interact with the Financial API endpoints.
@@ -35,6 +37,12 @@ export class FinancialApi extends BaseApi {
   private readonly paymentsEndpoint: PaymentsApiEndpoint;
 
   /**
+   * Reports API endpoint.
+   * @private
+   */
+  private readonly reportsEndpoint: ReportsApiEndpoint;
+
+  /**
    * Constructor to initialize the Financial API service with HTTP client.
    * @param http - The HTTP client to make API requests.
    */
@@ -43,6 +51,7 @@ export class FinancialApi extends BaseApi {
     this.currencyCatalogsEndpoint = new CurrencyCatalogsApiEndpoint(http);
     this.creditsEndpoint = new CreditsApiEndpoint(http);
     this.paymentsEndpoint = new PaymentsApiEndpoint(http);
+    this.reportsEndpoint = new ReportsApiEndpoint(http);
   }
 
   /**
@@ -177,4 +186,47 @@ export class FinancialApi extends BaseApi {
     return this.paymentsEndpoint.delete(id);
   }
 
+  /**
+   * Get all reports.
+   * @returns An observable of an array of reports.
+   */
+  getReports(): Observable<Report[]> {
+    return this.reportsEndpoint.getAll();
+  }
+
+  /**
+   * Get a report by ID.
+   * @param id - The ID of the report to retrieve.
+   * @returns An observable of the report.
+   */
+  getReport(id: number): Observable<Report> {
+    return this.reportsEndpoint.getById(id);
+  }
+
+  /**
+   * Create a new report.
+   * @param report - The report data to create.
+   * @returns An observable of the created report.
+   */
+  createReport(report: Report): Observable<Report> {
+    return this.reportsEndpoint.create(report);
+  }
+
+  /**
+   * Update an existing report.
+   * @param report - The report data to update.
+   * @returns An observable of the updated report.
+   */
+  updateReport(report: Report): Observable<Report> {
+    return this.reportsEndpoint.update(report, report.id);
+  }
+
+  /**
+   * Delete a report by ID.
+   * @param id - The ID of the report to delete.
+   * @returns An observable of void.
+   */
+  deleteReport(id: number): Observable<void> {
+    return this.reportsEndpoint.delete(id);
+  }
 }

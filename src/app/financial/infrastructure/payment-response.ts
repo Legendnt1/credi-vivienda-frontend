@@ -19,39 +19,71 @@ export interface PaymentResource extends BaseResource {
    */
   id: number;
   /**
-   * The payment period.
+   * The report identifier associated with the payment.
+   */
+  report_id: number;
+  /**
+   * The period number of the payment.
    */
   period: number;
   /**
-   * The payment date.
-   */
-  payment_date: string;
-  /**
-   * The payment amount.
-   */
-  payment_amount: number;
-  /**
-   * The capital amortization amount.
-   */
-  capital_amortization: number;
-  /**
-   * The interest paid amount.
-   */
-  interest_paid: number;
-  /**
-   * The effective rate for the period.
-   */
-  effective_rate_period: number;
-  /**
-   * The type of grace period.
+   * The type of grace period for the payment.
    */
   grace_type: string;
   /**
-   * The remaining balance after the payment.
+   * The annual interest rate for the payment.
+   */
+  annual_rate: number;
+  /**
+   * The payment amount for the period.
+   */
+  effective_period_rate: number;
+  /**
+   * The effective period interest rate.
+   */
+  initial_balance: number;
+  /**
+   * The initial balance before the payment.
+   */
+  interest_paid: number;
+  /**
+   * The interest paid during the period.
+   */
+  installment_base: number;
+  /**
+   * The installment base amount.
+   */
+  capital_amortization: number;
+  /**
+   * The capital amortization amount.
+   */
+  life_insurance: number;
+  /**
+   * The life insurance amount.
+   */
+  risk_insurance: number;
+  /**
+   * The risk insurance amount.
+   */
+  commission: number;
+  /**
+   * The commission amount.
+   */
+  charges: number;
+  /**
+   * The charges amount.
+   */
+  admin_expense: number;
+  /**
+   * The administrative expense amount.
+   */
+  total_payment: number;
+  /**
+   * The total payment amount.
    */
   remaining_balance: number;
   /**
-   * The credit identifier associated with the payment.
+   * The remaining balance after the payment.
    */
-  credit_id: number;
+  cash_flow: number;
 }

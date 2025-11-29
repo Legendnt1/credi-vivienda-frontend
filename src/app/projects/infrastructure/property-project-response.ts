@@ -33,11 +33,15 @@ export interface PropertyProjectResource extends BaseResource {
   /**
    * The area of the property.
    */
-  area: string;
+  area: number;
   /**
    * The price of the property.
    */
   price: number;
+  /**
+   * The currency catalog ID for the property's price.
+   */
+  currency_catalog_id: number;
   /**
    * The availability status of the property.
    */
@@ -46,4 +50,16 @@ export interface PropertyProjectResource extends BaseResource {
    * The status of the property project.
    */
   status: string;
+  /**
+   * The address of the property.
+   */
+  address: string;
+  /**
+   * The district where the property is located.
+   */
+  district: string;
+  /**
+   * The province where the property is located.
+   */
+  province: string;
 }

@@ -6,7 +6,7 @@
     <select
       id="language"
       class="form-select"
-      [value]="currentLang"
+      [value]="currentLang()"
       (change)="useLanguage($event)">
       @for (language of languages; track language.code) {
         <option [value]="language.code">{{ language.name }}</option>

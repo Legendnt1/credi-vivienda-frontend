@@ -4,7 +4,11 @@ import {Credit} from '@financial/domain/model/credit.entity';
 import {Payment} from '@financial/domain/model/payment.entity';
 import {FinancialApi} from '@financial/infrastructure/financial-api';
 import {retry} from 'rxjs';
+import {Report} from '@financial/domain/model/report.entity';
 
+/**
+ * Financial Store to manage state related to financial entities.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -36,6 +40,17 @@ export class FinancialStore {
    * Payments readonly signal.
    */
   readonly payments = this.paymentsSignal.asReadonly();
+
+  /**
+   * Reports signal.
+   * @private
+   */
+  private readonly reportsSignal = signal<Report[]>([]);
+
+  /**
+   * Reports readonly signal.
+   */
+  readonly reports = this.reportsSignal.asReadonly();
 
   /**
    * Loading signal.
@@ -70,10 +85,20 @@ export class FinancialStore {
    */
   readonly paymentCount = signal(() => this.paymentsSignal().length);
 
+  /**
+   * Report count signal.
+   */
+  readonly reportCount = signal(() => this.reportsSignal().length);
+
+  /**
+   * Constructor to initialize the Financial Store with Financial API.
+   * @param financialApi - The Financial API service.
+   */
   constructor(private financialApi: FinancialApi) {
     this.loadCurrencyCatalogs();
     this.loadCredits();
     this.loadPayments();
+    this.loadReports();
   }
 
   /**
@@ -101,6 +126,15 @@ export class FinancialStore {
    */
   getPaymentById(id: number | null | undefined): Signal<Payment | undefined> {
     return computed(() => id ? this.payments().find(p => p.id === id) : undefined);
+  }
+
+  /**
+   * Get Report by ID.
+   * @param id - The ID of the Report.
+   * @returns A signal of the Report or undefined.
+   */
+  getReportById(id: number | null | undefined): Signal<Report | undefined> {
+    return computed(() => id ? this.reports().find(r => r.id === id) : undefined);
   }
 
   /**
@@ -281,6 +315,65 @@ export class FinancialStore {
   }
 
   /**
+   * Add a new Report.
+   * @param report - The Report to add.
+   */
+  addReport(report: Report): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.financialApi.createReport(report).pipe(retry(2)).subscribe({
+      next: (createdReport) => {
+        this.reportsSignal.set([...this.reports(), createdReport]);
+        this.loadingSignal.set(false);
+      },
+      error: (error) => {
+        this.errorSignal.set(this.formatError(error, 'Error at creating report'));
+        this.loadingSignal.set(false);
+      }
+    });
+  }
+
+  /**
+   * Update an existing Report.
+   * @param updatedReport - The Report to update.
+   */
+  updateReport(updatedReport: Report): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.financialApi.updateReport(updatedReport).pipe(retry(2)).subscribe({
+      next: report => {
+        this.reportsSignal.update(reports =>
+          reports.map(r => r.id === report.id ? report : r))
+          this.loadingSignal.set(false);
+        },
+      error: (err) => {
+        this.errorSignal.set(this.formatError(err, 'Error at updating report'));
+        this.loadingSignal.set(false);
+      }
+    });
+  }
+
+  /**
+   * Delete a Report by ID.
+   * @param id - The ID of the Report to delete.
+   */
+  deleteReport(id: number): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.financialApi.deleteReport(id).pipe(retry(2)).subscribe({
+      next: () => {
+        this.reportsSignal.update(reports =>
+          reports.filter(r => r.id !== id));
+        this.loadingSignal.set(false);
+      },
+      error: (err) => {
+        this.errorSignal.set(this.formatError(err, 'Error at deleting report'));
+        this.loadingSignal.set(false);
+      }
+    });
+  }
+
+  /**
    * Load Currency Catalogs from API.
    * @private
    */
@@ -335,6 +428,26 @@ export class FinancialStore {
       },
       error: (error) => {
         this.errorSignal.set(this.formatError(error, 'Error at loading payments'));
+        this.loadingSignal.set(false);
+      }
+    });
+  }
+
+  /**
+   * Load Reports from API.
+   * @private
+   */
+  private loadReports(): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.financialApi.getReports().pipe(retry(2)).subscribe({
+      next: (reports) => {
+        console.log("Reports loaded:", reports);
+        this.reportsSignal.set(reports);
+        this.loadingSignal.set(false);
+      },
+      error: (error) => {
+        this.errorSignal.set(this.formatError(error, 'Error at loading reports'));
         this.loadingSignal.set(false);
       }
     });

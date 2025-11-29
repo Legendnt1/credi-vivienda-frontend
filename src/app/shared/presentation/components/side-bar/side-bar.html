@@ -53,7 +53,7 @@
       <svg class="user-icon" width="20" height="20">
         <use [attr.href]="spriteUrl + '#user'"></use>
       </svg>
-      <span class="user-label">{{ 'sidebar.user' | translate }}</span>
+      <span class="user-label">{{ sessionUser()?.username }}</span>
     </div>
   </div>
 </aside>

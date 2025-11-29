@@ -88,6 +88,67 @@
           </div>
         </div>
 
+        <!-- Opportunity TEA -->
+        <div class="form-group">
+          <label for="opportunityTea" class="form-label">
+            {{ 'settings.form.opportunityTea.label' | translate }}
+          </label>
+          <input
+            type="number"
+            id="opportunityTea"
+            formControlName="default_opportunity_tea"
+            class="form-input"
+            step="0.01"
+            min="0.01"
+            placeholder="{{ 'settings.form.opportunityTea.placeholder' | translate }}"
+            (blur)="onOpportunityTeaBlur()"
+            [class.invalid]="settingsForm.get('default_opportunity_tea')?.invalid && settingsForm.get('default_opportunity_tea')?.touched">
+          @if (settingsForm.get('default_opportunity_tea')?.invalid && settingsForm.get('default_opportunity_tea')?.touched) {
+            <span class="error-message">{{ 'settings.form.opportunityTea.error' | translate }}</span>
+          }
+        </div>
+
+        <!-- Days in Year -->
+        <div class="form-group">
+          <label for="daysInYear" class="form-label">
+            {{ 'settings.form.daysInYear.label' | translate }}
+          </label>
+          <div class="select-wrapper">
+            <select
+              id="daysInYear"
+              formControlName="default_days_in_year"
+              class="form-select"
+              [class.invalid]="settingsForm.get('default_days_in_year')?.invalid && settingsForm.get('default_days_in_year')?.touched">
+              @for (days of daysInYearOptions; track days.value) {
+                <option [value]="days.value">{{ days.label }}</option>
+              }
+            </select>
+            <svg class="select-icon">
+              <use href="assets/icons/sprite.symbol.svg#chevron-down"></use>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Exchange Rate USD/PEN -->
+        <div class="form-group">
+          <label for="exchangeRate" class="form-label">
+            {{ 'settings.form.exchangeRate.label' | translate }}
+          </label>
+          <input
+            type="number"
+            id="exchangeRate"
+            formControlName="default_change_usd_pen"
+            class="form-input"
+            step="0.01"
+            min="0.01"
+            placeholder="{{ 'settings.form.exchangeRate.placeholder' | translate }}"
+            (blur)="onExchangeRateBlur()"
+            [class.invalid]="settingsForm.get('default_change_usd_pen')?.invalid && settingsForm.get('default_change_usd_pen')?.touched">
+          @if (settingsForm.get('default_change_usd_pen')?.invalid && settingsForm.get('default_change_usd_pen')?.touched) {
+            <span class="error-message">{{ 'settings.form.exchangeRate.error' | translate }}</span>
+          }
+        </div>
+
         <!--  Language switcher  -->
         <app-language-switcher />
 
