@@ -127,6 +127,59 @@
   box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
 }
 
+/* Input Fields */
+.form-input {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  font-family: var(--font-regular);
+  color: var(--color-neutral-dark);
+  background: #fff;
+  border: 2px solid #d0d0d0;
+  border-radius: 0.75rem;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-input:hover {
+  border-color: var(--color-primary);
+}
+
+.form-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 0, 92, 0.1);
+}
+
+.form-input.invalid {
+  border-color: var(--color-error);
+}
+
+.form-input.invalid:focus {
+  box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
+}
+
+/* Remove number input spinners for consistent sizing */
+.form-input[type="number"]::-webkit-outer-spin-button,
+.form-input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.form-input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Error Message */
+.error-message {
+  font-size: 0.875rem;
+  color: var(--color-error);
+  margin-top: 0.25rem;
+  display: block;
+  font-weight: 500;
+}
+
 .select-icon {
   position: absolute;
   right: 1rem;
@@ -212,6 +265,11 @@
 
   .form-select {
     padding: 0.875rem 2.5rem 0.875rem 0.875rem;
+    font-size: 0.9rem;
+  }
+
+  .form-input {
+    padding: 0.875rem;
     font-size: 0.9rem;
   }
 
