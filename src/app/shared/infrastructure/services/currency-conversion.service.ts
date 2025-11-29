@@ -1,22 +1,30 @@
-import {Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { IamStore } from '@iam/application/iam-store';
 
 /**
  * Service to handle currency conversions between PEN and USD.
- * Uses a fixed exchange rate for development purposes.
+ * Uses the exchange rate from user settings.
  */
 @Injectable({
   providedIn: 'root'
 })
 export class CurrencyConversionService {
-  /**
-   * Exchange rate: 1 USD = 3.75 PEN (configurable for development)
-   */
-  private readonly EXCHANGE_RATE = 3.75;
+  private readonly iamStore = inject(IamStore);
+
   /**
    * Currency catalog IDs
    */
   readonly CURRENCY_PEN_ID = 1;
   readonly CURRENCY_USD_ID = 2;
+
+  /**
+   * Get the current exchange rate from user settings.
+   * Falls back to 3.75 if not configured.
+   */
+  private getExchangeRateFromSettings(): number {
+    const settings = this.iamStore.getCurrentUserSetting()();
+    return settings?.default_change_usd_pen ?? 3.75;
+  }
 
   /**
    * Convert amount from one currency to another.
@@ -30,13 +38,16 @@ export class CurrencyConversionService {
     if (fromCurrencyId === toCurrencyId) {
       return amount;
     }
+
+    const exchangeRate = this.getExchangeRateFromSettings();
+
     // Convert from USD to PEN
     if (fromCurrencyId === this.CURRENCY_USD_ID && toCurrencyId === this.CURRENCY_PEN_ID) {
-      return amount * this.EXCHANGE_RATE;
+      return amount * exchangeRate;
     }
     // Convert from PEN to USD
     if (fromCurrencyId === this.CURRENCY_PEN_ID && toCurrencyId === this.CURRENCY_USD_ID) {
-      return amount / this.EXCHANGE_RATE;
+      return amount / exchangeRate;
     }
     return amount;
   }
@@ -71,11 +82,11 @@ export class CurrencyConversionService {
   }
 
   /**
-   * Get the exchange rate.
+   * Get the current exchange rate from user settings.
    * @returns Current exchange rate
    */
   getExchangeRate(): number {
-    return this.EXCHANGE_RATE;
+    return this.getExchangeRateFromSettings();
   }
 }
 
