@@ -22,9 +22,9 @@ export interface ReportResource extends BaseResource {
    */
   property_project_id: number;
   /**
-   * The identifier of the settings used to generate the report
+   * The identifier of the currency settings used in the report
    */
-  settings_id: number;
+  currency_catalog_id: number;
   /**
    * The timestamp when the report was generated
    */

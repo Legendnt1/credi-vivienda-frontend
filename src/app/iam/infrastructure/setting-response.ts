@@ -34,4 +34,16 @@ export interface SettingResource extends BaseResource {
    * The default number of total grace months.
    */
   default_grace_period: string;
+  /**
+   * The COK default opportunity tea.
+   */
+  default_opportunity_tea: number;
+  /**
+   * The default days in year.
+   */
+  default_days_in_year: number;
+  /**
+   * The default change USD to PEN.
+   */
+  default_change_usd_pen: number;
 }

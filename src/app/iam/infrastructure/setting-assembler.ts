@@ -27,6 +27,9 @@ export class SettingAssembler implements BaseAssembler<Setting, SettingResource,
       default_currency_catalog_id: resource.default_currency_catalog_id,
       default_interest_type: resource.default_interest_type,
       default_grace_period: resource.default_grace_period,
+      default_opportunity_tea: resource.default_opportunity_tea,
+      default_days_in_year: resource.default_days_in_year,
+      default_change_usd_pen: resource.default_change_usd_pen,
     });
   }
 
@@ -41,6 +44,9 @@ export class SettingAssembler implements BaseAssembler<Setting, SettingResource,
       default_currency_catalog_id: entity.default_currency_catalog_id,
       default_interest_type: entity.default_interest_type,
       default_grace_period: entity.default_grace_period,
+      default_opportunity_tea: entity.default_opportunity_tea,
+      default_days_in_year: entity.default_days_in_year,
+      default_change_usd_pen: entity.default_change_usd_pen,
     } as SettingResource;
   }
 

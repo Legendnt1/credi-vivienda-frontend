@@ -21,9 +21,9 @@ export class Report implements BaseEntity{
    */
   _property_project_id: number;
   /**
-   * The identifier of the settings used to generate the report
+   * The identifier of the currency settings used in the report
    */
-  _settings_id: number;
+  _currency_catalog_id: number;
   /**
    * The timestamp when the report was generated
    */
@@ -130,7 +130,7 @@ export class Report implements BaseEntity{
    * @param report - An object containing all necessary properties to initialize the Report entity
    */
   constructor(report: { id: number; user_id: number; credit_id: number;
-    property_project_id: number; settings_id: number; generated_at: string;
+    property_project_id: number; currency_catalog_id: number; generated_at: string;
     price: number; down_payment: number; bond_applied: number; years: number; frequency: string;
     base_tea: number; notary: number; registry: number; appraisal: number; study_commission: number;
     activation_commission: number; commission: number; charges: number; admin_expense: number;
@@ -141,7 +141,7 @@ export class Report implements BaseEntity{
     this._user_id = report.user_id;
     this._credit_id = report.credit_id;
     this._property_project_id = report.property_project_id;
-    this._settings_id = report.settings_id;
+    this._currency_catalog_id = report.currency_catalog_id;
     this._generated_at = report.generated_at;
     this._price = report.price;
     this._down_payment = report.down_payment;
@@ -178,8 +178,8 @@ export class Report implements BaseEntity{
   set credit_id(value: number) { this._credit_id = value; }
   get property_project_id(): number { return this._property_project_id; }
   set property_project_id(value: number) { this._property_project_id = value; }
-  get settings_id(): number { return this._settings_id; }
-  set settings_id(value: number) { this._settings_id = value; }
+  get currency_catalog_id(): number { return this._currency_catalog_id; }
+  set currency_catalog_id(value: number) { this._currency_catalog_id = value; }
   get generated_at(): string { return this._generated_at; }
   set generated_at(value: string) { this._generated_at = value; }
   get price(): number { return this._price; }
