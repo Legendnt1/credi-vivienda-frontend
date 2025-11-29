@@ -1,86 +1,141 @@
 <div class="reports-container">
-  <h1 class="page-title">{{ 'reports.title' | translate }}</h1>
+  <h1 class="page-title">
+    <svg class="title-icon">
+      <use href="assets/icons/sprite.symbol.svg#file-text"></use>
+    </svg>
+    {{ 'reports.title' | translate }}
+  </h1>
 
-  <!-- Report Form -->
-  <div class="report-form-card">
-    <form [formGroup]="reportsForm" (ngSubmit)="onDownload()">
-      <div class="form-grid">
+  <!-- Filter Form -->
+  <div class="filter-card">
+    <h2 class="filter-title">{{ 'reports.filter.title' | translate }}</h2>
+    <div class="filter-form">
+      <div class="filter-grid">
         <div class="form-field">
-          <label class="form-label">{{ 'reports.form.period' | translate }}</label>
+          <label class="form-label">{{ 'reports.filter.period' | translate }}</label>
           <input
             type="text"
             class="form-input"
-            formControlName="period"
-            placeholder=""
+            [(ngModel)]="periodFilter"
+            [placeholder]="'reports.filter.periodPlaceholder' | translate"
           />
         </div>
 
         <div class="form-field">
-          <label class="form-label">{{ 'reports.form.project' | translate }}</label>
-          <input
-            type="text"
-            class="form-input"
-            formControlName="project"
-            placeholder=""
-          />
+          <label class="form-label">{{ 'reports.filter.property' | translate }}</label>
+          <select class="form-input" [(ngModel)]="propertyFilter">
+            <option value="">{{ 'reports.filter.all' | translate }}</option>
+            @for (property of properties(); track property.id) {
+              <option [value]="property.id">{{ property.project }} - {{ property.property_code }}</option>
+            }
+          </select>
         </div>
 
         <div class="form-field">
-          <label class="form-label">{{ 'reports.form.reportType' | translate }}</label>
-          <input
-            type="text"
-            class="form-input"
-            formControlName="reportType"
-            placeholder=""
-          />
+          <label class="form-label">{{ 'reports.filter.credit' | translate }}</label>
+          <select class="form-input" [(ngModel)]="creditFilter">
+            <option value="">{{ 'reports.filter.all' | translate }}</option>
+            @for (credit of credits(); track credit.id) {
+              <option [value]="credit.id">{{ credit.program }}</option>
+            }
+          </select>
         </div>
 
-        <div class="form-actions-inline">
-          <button type="submit" class="btn-download" [disabled]="reportsForm.invalid">
-            <svg class="icon-download" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" [attr.stroke-width]="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
+        <div class="filter-actions">
+          <button type="button" class="btn-clear" (click)="clearFilters()">
+            <svg class="btn-icon">
+              <use href="assets/icons/sprite.symbol.svg#x"></use>
             </svg>
-            {{ 'reports.form.download' | translate }}
+            {{ 'reports.filter.clear' | translate }}
           </button>
-        </div>
-      </div>
-    </form>
-  </div>
-
-  <!-- Chart Section -->
-  <div class="chart-section">
-    <h2 class="chart-title">{{ 'reports.chart.title' | translate }}</h2>
-
-    <div class="chart-container">
-      <div class="chart-y-axis">
-        @for (label of yAxisLabels(); track $index) {
-          <span class="y-axis-label">{{ label }}</span>
-        }
-      </div>
-
-      <div class="chart-content">
-        <div class="chart-grid">
-          @for (_ of yAxisLabels(); track $index) {
-            <div class="grid-line"></div>
-          }
-        </div>
-
-        <div class="chart-bars">
-          @for (data of chartData(); track data.month) {
-            <div class="bar-container">
-              <div
-                class="bar"
-                [style.height.%]="getBarHeight(data.value)"
-                [attr.data-value]="data.value">
-              </div>
-              <span class="bar-label">{{ data.month | translate }}</span>
-            </div>
-          }
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Reports Summary -->
+  <div class="reports-summary">
+    <span class="summary-text">
+      {{ 'reports.summary.showing' | translate }}
+      <strong>{{ filteredReports().length }}</strong>
+      {{ 'reports.summary.of' | translate }}
+      <strong>{{ reports().length }}</strong>
+      {{ 'reports.summary.reports' | translate }}
+    </span>
+  </div>
+
+  <!-- Reports List -->
+  @if (filteredReports().length === 0) {
+    <div class="empty-state">
+      <svg class="empty-icon">
+        <use href="assets/icons/sprite.symbol.svg#inbox"></use>
+      </svg>
+      <p class="empty-text">{{ 'reports.empty' | translate }}</p>
+      <p class="empty-hint">{{ 'reports.emptyHint' | translate }}</p>
+    </div>
+  } @else {
+    <div class="reports-grid">
+      @for (report of filteredReports(); track report.id) {
+        <div class="report-card">
+          <div class="report-header">
+            <div class="report-id">
+              <svg class="report-icon">
+                <use href="assets/icons/sprite.symbol.svg#file-text"></use>
+              </svg>
+              <span>{{ 'reports.reportNumber' | translate }} #{{ report.id }}</span>
+            </div>
+            <div class="report-date">{{ formatDate(report.generated_at) }}</div>
+          </div>
+
+          <div class="report-body">
+            <div class="report-info-row">
+              <span class="info-label">{{ 'reports.card.property' | translate }}:</span>
+              <span class="info-value">{{ getPropertyName(report.property_project_id) }}</span>
+            </div>
+            <div class="report-info-row">
+              <span class="info-label">{{ 'reports.card.credit' | translate }}:</span>
+              <span class="info-value">{{ getCreditName(report.credit_id) }}</span>
+            </div>
+            <div class="report-info-row">
+              <span class="info-label">{{ 'reports.card.price' | translate }}:</span>
+              <span class="info-value">{{ getReportCurrencySymbol(report.currency_catalog_id) }} {{ report.price | number:'1.2-2' }}</span>
+            </div>
+            <div class="report-info-row">
+              <span class="info-label">{{ 'reports.card.term' | translate }}:</span>
+              <span class="info-value">{{ report.years }} {{ 'reports.card.years' | translate }}</span>
+            </div>
+            <div class="report-info-row">
+              <span class="info-label">{{ 'reports.card.tea' | translate }}:</span>
+              <span class="info-value">{{ report.base_tea }}%</span>
+            </div>
+          </div>
+
+          <div class="report-metrics">
+            <div class="metric">
+              <span class="metric-label">VAN</span>
+              <span class="metric-value">{{ getReportCurrencySymbol(report.currency_catalog_id) }} {{ report.van | number:'1.2-2' }}</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">TIR</span>
+              <span class="metric-value">{{ (report.tir * 100) | number:'1.2-2' }}%</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">TCEA</span>
+              <span class="metric-value">{{ (report.tcea * 100) | number:'1.2-2' }}%</span>
+            </div>
+          </div>
+
+          <div class="report-footer">
+            <button class="btn-download" (click)="downloadReport(report)">
+              <svg class="btn-icon">
+                <use href="assets/icons/sprite.symbol.svg#download"></use>
+              </svg>
+              {{ 'reports.download' | translate }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
 </div>
 
