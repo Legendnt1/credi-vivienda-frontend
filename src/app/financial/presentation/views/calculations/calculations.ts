@@ -452,8 +452,8 @@ export class Calculations implements OnInit {
         commission: this.round2(costsValue.commission ?? 0),
         charges: this.round2(costsValue.charges ?? 0),
         admin_expense: this.round2(costsValue.adminExpense ?? 0),
-        life_insurance_annual_rate: this.round2(costsValue.lifeInsuranceRate ?? 0) / 100, // Store as decimal
-        risk_insurance_annual_rate: this.round2(costsValue.riskInsuranceRate ?? 0) / 100, // Store as decimal
+        life_insurance_annual_rate: this.round2(costsValue.lifeInsuranceRate ?? 0),
+        risk_insurance_annual_rate: this.round2(costsValue.riskInsuranceRate ?? 0),
         opportunity_tea: this.round2(formValue.opportunityTea ?? 10),
         total_installments_paid: totalInstallmentsPaid,
         total_amortization: totalAmortization,
@@ -482,8 +482,8 @@ export class Calculations implements OnInit {
         interest_paid: this.round2(row.interest),
         installment_base: this.round2(row.installment),
         capital_amortization: this.round2(row.amortization),
-        life_insurance: this.round2(row.lifeInsurance) / 100, // Convert back to decimal
-        risk_insurance: this.round2(row.riskInsurance) / 100, // Convert back to decimal
+        life_insurance: this.round2(row.lifeInsurance),
+        risk_insurance: this.round2(row.riskInsurance),
         commission: this.round2(row.commission),
         charges: this.round2(row.charges),
         admin_expense: this.round2(row.adminExpense),
@@ -492,26 +492,13 @@ export class Calculations implements OnInit {
         cash_flow: this.round2(row.cashFlow)
       }));
 
-      // Save all payments in batch using callbacks
-      this.financialStore.addPaymentsBatch(
-        paymentEntities,
-        (createdPayments) => {
-          // Success callback
-          const modalRef = this.modal();
-          modalRef.openSuccess(
-            this.translate.instant('calculations.modal.successTitle'),
-            `Reporte #${newReportId} guardado exitosamente con ${createdPayments.length} pagos.`
-          );
-        },
-        (error) => {
-          // Error callback
-          console.error('Error saving payments:', error);
-          const modalRef = this.modal();
-          modalRef.openError(
-            this.translate.instant('calculations.modal.errorTitle'),
-            'Error al guardar los pagos. Intente nuevamente.'
-          );
-        }
+      // Save all payments
+      paymentEntities.forEach(payment => this.financialStore.addPayment(payment));
+
+      const modalRef = this.modal();
+      modalRef.openSuccess(
+        this.translate.instant('calculations.modal.successTitle'),
+        'El reporte y los pagos se han guardado correctamente.'
       );
 
     } catch (error) {

@@ -112,7 +112,7 @@
             type="number"
             class="form-input"
             formControlName="interestRate"
-            step="0.01"
+            step="0.000000001"
             (blur)="onMonetaryBlur($event, 'interestRate')"
             [placeholder]="'calculations.enter_rate' | translate">
         </div>
@@ -282,7 +282,7 @@
               type="number"
               class="form-input"
               formControlName="lifeInsuranceRate"
-              step="0.01"
+              step="0.00000001"
               (blur)="onMonetaryBlur($event, 'lifeInsuranceRate', costsForm)">
           </div>
 
@@ -292,7 +292,7 @@
               type="number"
               class="form-input"
               formControlName="riskInsuranceRate"
-              step="0.01"
+              step="0.000000001"
               (blur)="onMonetaryBlur($event, 'riskInsuranceRate', costsForm)">
           </div>
         </div>
