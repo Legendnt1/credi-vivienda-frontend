@@ -275,6 +275,37 @@ export class FinancialStore {
   }
 
   /**
+   * Add multiple payments in batch.
+   * @param payments - Array of payments to add.
+   * @param onSuccess - Callback function when payments are created successfully.
+   * @param onError - Callback function when there's an error.
+   */
+  addPaymentsBatch(
+    payments: Payment[],
+    onSuccess?: (createdPayments: Payment[]) => void,
+    onError?: (error: any) => void
+  ): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.financialApi.createPaymentsBatch(payments).pipe().subscribe({
+      next: (createdPayments) => {
+        this.paymentsSignal.set([...this.payments(), ...createdPayments]);
+        this.loadingSignal.set(false);
+        if (onSuccess) {
+          onSuccess(createdPayments);
+        }
+      },
+      error: (error) => {
+        this.errorSignal.set(this.formatError(error, 'Error at creating payments batch'));
+        this.loadingSignal.set(false);
+        if (onError) {
+          onError(error);
+        }
+      }
+    });
+  }
+
+  /**
    * Update an existing Payment.
    * @param updatedPayment - The Payment to update.
    */
@@ -321,7 +352,7 @@ export class FinancialStore {
   addReport(report: Report): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
-    this.financialApi.createReport(report).pipe(retry(2)).subscribe({
+    this.financialApi.createReport(report).pipe().subscribe({
       next: (createdReport) => {
         this.reportsSignal.set([...this.reports(), createdReport]);
         this.loadingSignal.set(false);
@@ -360,7 +391,7 @@ export class FinancialStore {
   deleteReport(id: number): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
-    this.financialApi.deleteReport(id).pipe(retry(2)).subscribe({
+    this.financialApi.deleteReport(id).subscribe({
       next: () => {
         this.reportsSignal.update(reports =>
           reports.filter(r => r.id !== id));

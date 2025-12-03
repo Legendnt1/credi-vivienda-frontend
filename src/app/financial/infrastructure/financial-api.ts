@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BaseApi} from '@shared/infrastructure/http/base-api';
 import {CurrencyCatalogsApiEndpoint} from '@financial/infrastructure/currency-catalogs-api-endpoint';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {forkJoin, Observable, of} from 'rxjs';
 import {CurrencyCatalog} from '@financial/domain/model/currency-catalog.entity';
 import {CreditsApiEndpoint} from '@financial/infrastructure/credits-api-endpoint';
 import {PaymentsApiEndpoint} from '@financial/infrastructure/payments-api-endpoint';
@@ -166,6 +166,19 @@ export class FinancialApi extends BaseApi {
    */
   createPayment(payment: Payment): Observable<Payment> {
     return this.paymentsEndpoint.create(payment);
+  }
+
+  /**
+   * Create multiple payments in batch.
+   * @param payments - Array of payments to create.
+   * @returns An observable of an array of created payments.
+   */
+  createPaymentsBatch(payments: Payment[]): Observable<Payment[]> {
+    if (payments.length === 0) {
+      return of([]);
+    }
+    const requests = payments.map(payment => this.paymentsEndpoint.create(payment));
+    return forkJoin(requests);
   }
 
   /**

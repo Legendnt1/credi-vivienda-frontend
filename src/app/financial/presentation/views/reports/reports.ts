@@ -343,6 +343,9 @@ export class Reports {
 
     // ===== PAYMENT SCHEDULE (ALL PAYMENTS) =====
     if (payments.length > 0) {
+      // Sort payments by period (ascending order)
+      const sortedPayments = [...payments].sort((a, b) => a.period - b.period);
+
       // Add new page in landscape orientation for payment schedule
       doc.addPage('a4', 'l'); // 'l' for landscape
       const landscapePageWidth = doc.internal.pageSize.getWidth(); // Now ~297mm
@@ -358,12 +361,12 @@ export class Reports {
 
       yPos += 10;
 
-      // Prepare payment schedule data with all columns
-      const scheduleData = payments.map(payment => [
+      // Prepare payment schedule data with all columns - using sorted payments
+      const scheduleData = sortedPayments.map(payment => [
         payment.period.toString(),
         payment.grace_type === 'TOTAL' ? 'T' : payment.grace_type === 'PARCIAL' ? 'P' : '-',
-        payment.annual_rate.toFixed(7) + '%',
-        (payment.effective_period_rate * 100).toFixed(7) + '%',
+        payment.annual_rate.toFixed(4) + '%',
+        (payment.effective_period_rate * 100).toFixed(4) + '%',
         formatCurrency(payment.initial_balance),
         formatCurrency(payment.interest_paid),
         formatCurrency(payment.installment_base),
@@ -412,27 +415,29 @@ export class Reports {
           textColor: [255, 255, 255],
           fontStyle: 'bold',
           halign: 'center',
-          fontSize: 5.5
+          fontSize: 6
         },
         columnStyles: {
           0: { halign: 'center', cellWidth: 10 },  // Period
-          1: { halign: 'center', cellWidth: 8 },   // Grace
-          2: { halign: 'right', cellWidth: 15 },   // TEA
-          3: { halign: 'right', cellWidth: 15 },   // Period Rate
-          4: { halign: 'right', cellWidth: 18 },   // Initial Balance
-          5: { halign: 'right', cellWidth: 15 },   // Interest
-          6: { halign: 'right', cellWidth: 15 },   // Installment
-          7: { halign: 'right', cellWidth: 15 },   // Amortization
-          8: { halign: 'right', cellWidth: 12 },   // Life Insurance
-          9: { halign: 'right', cellWidth: 12 },   // Risk Insurance
-          10: { halign: 'right', cellWidth: 12 },  // Commission
-          11: { halign: 'right', cellWidth: 10 },  // Charges
-          12: { halign: 'right', cellWidth: 10 },  // Admin Expense
-          13: { halign: 'right', cellWidth: 15 },  // Total Payment
-          14: { halign: 'right', cellWidth: 18 },  // Final Balance
-          15: { halign: 'right', cellWidth: 15 }   // Cash Flow
+          1: { halign: 'center', cellWidth: 7 },   // Grace
+          2: { halign: 'right', cellWidth: 14 },   // TEA
+          3: { halign: 'right', cellWidth: 14 },   // Period Rate
+          4: { halign: 'right', cellWidth: 17 },   // Initial Balance
+          5: { halign: 'right', cellWidth: 14 },   // Interest
+          6: { halign: 'right', cellWidth: 14 },   // Installment
+          7: { halign: 'right', cellWidth: 14 },   // Amortization
+          8: { halign: 'right', cellWidth: 11 },   // Life Insurance
+          9: { halign: 'right', cellWidth: 11 },   // Risk Insurance
+          10: { halign: 'right', cellWidth: 11 },  // Commission
+          11: { halign: 'right', cellWidth: 9 },   // Charges
+          12: { halign: 'right', cellWidth: 9 },   // Admin Expense
+          13: { halign: 'right', cellWidth: 14 },  // Total Payment
+          14: { halign: 'right', cellWidth: 17 },  // Final Balance
+          15: { halign: 'right', cellWidth: 14 }   // Cash Flow
         },
-        tableWidth: 'auto'
+        tableWidth: 'auto',
+        margin: { top: 30, bottom: 30, left: 10, right: 10 }, // Leave space for header and footer
+        showHead: 'everyPage' // Show header on every page
       });
     }
 

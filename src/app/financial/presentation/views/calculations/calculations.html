@@ -349,11 +349,16 @@
                 <td>
                   <select
                     class="editable-select"
-                    [value]="row.graceType"
                     (change)="updateRowGraceType(i, $event)">
-                    <option value="SIN_PLAZO">{{ 'calculations.sinPlazo' | translate }}</option>
-                    <option value="TOTAL">{{ 'calculations.total_grace' | translate }}</option>
-                    <option value="PARCIAL">{{ 'calculations.partial_grace' | translate }}</option>
+                    @for (graceType of graceTypeOptions(); track graceType) {
+                      <option [value]="graceType" [selected]="row.graceType === graceType">
+                        @switch (graceType) {
+                          @case ('SIN_PLAZO') { {{ 'calculations.sinPlazo' | translate }} }
+                          @case ('TOTAL') { {{ 'calculations.total_grace' | translate }} }
+                          @case ('PARCIAL') { {{ 'calculations.partial_grace' | translate }} }
+                        }
+                      </option>
+                    }
                   </select>
                 </td>
               </tr>
