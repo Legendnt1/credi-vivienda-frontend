@@ -291,7 +291,7 @@ export class Reports {
     doc.text('TIR (IRR)', 15 + boxWidth * 1.5 - 2, yPos + 8, { align: 'center' });
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text(`${(report.tir * 100).toFixed(2)}%`, 15 + boxWidth * 1.5 - 2, yPos + 18, { align: 'center' });
+    doc.text(`${(report.tir).toFixed(2)}%`, 15 + boxWidth * 1.5 - 2, yPos + 18, { align: 'center' });
 
     // TCEA box
     doc.setFillColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
@@ -301,7 +301,7 @@ export class Reports {
     doc.text('TCEA', 15 + boxWidth * 2.5 - 2, yPos + 8, { align: 'center' });
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text(`${(report.tcea * 100).toFixed(2)}%`, 15 + boxWidth * 2.5 - 2, yPos + 18, { align: 'center' });
+    doc.text(`${(report.tcea).toFixed(2)}%`, 15 + boxWidth * 2.5 - 2, yPos + 18, { align: 'center' });
 
     yPos += boxHeight + 15;
 
