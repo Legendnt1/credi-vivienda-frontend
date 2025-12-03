@@ -90,6 +90,31 @@ export class Calculations implements OnInit {
   readonly tir = signal<number>(0);
   readonly tcea = signal<number>(0);
 
+  // Grace period options ordered by user's default
+  readonly graceTypeOptions = computed(() => {
+    const settings = this.userSettings();
+    const defaultGrace = settings?.default_grace_period ?? 'TOTAL';
+
+    // Map default grace to GraceType
+    const graceMap: Record<string, GraceType> = {
+      'TOTAL': 'TOTAL',
+      'PARTIAL': 'PARCIAL',
+      'NONE': 'SIN_PLAZO'
+    };
+
+    const defaultGraceType = graceMap[defaultGrace] ?? 'TOTAL';
+
+    // All grace types
+    const allTypes: GraceType[] = ['SIN_PLAZO', 'TOTAL', 'PARCIAL'];
+
+    // Sort: default first, then the rest
+    return allTypes.sort((a, b) => {
+      if (a === defaultGraceType) return -1;
+      if (b === defaultGraceType) return 1;
+      return 0;
+    });
+  });
+
   // Forms
   calculationForm!: FormGroup;
   costsForm!: FormGroup;
@@ -209,7 +234,6 @@ export class Calculations implements OnInit {
     const interestRate = this.round2(this.calculationForm.get('interestRate')?.value ?? 0);
     const interestType = this.calculationForm.get('interestType')?.value ?? 'EFFECTIVE';
     const capitalization = this.calculationForm.get('capitalization')?.value ?? 'MENSUAL';
-    const credit = this.defaultCredit();
 
     // Calculate total periods - ensure it's an integer
     const periodsPerYear = this.getPeriodsPerYear(frequency);
@@ -229,29 +253,14 @@ export class Calculations implements OnInit {
       console.log(`Converting nominal to TEA: ${interestRate}% nominal with ${capitalization} capitalization = ${(tea * 100).toFixed(7)}% TEA`);
     }
 
-    // Determine grace periods based on credit defaults or calculated
-    const totalGraceMonths = credit?.default_grace_period_total_months ?? 0;
-    const partialGraceMonths = credit?.default_grace_period_partial_months ?? 0;
-
-    // Convert grace months to periods (based on the selected frequency)
-    const totalGracePeriods = Math.round((totalGraceMonths / 12) * periodsPerYear);
-    const partialGracePeriods = Math.round((partialGraceMonths / 12) * periodsPerYear);
-
-    // Generate rows
+    // Generate rows - all periods start with SIN_PLAZO by default
+    // User can manually change them in the editable table
     const rows: EditableRow[] = [];
     for (let i = 1; i <= totalPeriods; i++) {
-      let graceType: GraceType = 'SIN_PLAZO';
-
-      if (i <= totalGracePeriods) {
-        graceType = 'TOTAL';
-      } else if (i <= totalGracePeriods + partialGracePeriods) {
-        graceType = 'PARCIAL';
-      }
-
       rows.push({
         period: i,
         tea: Number((tea * 100).toFixed(7)), // Store as percentage with 7 decimals for precision
-        graceType: graceType
+        graceType: 'SIN_PLAZO' // Default value for all periods
       });
     }
 
@@ -295,7 +304,7 @@ export class Calculations implements OnInit {
       const downPayment = this.round2(formValue.downPayment ?? 0);
       const years = this.round2(formValue.years ?? 0);
       const frequency = formValue.paymentFrequency ?? 'MENSUAL';
-      const opportunityTea = this.round2(formValue.opportunityTea ?? 10) / 100; // Convert to decimal
+      const opportunityTea = this.round2(formValue.opportunityTea ?? 10); // Keep as percentage
       const daysInYear = parseInt(formValue.daysInYear ?? 360);
 
       // Build FrenchInput
@@ -305,7 +314,7 @@ export class Calculations implements OnInit {
         bondAmount: bondAmount,
         years: years,
         frequency: frequency,
-        annualRates: rows.map(r => this.round2(r.tea) / 100), // Convert to decimal
+        annualRates: rows.map(r => r.tea), // Keep as percentage with 7 decimals precision
         graceByPeriod: rows.map(r => r.graceType),
         daysInYear: daysInYear,
         initialCosts: {
@@ -319,10 +328,10 @@ export class Calculations implements OnInit {
           commission: this.round2(costsValue.commission ?? 0),
           charges: this.round2(costsValue.charges ?? 0),
           adminExpense: this.round2(costsValue.adminExpense ?? 0),
-          lifeInsuranceAnnualRate: this.round2(costsValue.lifeInsuranceRate ?? 0) / 100,
-          riskInsuranceAnnualRate: this.round2(costsValue.riskInsuranceRate ?? 0) / 100
+          lifeInsuranceAnnualRate: this.round2(costsValue.lifeInsuranceRate ?? 0) / 100, // Convert to decimal
+          riskInsuranceAnnualRate: this.round2(costsValue.riskInsuranceRate ?? 0) / 100 // Convert to decimal
         },
-        opportunityAnnualRatePercent: opportunityTea
+        opportunityAnnualRatePercent: opportunityTea // Keep as percentage
       };
 
       // Calculate schedule
@@ -333,7 +342,7 @@ export class Calculations implements OnInit {
       const displaySchedule: PaymentScheduleRow[] = result.schedule.map(row => ({
         period: row.period,
         graceType: row.graceType,
-        annualRate: this.round2(row.annualRate * 100),
+        annualRate: row.annualRate, // Already in % form with full precision
         effectivePeriodRate: this.round2(row.effectivePeriodRate * 100),
         initialBalance: this.round2(row.initialBalance),
         interest: this.round2(row.interest),
@@ -353,8 +362,8 @@ export class Calculations implements OnInit {
 
       // Set financial metrics from result
       this.van.set(this.round2(result.npv ?? 0));
-      this.tir.set(this.round2((result.irrPerPeriod ?? 0) * 100));
-      this.tcea.set(this.round2((result.tcea ?? 0) * 100));
+      this.tir.set(this.round2((result.irrPerPeriod ?? 0) * 100)); // Convert to percentage
+      this.tcea.set(this.round2(result.tcea ?? 0)); // Already in percentage from service
 
       this.isCalculated.set(true);
       this.successMessage.set('Cálculo completado exitosamente.');
@@ -455,43 +464,41 @@ export class Calculations implements OnInit {
         tcea: this.round2(this.tcea())
       });
 
-      // Save report
+      // Save report first
       this.financialStore.addReport(report);
 
-      // Create and save payments
+      // Create all payment entities
       const payments = this.financialStore.payments();
       let nextPaymentId = payments.length > 0 ? Math.max(...payments.map(p => p.id)) + 1 : 1;
 
-      for (const row of schedule) {
-        const payment = new Payment({
-          id: nextPaymentId++,
-          report_id: newReportId,
-          period: row.period,
-          grace_type: row.graceType,
-          annual_rate: this.round2(row.annualRate),
-          effective_period_rate: this.round2(row.effectivePeriodRate),
-          initial_balance: this.round2(row.initialBalance),
-          interest_paid: this.round2(row.interest),
-          installment_base: this.round2(row.installment),
-          capital_amortization: this.round2(row.amortization),
-          life_insurance: this.round2(row.lifeInsurance),
-          risk_insurance: this.round2(row.riskInsurance),
-          commission: this.round2(row.commission),
-          charges: this.round2(row.charges),
-          admin_expense: this.round2(row.adminExpense),
-          total_payment: this.round2(row.totalPayment),
-          remaining_balance: this.round2(row.remainingBalance),
-          cash_flow: this.round2(row.cashFlow)
-        });
+      const paymentEntities = schedule.map(row => new Payment({
+        id: nextPaymentId++,
+        report_id: newReportId,
+        period: row.period,
+        grace_type: row.graceType,
+        annual_rate: row.annualRate, // Keep 7-decimal precision
+        effective_period_rate: this.round2(row.effectivePeriodRate),
+        initial_balance: this.round2(row.initialBalance),
+        interest_paid: this.round2(row.interest),
+        installment_base: this.round2(row.installment),
+        capital_amortization: this.round2(row.amortization),
+        life_insurance: this.round2(row.lifeInsurance),
+        risk_insurance: this.round2(row.riskInsurance),
+        commission: this.round2(row.commission),
+        charges: this.round2(row.charges),
+        admin_expense: this.round2(row.adminExpense),
+        total_payment: this.round2(row.totalPayment),
+        remaining_balance: this.round2(row.remainingBalance),
+        cash_flow: this.round2(row.cashFlow)
+      }));
 
-        this.financialStore.addPayment(payment);
-      }
+      // Save all payments
+      paymentEntities.forEach(payment => this.financialStore.addPayment(payment));
 
-      // Show success modal
       const modalRef = this.modal();
       modalRef.openSuccess(
         this.translate.instant('calculations.modal.successTitle'),
-        `Reporte #${newReportId} guardado exitosamente con ${schedule.length} pagos.`
+        'El reporte y los pagos se han guardado correctamente.'
       );
 
     } catch (error) {

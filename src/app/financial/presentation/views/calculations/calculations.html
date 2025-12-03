@@ -112,7 +112,7 @@
             type="number"
             class="form-input"
             formControlName="interestRate"
-            step="0.01"
+            step="0.000000001"
             (blur)="onMonetaryBlur($event, 'interestRate')"
             [placeholder]="'calculations.enter_rate' | translate">
         </div>
@@ -282,7 +282,7 @@
               type="number"
               class="form-input"
               formControlName="lifeInsuranceRate"
-              step="0.01"
+              step="0.00000001"
               (blur)="onMonetaryBlur($event, 'lifeInsuranceRate', costsForm)">
           </div>
 
@@ -292,7 +292,7 @@
               type="number"
               class="form-input"
               formControlName="riskInsuranceRate"
-              step="0.01"
+              step="0.000000001"
               (blur)="onMonetaryBlur($event, 'riskInsuranceRate', costsForm)">
           </div>
         </div>
@@ -349,11 +349,16 @@
                 <td>
                   <select
                     class="editable-select"
-                    [value]="row.graceType"
                     (change)="updateRowGraceType(i, $event)">
-                    <option value="SIN_PLAZO">{{ 'calculations.normal' | translate }}</option>
-                    <option value="TOTAL">{{ 'calculations.total_grace' | translate }}</option>
-                    <option value="PARCIAL">{{ 'calculations.partial_grace' | translate }}</option>
+                    @for (graceType of graceTypeOptions(); track graceType) {
+                      <option [value]="graceType" [selected]="row.graceType === graceType">
+                        @switch (graceType) {
+                          @case ('SIN_PLAZO') { {{ 'calculations.sinPlazo' | translate }} }
+                          @case ('TOTAL') { {{ 'calculations.total_grace' | translate }} }
+                          @case ('PARCIAL') { {{ 'calculations.partial_grace' | translate }} }
+                        }
+                      </option>
+                    }
                   </select>
                 </td>
               </tr>

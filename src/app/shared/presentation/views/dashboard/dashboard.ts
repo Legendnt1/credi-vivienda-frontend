@@ -7,6 +7,7 @@ import { ProjectsStore } from '@projects/application/projects-store';
 import { Report } from '@financial/domain/model/report.entity';
 import { User } from '@iam/domain/model/user.entity';
 import { PropertyProject } from '@projects/domain/property-project.entity';
+import {Router} from '@angular/router';
 
 interface KPI {
   icon: string;
@@ -38,6 +39,8 @@ interface ChartData {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Dashboard {
+  private router = inject(Router);
+
   private readonly iamStore = inject(IamStore);
   private readonly financialStore = inject(FinancialStore);
   private readonly projectsStore = inject(ProjectsStore);
@@ -257,8 +260,7 @@ export class Dashboard {
   }
 
   viewPropertyDetail(propertyId: number): void {
-    console.log('Ver detalle de propiedad:', propertyId);
-    // TODO: Navigate to property detail view
+    this.router.navigate(['/projects']).then();
   }
 
   simulateCredit(propertyId: number): void {
@@ -267,8 +269,7 @@ export class Dashboard {
   }
 
   downloadGuide(): void {
-    console.log('Descargar guía PDF');
-    // TODO: Implement PDF download
+    window.open('https://www.amazon.com/-/es/Guía-principiantes-Inversiones-Bienes-Raíces/dp/1800763921', '_blank');
   }
 }
 

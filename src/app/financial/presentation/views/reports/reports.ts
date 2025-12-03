@@ -134,7 +134,7 @@ export class Reports {
     const currencySymbol = this.getReportCurrencySymbol(report.currency_catalog_id);
     const currentLang = this.translate.currentLang || 'es';
 
-    // Create PDF
+    // Create PDF in portrait for summary, will add landscape page for payment schedule
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
     let yPos = 20;
@@ -343,29 +343,42 @@ export class Reports {
 
     // ===== PAYMENT SCHEDULE (ALL PAYMENTS) =====
     if (payments.length > 0) {
-      // Add new page for payment schedule
-      doc.addPage();
+      // Sort payments by period (ascending order)
+      const sortedPayments = [...payments].sort((a, b) => a.period - b.period);
+
+      // Add new page in landscape orientation for payment schedule
+      doc.addPage('a4', 'l'); // 'l' for landscape
+      const landscapePageWidth = doc.internal.pageSize.getWidth(); // Now ~297mm
       yPos = 20;
 
       doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
-      doc.text(t('reports.pdf.paymentSchedule'), 15, yPos);
+      doc.text(t('reports.pdf.paymentSchedule'), landscapePageWidth / 2, yPos, { align: 'center' });
 
       doc.setDrawColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
-      doc.line(15, yPos + 2, pageWidth - 15, yPos + 2);
+      doc.line(15, yPos + 2, landscapePageWidth - 15, yPos + 2);
 
       yPos += 10;
 
-      // Prepare payment schedule data
-      const scheduleData = payments.map(payment => [
+      // Prepare payment schedule data with all columns - using sorted payments
+      const scheduleData = sortedPayments.map(payment => [
         payment.period.toString(),
         payment.grace_type === 'TOTAL' ? 'T' : payment.grace_type === 'PARCIAL' ? 'P' : '-',
+        payment.annual_rate.toFixed(4) + '%',
+        (payment.effective_period_rate * 100).toFixed(4) + '%',
         formatCurrency(payment.initial_balance),
         formatCurrency(payment.interest_paid),
+        formatCurrency(payment.installment_base),
         formatCurrency(payment.capital_amortization),
+        formatCurrency(payment.life_insurance),
+        formatCurrency(payment.risk_insurance),
+        formatCurrency(payment.commission),
+        formatCurrency(payment.charges),
+        formatCurrency(payment.admin_expense),
         formatCurrency(payment.total_payment),
-        formatCurrency(payment.remaining_balance)
+        formatCurrency(payment.remaining_balance),
+        formatCurrency(payment.cash_flow)
       ]);
 
       autoTable(doc, {
@@ -373,64 +386,92 @@ export class Reports {
         head: [[
           t('reports.pdf.period'),
           t('reports.pdf.grace'),
+          t('reports.pdf.annualRate'),
+          t('reports.pdf.periodRate'),
           t('reports.pdf.initialBalance'),
           t('reports.pdf.interest'),
-          t('reports.pdf.amortization'),
           t('reports.pdf.installment'),
-          t('reports.pdf.finalBalance')
+          t('reports.pdf.amortization'),
+          t('reports.pdf.lifeInsurance'),
+          t('reports.pdf.riskInsurance'),
+          t('reports.pdf.commission'),
+          t('reports.pdf.charges'),
+          t('reports.pdf.adminExpense'),
+          t('reports.pdf.totalPayment'),
+          t('reports.pdf.finalBalance'),
+          t('reports.pdf.cashFlow')
         ]],
         body: scheduleData,
         theme: 'striped',
         styles: {
-          fontSize: 7,
-          cellPadding: 2
+          fontSize: 6,
+          cellPadding: 1.5,
+          overflow: 'linebreak',
+          cellWidth: 'wrap',
+          halign: 'center'
         },
         headStyles: {
           fillColor: primaryColor,
           textColor: [255, 255, 255],
           fontStyle: 'bold',
-          halign: 'center'
+          halign: 'center',
+          fontSize: 6
         },
         columnStyles: {
-          0: { halign: 'center', cellWidth: 15 },
-          1: { halign: 'center', cellWidth: 12 },
-          2: { halign: 'right', cellWidth: 28 },
-          3: { halign: 'right', cellWidth: 25 },
-          4: { halign: 'right', cellWidth: 28 },
-          5: { halign: 'right', cellWidth: 25 },
-          6: { halign: 'right', cellWidth: 28 }
+          0: { halign: 'center', cellWidth: 10 },  // Period
+          1: { halign: 'center', cellWidth: 7 },   // Grace
+          2: { halign: 'right', cellWidth: 14 },   // TEA
+          3: { halign: 'right', cellWidth: 14 },   // Period Rate
+          4: { halign: 'right', cellWidth: 17 },   // Initial Balance
+          5: { halign: 'right', cellWidth: 14 },   // Interest
+          6: { halign: 'right', cellWidth: 14 },   // Installment
+          7: { halign: 'right', cellWidth: 14 },   // Amortization
+          8: { halign: 'right', cellWidth: 11 },   // Life Insurance
+          9: { halign: 'right', cellWidth: 11 },   // Risk Insurance
+          10: { halign: 'right', cellWidth: 11 },  // Commission
+          11: { halign: 'right', cellWidth: 9 },   // Charges
+          12: { halign: 'right', cellWidth: 9 },   // Admin Expense
+          13: { halign: 'right', cellWidth: 14 },  // Total Payment
+          14: { halign: 'right', cellWidth: 17 },  // Final Balance
+          15: { halign: 'right', cellWidth: 14 }   // Cash Flow
         },
-        margin: { left: 15, right: 15, bottom: 30 }
+        tableWidth: 'auto',
+        margin: { top: 30, bottom: 30, left: 10, right: 10 }, // Leave space for header and footer
+        showHead: 'everyPage' // Show header on every page
       });
     }
 
     // ===== FOOTER ON ALL PAGES =====
     const totalPages = doc.getNumberOfPages();
-    const footerY = doc.internal.pageSize.getHeight() - 25;
 
     // Draw footer on each page
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
 
+      // Get current page dimensions (handles both portrait and landscape)
+      const currentPageWidth = doc.internal.pageSize.getWidth();
+      const currentPageHeight = doc.internal.pageSize.getHeight();
+      const footerY = currentPageHeight - 25;
+
       // Footer line
       doc.setDrawColor(grayColor[0], grayColor[1], grayColor[2]);
       doc.setLineWidth(0.5);
-      doc.line(15, footerY, pageWidth - 15, footerY);
+      doc.line(15, footerY, currentPageWidth - 15, footerY);
 
       // Company name
       doc.setTextColor(grayColor[0], grayColor[1], grayColor[2]);
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
-      doc.text('CrediVivienda', pageWidth / 2, footerY + 6, { align: 'center' });
+      doc.text('CrediVivienda', currentPageWidth / 2, footerY + 6, { align: 'center' });
 
       // Auto generated text
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
-      doc.text(t('reports.pdf.autoGenerated'), pageWidth / 2, footerY + 11, { align: 'center' });
+      doc.text(t('reports.pdf.autoGenerated'), currentPageWidth / 2, footerY + 11, { align: 'center' });
 
       // Print date and page number
       const pageInfo = `${t('reports.pdf.page')} ${i} ${t('reports.pdf.of')} ${totalPages} | ${t('reports.pdf.printDate')}: ${new Date().toLocaleString(currentLang === 'es' ? 'es-PE' : 'en-US')}`;
-      doc.text(pageInfo, pageWidth / 2, footerY + 16, { align: 'center' });
+      doc.text(pageInfo, currentPageWidth / 2, footerY + 16, { align: 'center' });
     }
 
     // Save PDF
