@@ -229,7 +229,8 @@ export class FrenchAmortizationService {
     if (financedCapital < 0) {
       financedCapital = 0;
     }
-    financedCapital = this.round2(financedCapital) ;
+    financedCapital = this.round2(financedCapital);
+    console.log('Financed Capital:', financedCapital);
 
     const graceConfig: GraceConfig = input.graceConfig ?? {
       totalPeriods: 0,
@@ -374,6 +375,7 @@ export class FrenchAmortizationService {
       npv = this.calculateNpv(kPerPeriod, flows);
     }
 
+
     return {
       price: input.price,
       downPayment,
@@ -502,11 +504,11 @@ export class FrenchAmortizationService {
   }
 
   /**
-   * Build borrower cash flows for IRR calculation.
-   * @param financedCapital - Financed capital amount.
+   * Build cash flows array for SBS method.
+   * @param financedCapital - Financed capital.
    * @param schedule - Amortization schedule.
    * @param initialCosts - Initial costs.
-   * @returns Array of cash flows.
+   * @returns Cash flows array.
    * @private
    */
   private buildBorrowerCashFlows(
@@ -515,16 +517,17 @@ export class FrenchAmortizationService {
     initialCosts?: FrenchInput['initialCosts']
   ): number[] {
     const costs =
-      initialCosts
-        ? initialCosts.notary +
-        initialCosts.registry +
-        initialCosts.appraisal +
-        initialCosts.studyCommission +
-        initialCosts.activationCommission
-        : 0;
+      (initialCosts?.notary ?? 0) +
+      (initialCosts?.registry ?? 0) +
+      (initialCosts?.appraisal ?? 0) +
+      (initialCosts?.studyCommission ?? 0) +
+      (initialCosts?.activationCommission ?? 0);
 
     const flows: number[] = [];
-    flows.push(financedCapital - costs);
+
+    // Initial flow: financed capital - costs
+    const initialFlow = financedCapital - costs;
+    flows.push(initialFlow);
 
     for (const row of schedule) {
       const total = row.totalInstallmentWithCharges ?? row.installment;
