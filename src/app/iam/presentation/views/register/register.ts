@@ -96,35 +96,18 @@ export class Register {
     // Add user first
     this.iamStore.addUser(newUser);
 
-    // Wait for user to be created and then create setting
-    // Using a small delay to allow the user to be added to the store
-    setTimeout(() => {
-      const users = this.iamStore.users();
-      const createdUser = users.find(u => u.username === formValue.username);
+    const newSetting = new Setting({
+      id: this.iamStore.settingCount() + 1, // ID will be set by the backend
+      user_id: newUser.id,
+      default_currency_catalog_id: 1, // Default PEN currency
+      default_interest_type: 'EFFECTIVE', // Default interest type
+      default_grace_period: "TOTAL", // Default grace period
+      default_opportunity_tea: 10.00, // Default opportunity TEA
+      default_days_in_year: 360, // Default days in year
+      default_change_usd_pen: 3.70 // Default USD to PEN exchange rate
+    });
 
-      if (createdUser) {
-        // Now create the setting with the correct user_id
-        const newSetting = new Setting({
-          id: 0, // ID will be set by the backend
-          user_id: createdUser.id,
-          default_currency_catalog_id: 1, // Default PEN currency
-          default_interest_type: 'EFFECTIVE', // Default interest type
-          default_grace_period: "TOTAL", // Default grace period
-          default_opportunity_tea: 10.00, // Default opportunity TEA
-          default_days_in_year: 360, // Default days in year
-          default_change_usd_pen: 3.70 // Default USD to PEN exchange rate
-        });
-
-        this.iamStore.addSetting(newSetting);
-
-        console.log('Usuario y configuración registrados:', createdUser);
-      }
-
-      this.isLoading.set(false);
-
-      // Redirect to login after successful registration
-      this.router.navigate(['/login']).then();
-    }, 1500);
+    this.iamStore.addSetting(newSetting);
   }
 
   goToLogin() {

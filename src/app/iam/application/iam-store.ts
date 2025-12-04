@@ -76,6 +76,11 @@ export class IamStore {
   readonly roleCount = computed(() => this.roles().length);
 
   /**
+   * Setting count computed signal.
+   */
+  readonly settingCount = computed(() => this.settings().length);
+
+  /**
    * Session user signal.
    * @private
    */
@@ -540,7 +545,7 @@ export class IamStore {
   addSetting(setting: Setting): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
-    this.iamApi.createSetting(setting).pipe(retry(2)).subscribe({
+    this.iamApi.createSetting(setting).pipe().subscribe({
       next: (createdSetting) => {
         this.settingsSignal.set([...this.settings(), createdSetting]);
         this.loadingSignal.set(false);
