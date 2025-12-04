@@ -382,7 +382,7 @@ export class IamStore {
   addUser(user: User): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
-    this.iamApi.createUser(user).pipe(retry(2)).subscribe({
+    this.iamApi.createUser(user).pipe().subscribe({
       next: (createdUser) => {
         this.usersSignal.set([...this.users(), createdUser]);
         this.loadingSignal.set(false);

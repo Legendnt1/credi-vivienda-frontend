@@ -219,12 +219,17 @@ export class FrenchAmortizationService {
 
     const downPayment = this.round2(input.downPaymentAmount);
     const bond = this.round2(input.bondAmount ?? 0);
+    const costs = this.round2(input.initialCosts?.notary ?? 0) +
+      this.round2(input.initialCosts?.registry ?? 0) +
+      this.round2(input.initialCosts?.appraisal ?? 0) +
+      this.round2(input.initialCosts?.studyCommission ?? 0) +
+      this.round2(input.initialCosts?.activationCommission ?? 0);
 
-    let financedCapital = input.price - downPayment - bond;
+    let financedCapital = input.price - downPayment - bond + costs; // C
     if (financedCapital < 0) {
       financedCapital = 0;
     }
-    financedCapital = this.round2(financedCapital);
+    financedCapital = this.round2(financedCapital) ;
 
     const graceConfig: GraceConfig = input.graceConfig ?? {
       totalPeriods: 0,
@@ -274,12 +279,12 @@ export class FrenchAmortizationService {
       } else {
         // SIN_PLAZO: normal payment
         const remainingPeriods = totalPeriods - period + 1; // (N - NC + 1)
-        const r = this.computeFrenchInstallment(
+        const baseInstallment = this.computeFrenchInstallment(
           initialBalance,
           effectivePeriodRate,
           remainingPeriods
         );
-        installment = this.round2(r);
+        installment = this.round2(baseInstallment);
         amortization = this.round2(installment - interest);
         finalBalance = this.round2(initialBalance - amortization);
       }
@@ -294,8 +299,8 @@ export class FrenchAmortizationService {
       if (input.periodicCosts) {
         const pc = input.periodicCosts;
 
-        const lifeAnnual = (pc.lifeInsuranceAnnualRate ?? 0) / 100;
-        const riskAnnual = (pc.riskInsuranceAnnualRate ?? 0) / 100;
+        const lifeAnnual = (pc.lifeInsuranceAnnualRate ?? 0);
+        const riskAnnual = (pc.riskInsuranceAnnualRate ?? 0);
 
         const lifeRatePerPeriod =
           lifeAnnual > 0 ? Math.pow(1 + lifeAnnual, frequencyDays / daysInYear) - 1 : 0;
@@ -354,14 +359,12 @@ export class FrenchAmortizationService {
       input.initialCosts
     );
 
-    let irrPerPeriod: number | undefined;
+    let irrPerPeriod = this.calculateIrr(flows);
     let tcea: number | undefined;
     let npv: number | undefined;
 
-    const irr = this.calculateIrr(flows);
-    if (irr != null) {
-      irrPerPeriod = irr;
-      tcea = this.calculateTceaFromIrr(irr, periodsPerYear);
+    if (irrPerPeriod != undefined) {
+      tcea = this.calculateTceaFromIrrSBS(irrPerPeriod, periodsPerYear);
     }
 
     if (input.opportunityAnnualRatePercent != null) {
@@ -543,7 +546,7 @@ export class FrenchAmortizationService {
     flows: number[],
     maxIterations = 100,
     tolerance = 1e-7
-  ): number | null {
+  ): number | undefined {
     let low = -0.9999;
     let high = 10;
     let mid = 0;
@@ -554,7 +557,7 @@ export class FrenchAmortizationService {
     let npvHigh = npvAt(high);
 
     if (npvLow * npvHigh > 0) {
-      return null;
+      return undefined;
     }
 
     for (let i = 0; i < maxIterations; i++) {
@@ -591,15 +594,11 @@ export class FrenchAmortizationService {
    * Calculate TCEA from IRR per period.
    * @param irrPerPeriod - IRR per period as decimal.
    * @param periodsPerYear - Number of periods per year.
-   * @returns TCEA in percentage.
+   * @returns The calculated TCEA in percentage.
    * @private
    */
-  private calculateTceaFromIrr(
-    irrPerPeriod: number,
-    periodsPerYear: number
-  ): number {
-    const tea = Math.pow(1 + irrPerPeriod, periodsPerYear) - 1;
-    return tea * 100;
+  private calculateTceaFromIrrSBS(irrPerPeriod: number, periodsPerYear: number): number {
+    return (Math.pow(1 + irrPerPeriod, periodsPerYear) - 1) * 100;
   }
 
 

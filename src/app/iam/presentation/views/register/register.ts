@@ -76,7 +76,7 @@ export class Register {
 
     // Create new user with enabled=false (needs to complete profile)
     const newUser = new User({
-      id: 0, // ID will be set by the store/backend
+      id: this.iamStore.userCount() + 1, // Simple ID generation
       username: formValue.username,
       password: formValue.password,
       enabled: false, // Needs to complete profile
