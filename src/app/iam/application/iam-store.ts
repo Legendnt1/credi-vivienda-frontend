@@ -52,6 +52,12 @@ export class IamStore {
   private readonly loadingSignal = signal<boolean>(false);
 
   /**
+   * Pending operations counter.
+   * @private
+   */
+  private readonly pendingOperationsSignal = signal<number>(0);
+
+  /**
    * Loading readonly signal.
    */
   readonly loading = this.loadingSignal.asReadonly();
@@ -385,16 +391,23 @@ export class IamStore {
    * @param user - The user to add.
    */
   addUser(user: User): void {
+    this.pendingOperationsSignal.update(count => count + 1);
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
     this.iamApi.createUser(user).pipe().subscribe({
       next: (createdUser) => {
         this.usersSignal.set([...this.users(), createdUser]);
-        this.loadingSignal.set(false);
+        this.pendingOperationsSignal.update(count => count - 1);
+        if (this.pendingOperationsSignal() === 0) {
+          this.loadingSignal.set(false);
+        }
       },
       error: (error) => {
         this.errorSignal.set(this.formatError(error, 'Error at create new user'));
-        this.loadingSignal.set(false);
+        this.pendingOperationsSignal.update(count => count - 1);
+        if (this.pendingOperationsSignal() === 0) {
+          this.loadingSignal.set(false);
+        }
       }
     })
   }
@@ -543,16 +556,23 @@ export class IamStore {
    * @param setting - The setting to add.
    */
   addSetting(setting: Setting): void {
+    this.pendingOperationsSignal.update(count => count + 1);
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
     this.iamApi.createSetting(setting).pipe().subscribe({
       next: (createdSetting) => {
         this.settingsSignal.set([...this.settings(), createdSetting]);
-        this.loadingSignal.set(false);
+        this.pendingOperationsSignal.update(count => count - 1);
+        if (this.pendingOperationsSignal() === 0) {
+          this.loadingSignal.set(false);
+        }
       },
       error: (error) => {
         this.errorSignal.set(this.formatError(error, 'Error at create new setting'));
-        this.loadingSignal.set(false);
+        this.pendingOperationsSignal.update(count => count - 1);
+        if (this.pendingOperationsSignal() === 0) {
+          this.loadingSignal.set(false);
+        }
       }
     })
   }

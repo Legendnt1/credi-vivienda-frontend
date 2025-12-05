@@ -93,11 +93,8 @@ export class Register {
       role_id: 1 // USER role
     });
 
-    // Add user first
-    this.iamStore.addUser(newUser);
-
     const newSetting = new Setting({
-      id: this.iamStore.settingCount() + 1, // ID will be set by the backend
+      id: this.iamStore.settingCount() + 1,
       user_id: newUser.id,
       default_currency_catalog_id: 1, // Default PEN currency
       default_interest_type: 'EFFECTIVE', // Default interest type
@@ -107,7 +104,40 @@ export class Register {
       default_change_usd_pen: 3.70 // Default USD to PEN exchange rate
     });
 
+    // Add user first, then setting
+    this.iamStore.addUser(newUser);
     this.iamStore.addSetting(newSetting);
+
+    // Wait and monitor for completion
+    const checkCompletion = setInterval(() => {
+      const storeLoading = this.iamStore.loading();
+      const storeError = this.iamStore.error();
+
+      if (!storeLoading) {
+        clearInterval(checkCompletion);
+
+        if (storeError) {
+          this.errorMessage.set(storeError);
+          this.isLoading.set(false);
+        } else {
+          // Success - redirect to login
+          this.isLoading.set(false);
+          console.log('Usuario registrado exitosamente. Redirigiendo al login...');
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 500);
+        }
+      }
+    }, 100);
+
+    // Timeout de seguridad
+    setTimeout(() => {
+      if (this.isLoading()) {
+        clearInterval(checkCompletion);
+        this.errorMessage.set('Error: La operación tardó demasiado tiempo. Por favor, intenta nuevamente.');
+        this.isLoading.set(false);
+      }
+    }, 15000); // 15 segundos timeout
   }
 
   goToLogin() {
