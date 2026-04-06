@@ -1,4 +1,4 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about TypeScript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
 /* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
   "compileOnSave": false,
@@ -14,13 +14,12 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
-    "baseUrl": "./src",
     "paths": {
-      "@env/*": ["environments/*"],
-      "@shared/*": ["app/shared/*"],
-      "@iam/*": ["app/iam/*"],
-      "@projects/*": ["app/projects/*"],
-      "@financial/*": ["app/financial/*"],
+      "@env/*": ["./src/environments/*"],
+      "@shared/*": ["./src/app/shared/*"],
+      "@iam/*": ["./src/app/iam/*"],
+      "@projects/*": ["./src/app/projects/*"],
+      "@financial/*": ["./src/app/financial/*"],
     }
   },
   "angularCompilerOptions": {
