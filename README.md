@@ -1,59 +1,122 @@
-# CrediViviendaFrontend
+# CrediVivienda Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.11.
+[![Angular](https://img.shields.io/badge/Angular-20-DD0031?logo=angular&logoColor=white)](https://angular.dev/) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![RxJS](https://img.shields.io/badge/RxJS-7-B7178C?logo=reactivex&logoColor=white)](https://rxjs.dev/) [![Jasmine](https://img.shields.io/badge/Jasmine-5-8A4182?logo=jasmine&logoColor=white)](https://jasmine.github.io/) [![Karma](https://img.shields.io/badge/Karma-6-56C0C0?logo=karma&logoColor=white)](https://karma-runner.github.io/) [![ngx-translate](https://img.shields.io/badge/ngx--translate-i18n-3B82F6)](https://github.com/ngx-translate/core)
 
-## Development server
+University web application for housing credit management. This repository contains the Angular frontend focused on financial simulation, real estate project management, and report generation.
 
-To start a local development server, run:
+## Project Description
 
-```bash
-ng serve
+CrediVivienda allows authenticated users to:
+
+- Register and review real estate projects.
+- Simulate credit and installment scenarios.
+- Analyze dashboards and financial reports.
+- Configure system preferences.
+
+The project is organized by functional domains (`iam`, `projects`, `financial`) and follows a layered architecture:
+
+- `application`: state and use cases.
+- `domain`: business entities and models.
+- `infrastructure`: HTTP integrations and assemblers.
+- `presentation`: views and UI components.
+
+## Main Technologies
+
+- Angular 20 (standalone components)
+- TypeScript 5
+- RxJS
+- Karma + Jasmine for unit testing
+- ngx-translate for i18n
+
+## Repository Structure
+
+```text
+src/
+  app/
+    financial/
+    iam/
+    projects/
+    shared/
+  environments/
+server/
+public/assets/
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- `src/app/app.routes.ts`: main routes and lazy-loaded views.
+- `server/`: data and routes for local mock API setup.
+- `public/assets/`: images, fonts, icons, and translation files.
 
-## Code scaffolding
+## Prerequisites
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- Node.js LTS (recommended: 20+)
+- pnpm (recommended) or npm
+- Angular CLI 20
 
-```bash
-ng generate component component-name
-```
+## Installation and Run
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+1. Clone the repository.
+2. Install dependencies.
+3. Start the development server.
 
 ```bash
-ng build
+pnpm install
+pnpm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Application URL: `http://localhost:4200`
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Available Scripts
 
 ```bash
-ng test
+pnpm start   # Runs ng serve
+pnpm build   # Builds the project
+pnpm watch   # Development build in watch mode
+pnpm test    # Runs unit tests
 ```
 
-## Running end-to-end tests
+## Development Conventions
 
-For end-to-end (e2e) testing, run:
+- Keep strict TypeScript typing.
+- Avoid `any`; prefer explicit types or `unknown` when needed.
+- Build small, focused components.
+- Prioritize readability and naming consistency.
+- Add tests for critical logic.
 
-```bash
-ng e2e
+## Contribution Guide
+
+Academic contributions are welcome. To contribute:
+
+1. Create a branch from `main`:
+   - `feature/short-name`
+   - `fix/short-name`
+2. Make atomic changes with clear commit messages.
+3. Run tests and build before opening a PR.
+4. Open a Pull Request describing:
+   - Problem or objective.
+   - Implemented solution.
+   - Evidence (screenshots or test notes).
+5. Wait for team review and address feedback.
+
+### Suggested Commit Format
+
+```text
+type(scope): short description
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Examples:
 
-## Additional Resources
+- `feat(projects): add project details view`
+- `fix(financial): correct down payment calculation`
+- `docs(readme): update contribution guide`
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Minimum Pull Request Criteria
+
+- Code compiles without errors.
+- Existing tests pass.
+- No secrets or credentials are included.
+- Functionality is manually validated.
+- Documentation is updated when behavior changes.
+
+## Team
+
+Project developed for a university context. You can update this section with team members, course name, and instructor.
